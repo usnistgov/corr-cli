@@ -52,3 +52,13 @@ an instance available.
 ## Prerequisites and Installation
 
 See the [installation guide](INSTALLATION.md).
+
+## Local Instance
+
+To set up a local instance of the database, use
+
+    mongod --config /path/to/mongodb.conf
+
+where the contents of `mongodb.conf` is
+
+    dbpath = /home/wd15/.mongodb
