@@ -10,21 +10,11 @@ conjunction with
 
 ## Usage
 
-To create a new database use:
+Use `dbhandle.py` to set up and tear down MongoDB. See
 
-    $ python handle.py --create
+    $ python dbhandle.py --help
 
-To run an already exisiting database use:
-
-    $ python handle.py --run
-
-To remove the data from an exisiting database use:
-
-    $ python handle.py --clean
-
-To remove a database entirely use:
-  
-    $ python handle.py --destroy
+for details.
 
 ## Testing
 
@@ -36,9 +26,10 @@ Use:
 
 [The MIT license.][LICENSE]
 
-## Prerequisites and Installation
+## Installation
 
-See the [installation guide](INSTALLATION.md).
+See the [Docker file](ddsmdb/Dockerfile) for more deatils
+[installation guide](INSTALLATION.md).
 
 ## Local Instance
 
