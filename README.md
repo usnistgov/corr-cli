@@ -24,19 +24,9 @@ Use:
 
 ## License
 
-[The MIT license.][LICENSE]
+[The MIT license.](LICENSE)
 
 ## Installation
 
-See the [Docker file](ddsmdb/Dockerfile) for more deatils
-[installation guide](INSTALLATION.md).
+See the [Docker file](ddsmdb/Dockerfile) for more details.
 
-## Local Instance
-
-To set up a local instance of the database, use
-
-    mongod --config /path/to/mongodb.conf
-
-where the contents of `mongodb.conf` is
-
-    dbpath = /home/wd15/.mongodb
