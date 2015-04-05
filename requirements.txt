@@ -14,3 +14,5 @@ Werkzeug==0.9.6
 boto==2.14.0
 itsdangerous==0.24
 wsgiref==0.1.2
+Requests==2.4.1
+Click==3.3

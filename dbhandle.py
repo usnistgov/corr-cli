@@ -1,6 +1,7 @@
 import click
 import subprocess
 import pymongo
+import sys
 
 @click.command()
 @click.option('--run/--no-run', default=None, help="run mongod with `--dbpath`")
@@ -55,12 +56,25 @@ def dbsetup():
     pass
 
 def dbshutdown(dbpath):
-    command = ['mongod']
-    command.append('--shutdown')
-    if dbpath:
-        command.append('--dbpath')
-        command.append(dbpath)
-    subprocess.call(command)
+    if "linux" in sys.platform:
+        command = ['mongod']
+        command.append('--shutdown')
+        if dbpath:
+            command.append('--dbpath')
+            command.append(dbpath)
+        subprocess.call(command)
+    elif "darwin" in sys.platform:
+        command = ['mongo']
+        command.append('--eval')
+        command.append('db.getSiblingDB(\'admin\').shutdownServer()')
+        subprocess.call(command)
+    elif "win" in sys.platform:
+        command = ['use']
+        command.append('admin')
+        command.append('db.shutdownServer()')
+        subprocess.call(command)
+    else:
+        click.echo('your {0} platform is not supported.'.format(sys.platform))
 
 if __name__ == "__main__":
     handle()
