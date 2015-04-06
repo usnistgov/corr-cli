@@ -56,25 +56,18 @@ def dbsetup():
     pass
 
 def dbshutdown(dbpath):
-    if "linux" in sys.platform:
-        command = ['mongod']
-        command.append('--shutdown')
-        if dbpath:
-            command.append('--dbpath')
-            command.append(dbpath)
-        subprocess.call(command)
-    elif "darwin" in sys.platform:
+    if "linux" in sys.platform or "darwin" in sys.platform:
         command = ['mongo']
         command.append('--eval')
         command.append('db.getSiblingDB(\'admin\').shutdownServer()')
         subprocess.call(command)
-    elif "win" in sys.platform:
-        command = ['use']
-        command.append('admin')
-        command.append('db.shutdownServer()')
-        subprocess.call(command)
     else:
         click.echo('your {0} platform is not supported.'.format(sys.platform))
+        if click.confirm('Try the mongo shell option anyway?'):
+            command = ['mongo']
+            command.append('--eval')
+            command.append('db.getSiblingDB(\'admin\').shutdownServer()')
+            subprocess.call(command)
 
 if __name__ == "__main__":
     handle()
