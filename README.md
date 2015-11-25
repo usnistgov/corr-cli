@@ -1,15 +1,13 @@
-# Simulation Management Tools AJAX frontend
+# Cloud of Reproducible Records AJAX View frontend
 
-An important part of the MGI effort is providing infrastructure and
-tools to enable reproducible research in computational materials
-science. For reproducible research to become a widely used, repeatable
-human based process needs to be replaced by automated open-source
-logging tools. This is especially the case for simulation management,
-which is often poorly documented and recorded during the development
-stages of a research project. A good practice is to use a dedicated
-simulation management tool (SMT) throughout the development process
-rather than creating an ad-hoc simulation management scheme. Listed
-below are a number of requirements for an effective SMT.
+CoRR is a Plateform designed to store records from SMT initially.
+It allows scientists to automatically push their record in the cloud
+and be able to display and manipulate them later. Also CoRR is a 
+collaboration platform where the interaction between scientists lead to:
+- Discussion about records
+- Rationels inclusion
+- Reproducible tags between each couple of records as: repeated, replicated,
+reproduced, non-repeated, non-replicated, non-reproduced.
 To run this, you have to run the database first:
 
     $ jekyll serve -H localhost
