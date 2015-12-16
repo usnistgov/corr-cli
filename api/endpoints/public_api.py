@@ -3,7 +3,7 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from api import app, check_access
+from api import app, check_api
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import RecordModel

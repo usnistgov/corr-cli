@@ -3,7 +3,7 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from api import app, check_access, upload_bundle, api_response, delete_project_files, delete_record_files, API_URL
+from api import app, check_api, upload_bundle, api_response, delete_project_files, delete_record_files, API_URL
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
 from corrdb.common.models import UserModel
@@ -37,7 +37,7 @@ def push_project(api_token, project_name):
         traffic.save()
 
     print api_token
-    current_user = check_access(api_token)
+    current_user = check_api(api_token)
     if current_user is not None:
         # user = UserModel.objects(email=user.email).first_or_404()
         if fk.request.method == 'POST': # POST to create a new one only.
@@ -93,7 +93,7 @@ def sync_project(api_token, project_name):
         traffic.interactions += 1 
         traffic.save()
 
-    current_user = check_access(api_token)
+    current_user = check_api(api_token)
     if current_user is not None:
         # user = UserModel.objects(email=user.email).first_or_404()
         if fk.request.method == 'PUT': # PUT to update an existing one only.
@@ -212,7 +212,7 @@ def sync_project(api_token, project_name):
 
 # @app.route(API_URL + '/<api_token>/<user_id>/project/clone/<project_name>', methods=['GET'])
 # def clone_project(api_token, user_id, project_name):
-#     current_user = check_access(api_token)
+#     current_user = check_api(api_token)
 #     if current_user is not None:
 #         if fk.request.method == 'GET':
 #             owner = UserModel.objects(id=user_id).first_or_404()
@@ -240,7 +240,7 @@ def pull_project_all(api_token):
         traffic.interactions += 1 
         traffic.save()
         
-    current_user = check_access(api_token)
+    current_user = check_api(api_token)
     if current_user is not None:
         if fk.request.method == 'GET':
             projects = ProjectModel.objects(owner=current_user)
@@ -261,7 +261,7 @@ def pull_project(api_token, project_name):
         traffic.interactions += 1 
         traffic.save()
         
-    current_user = check_access(api_token)
+    current_user = check_api(api_token)
     if current_user is not None:
         if fk.request.method == 'GET':
             # user = UserModel.objects(email=user.email).first_or_404()
@@ -291,7 +291,7 @@ def remove_project(api_token, project_name):
         traffic.interactions += 1 
         traffic.save()
         
-    current_user = check_access(api_token)
+    current_user = check_api(api_token)
     if current_user is not None:
         if fk.request.method == 'DELETE':
             # user = UserModel.objects(email=user.email).first_or_404()
@@ -323,7 +323,7 @@ def dashboard_project(api_token):
         traffic.interactions += 1 
         traffic.save()
         
-    current_user = check_access(api_token)
+    current_user = check_api(api_token)
     if current_user is not None:
         if fk.request.method == 'GET':
             projects = ProjectModel.objects(owner=current_user)

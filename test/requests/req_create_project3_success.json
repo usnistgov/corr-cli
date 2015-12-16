@@ -1,0 +1,8 @@
+{
+	"api_token":"62633ba90e65279f23d2e93063b5def4c5adee032764611d72979285a12e68a9",
+	"name":"FiPy: A Finite Volume PDE Solver Using Python",
+	"description":"FiPy is an object oriented, partial differential equation (PDE) solver, written in Python, based on a standard finite volume (FV) approach. The framework has been developed in the Materials Science and Engineering Division (MSED) and Center for Theoretical and Computational Materials Science (CTCMS), in the Material Measurement Laboratory (MML) at the National Institute of Standards and Technology (NIST).",
+	"goals":"The solution of coupled sets of PDEs is ubiquitous to the numerical simulation of science problems. Numerous PDE solvers exist, using a variety of languages and numerical approaches. Many are proprietary, expensive and difficult to customize. As a result, scientists spend considerable resources repeatedly developing limited tools for specific problems. Our approach, combining the FV method and Python, provides a tool that is extensible, powerful and freely available. A significant advantage to Python is the existing suite of tools for array calculations, sparse matrices and data rendering.",
+	"tags":["python","materials science","PDE","MML","MSED","CTCMS","transent diffusion","convection","NIST","standard resources","coupled elliptic","hyperbolic","parabolic"],
+	"group":"computational"
+}
