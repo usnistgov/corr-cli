@@ -80,16 +80,16 @@ def admin_stats():
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-# @app.route(API_URL + '/admin/stats/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-# @crossdomain(origin='*')
-# def admin_stats_clear():
-#     if fk.request.method == 'GET':
-#         stats = StatModel.objects()
-#         for stat in stats:
-#             stat.delete()
-#         return api_response(200, 'CoRR stats clear', 'All the stats in CoRR have been cleared.')
-#     else:
-#         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+@app.route(API_URL + '/admin/stats/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_stats_clear():
+    if fk.request.method == 'GET':
+        stats = StatModel.objects()
+        for stat in stats:
+            stat.delete()
+        return api_response(200, 'CoRR stats clear', 'All the stats in CoRR have been cleared.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/traffic', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
@@ -113,6 +113,31 @@ def admin_traffic_clear():
         return api_response(200, 'CoRR traffic cleared', 'All the traffic in CoRR have been cleared.')
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/comments', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_comments():
+    logTraffic(endpoint='/admin/comments')
+    if fk.request.method == 'GET':
+        comments = CommentModel.objects()
+        comments_json = {'total_comments':len(comments), 'comments':[]}
+        for comment in comments:
+            comments_json['comments'].append(comment.extended())
+        return api_response(200, 'All comments', comments_json)
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_comments_clear():
+    logTraffic(endpoint='/admin/comments/clear')
+    if fk.request.method == 'GET':
+        comments = CommentModel.objects()
+        comments.delete()
+        return api_response(200, 'All comments cleared', 'All comments deleted.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 
 # admin comment
 @app.route(API_URL + '/admin/comment/<group>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
@@ -148,13 +173,41 @@ def admin_comment_send(group):
             sender = UserModel.objects(session=sender_id).first()
             if item == None or sender == None:
                 return api_response(400, 'Missing mandatory fields', 'A comment creation requires a existing item and a existing sender.')
-            comment, created = CommentModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), sender=sender, title=title, content=content, attachments=attachments)
+            comment, created = CommentModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), sender=sender, title=title, content=content)
             logStat(comment=comment)
             item.comments.append(str(comment.id))
             item.save()
             return api_response(200, 'Comment delivered', comment.info())
         else:
             return api_response(204, 'Nothing created', 'You must provide the comment information.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
+
+@app.route(API_URL + '/admin/comment/all/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_comment_all(group, item_id):
+    logTraffic(endpoint='/admin/comment/<group>/<item_id>')
+    if fk.request.method == 'GET':
+        if item_id == None:
+            return api_response(400, 'Missing mandatory fields', 'Listing all the comments of an item requires the item id.')
+        item = None
+        if group == 'project':
+            item = ProjectModel.objects.with_id(item_id)
+        elif group == 'record':
+            item = RecordModel.objects.with_id(item_id)
+        elif group == 'diff':
+            item = DiffModel.objects.with_id(item_id)
+        elif group == 'env':
+            item = EnvironmentModel.objects.with_id(item_id)
+        elif group == 'file':
+            item = FileModel.objects.with_id(item_id)
+        else:
+            return api_response(405, 'Comment group not allowed', 'Comments are only possible with: project, record, diff, env and file.')
+        if item == None:
+            return api_response(400, 'Missing mandatory fields', 'This item does not exist. It is invalid to pull comments from an non existing item.')
+        else:
+            comments = [comment.extended() for comment in item._comments()]
+            return api_response(200, '%s %s comments list'%(group, item_id), comments)
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
@@ -243,7 +296,7 @@ def admin_app_create():
                 #     logo_location = 'local'
                 #     logo_group = 'logo'
                 #     logo_description = 'This is the application %s logo.'%name
-                logo, logo_created = FileModel.objects.get_or_create(encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+                logo, logo_created = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
                 app, created = None, False
                 if developer == None or developer.group != 'developer':
                     return api_response(400, 'A field is not applicable', 'The application user has to be a developer.')
@@ -254,7 +307,7 @@ def admin_app_create():
                 if not created:
                     return api_response(200, 'Application already exists', app.info())
                 else:
-                    logStat(application=application)
+                    logStat(application=app)
                     return api_response(201, 'Application created', app.info())
         else:
             return api_response(204, 'Nothing created', 'You must provide the application information.')
@@ -291,6 +344,18 @@ def admin_app_delete(app_id):
             return api_response(200, 'Deletion succeeded', 'The application %s was succesfully deleted.'%app.name)
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/app/delete/all', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_app_delete_all():
+    logTraffic(endpoint='/admin/app/delete/all')
+    if fk.request.method == 'GET':
+        apps = ApplicationModel.objects
+        apps.delete()
+        return api_response(200, 'Deletion succeeded', 'All the apps were succesfully deleted.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 
 @app.route(API_URL + '/admin/app/update/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
@@ -450,6 +515,18 @@ def admin_users():
         return api_response(200, 'Users list', users_dict)
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/profiles/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_profiles_clear():
+    logTraffic(endpoint='/admin/profiles/clear')
+    if fk.request.method == 'GET':
+        profiles = ProfileModel.objects()
+        profiles.delete()
+        return api_response(200, 'Profiles cleared', 'All the profiles have been deleted.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 
 #@TODO
 # @app.route(API_URL + '/admin/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
@@ -644,7 +721,7 @@ def admin_user_profile_create(user_id):
                 #     picture_location = 'local'
                 #     picture_group = 'picture'
                 #     picture_description = 'This is the user %s profile picture.'%fname
-                picture, picture_created = FileModel.objects.get_or_create(encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
+                picture, picture_created = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
                 profile, created = None, False
                 if picture == None:
                     profile, created = ProfileModel.objects.get_or_create(user=user, fname=fname, lname=lname, organisation=organisation, about=about)
@@ -897,6 +974,18 @@ def admin_projects():
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
+@app.route(API_URL + '/admin/projects/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_projects_clear():
+    logTraffic(endpoint='/admin/projects/clear')
+    if fk.request.method == 'GET':
+        projects = ProjectModel.objects()
+        projects.delete()
+        return api_response(200, 'Projects deleted', 'All the projects have been deleted.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+
 ### admin projects
 # 566728709f9d5109b8de3f91
 # [{u'useful': [], u'sender': u'5666ee079f9d5171fd03a565', u'extend': {}, u'title': u'This is a comment on the MKS project', u'created': u'2015-12-10 16:57:19.539104', u'content': u'Can we do some phase field simulations with PyMKS?', u'id': u'5669aeef9f9d5162d84546bf', u'attachments': []}]
@@ -930,7 +1019,7 @@ def admin_project_comments(project_id):
         if project == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
         else:
-            comments = project.comments
+            comments = project._comments()
             comments_dict = {'total_comments':0, 'comments':[]}
             for comment_id in comments:
                 comment = CommentModel.objects.with_id(comment_id)
@@ -963,6 +1052,23 @@ def admin_project_create():
             if owner_id == None or name == '':
                 return api_response(400, 'Missing mandatory fields', ' project should have a owner api token and a name.')
             else:
+                logo_storage = 'default-project.png'
+                logo_encoding = ''
+                logo_mimetype = mimetypes.guess_type(logo_storage)[0]
+                logo_buffer = s3_get_file('logo', logo_storage)
+                if logo_buffer != None:
+                    old_file_position = logo_buffer.tell()
+                    logo_buffer.seek(0, os.SEEK_END)
+                    logo_size = logo_buffer.tell()
+                    logo_buffer.seek(old_file_position, os.SEEK_SET)
+                else:
+                    logo_size = 0
+                logo_name = 'default-project.png'
+                logo_location = 'local'
+                logo_group = 'logo'
+                logo_description = 'This is the default image used for the project logo in case none is provided.'
+                logo, logo_created = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+                
                 application = None
                 owner = None
                 cloned_from = ''
@@ -989,6 +1095,7 @@ def admin_project_create():
                     project.cloned_from = cloned_from
                     project.resources = resources
                     project.group = group
+                    project.logo = logo
                     project.save()
                     logStat(project=project)
                     return api_response(201, 'Project created', project.info())
@@ -996,6 +1103,24 @@ def admin_project_create():
             return api_response(204, 'Nothing created', 'You must provide the file information.')
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
+
+@app.route(API_URL + '/admin/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_project_records(project_id):
+    logTraffic(endpoint='/admin/project/records/<project_id>')
+    if fk.request.method == 'GET':
+        project = ProjectModel.objects.with_id(project_id)
+        if project == None:
+            return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
+        else:
+            records = RecordModel.objects(project=project)
+            records_dict = {'total_records':len(records), 'records':[]}
+            for record in records:
+                records_dict['records'].append(record.extended())
+            return api_response(200, 'Project [%s] Records list'%project.name, records_dict)
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 
 @app.route(API_URL + '/admin/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
@@ -1007,6 +1132,57 @@ def admin_project_show(project_id):
             return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
         else:
             return api_response(200, 'Project %s'%project.name, project.extended())
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_project_logo(project_id):
+    logTraffic(endpoint='/admin/project/logo/<project_id>')
+    if fk.request.method == 'GET':
+        project = ProjectModel.objects.with_id(project_id)
+        if project != None:
+            logo = project.logo
+            if logo.location == 'local' and 'http://' not in logo.storage:
+                logo_buffer = s3_get_file('logo', logo.storage)
+                if logo_buffer == None:
+                    return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
+                else:
+                    return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
+            elif logo.location == 'remote':
+                logo_buffer = web_get_file(logo.storage)
+                if logo_buffer != None:
+                    return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
+                else:
+                    logo_buffer = s3_get_file('logo', 'default-logo.png')
+                    if logo_buffer == None:
+                        return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
+                    else:
+                        return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
+            else:
+                # solve the file situation and return the appropriate one.
+                if 'http://' in logo.storage:
+                    logo.location = 'remote'
+                    logo.save()
+                    logo_buffer = web_get_file(logo.storage)
+                    if logo_buffer != None:
+                        return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
+                    else:
+                        logo_buffer = s3_get_file('logo', 'default-logo.png')
+                        if logo_buffer == None:
+                            return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
+                        else:
+                            return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
+                else:
+                    logo.location = 'local'
+                    logo.save()
+                    logo_buffer = s3_get_file('logo', logo.storage)
+                    if logo_buffer == None:
+                        return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
+                    else:
+                        return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
+        else:
+            return api_response(404, 'Request suggested an empty response', 'Unable to find this application.')
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
@@ -1100,11 +1276,11 @@ def admin_project_download(project_id):
         if project == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
         else:
-            prepared = prepare_project(project, env)
+            prepared = prepare_project(project)
             if prepared[0] == None:
                 return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
             else:
-                return fk.send_file(prepared[0], attachment_filename=prepared[1], mimetype='application/zip')
+                return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
@@ -1128,7 +1304,7 @@ def admin_project_envs(project_id):
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/admin/project/envs/head', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_envs_head(project_id):
     logTraffic(endpoint='/admin/project/envs/head')
@@ -1137,7 +1313,10 @@ def admin_project_envs_head(project_id):
         if project == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
         else:
-            return api_response(200, 'Project %s environments head'%project.name, project.history[-1])
+            head = {}
+            if len(project.history) > 0:
+                head = project.history[-1]
+            return api_response(200, 'Project %s environments head'%project.name, head)
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
@@ -1278,7 +1457,7 @@ def admin_project_env_download():
                     if prepared[0] == None:
                         return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
                     else:
-                        return fk.send_file(prepared[0], attachment_filename=prepared[1], mimetype='application/zip')
+                        return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
@@ -1299,6 +1478,18 @@ def admin_records():
         return api_response(200, 'Records list', records_dict)
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/records/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_records_clear():
+    logTraffic(endpoint='/admin/records/clear')
+    if fk.request.method == 'GET':
+        records = RecordModel.objects()
+        records.delete()
+        return api_response(200, 'Records cleared', 'All the records have been deleted.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 
 # @TODO
 # Get the record comments
@@ -1337,10 +1528,11 @@ def admin_record_create():
             data_pop(data, 'cloned_from')
             access = data.get('access', 'private')
             data_pop(data, 'access')
-            resources = data.get('resources', [])
-            data_pop(data, 'resources')
+            # resources_ids = data.get('resources', [])
+            # data_pop(data, 'resources')
             rationels = data.get('rationels', [])
             data_pop(data, 'rationels')
+            # resources = []
             if project_id == None:
                 return api_response(400, 'Missing mandatory fields', ' record should have a record to reference itself to.')
             else:
@@ -1369,20 +1561,26 @@ def admin_record_create():
                     history = project.history
                     if len(history) > 0:
                         environment = history[-1] # Create with the latest environment.
+                # if len(resources) > 0:
+                #     for res_id in resources_ids:
+                #         res = FileModel.objects.with_id(res_id)
+                #         if res != None:
+                #             resources.append(res)
+                # print resources
                 if application != None:
                     if environment != None:
-                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, application=application, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, resources=resources, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, application=application, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     else:
-                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, application=application, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, resources=resources, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, application=application, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                 else:
                     if environment != None:
-                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, resources=resources, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     else:
-                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, resources=resources, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                 if len(data) != 0:
                     body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
                 logStat(record=record)
-                return api_response(201, 'Record created', project.info())
+                return api_response(201, 'Record created', record.info())
         else:
             return api_response(204, 'Nothing created', 'You must provide the file information.')
     else:
@@ -1422,8 +1620,8 @@ def admin_record_delete(record_id):
 def admin_record_update(record_id):
     logTraffic(endpoint='/admin/record/update/<record_id>')
     if fk.request.method == 'POST':
-        record = RecordModel.objects.with_id(project_id)
-        if project == None:
+        record = RecordModel.objects.with_id(record_id)
+        if record == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
         else:
             if fk.request.data:
@@ -1432,7 +1630,7 @@ def admin_record_update(record_id):
                 data_pop(data, 'project')
                 application_id = data.get('application', None)
                 data_pop(data, 'application')
-                parent_id = get('parent', None)
+                parent_id = data.get('parent', None)
                 data_pop(data, 'parent')
                 label = data.get('label', record.label)
                 data_pop(data, 'label')
@@ -1531,21 +1729,21 @@ def admin_record_update(record_id):
 
 @app.route(API_URL + '/admin/record/download/<project_id>/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
-def admin_record_download(record_id):
+def admin_record_download(project_id, record_id):
     logTraffic(endpoint='/admin/record/download/<project_id>/<record_id>')
     if fk.request.method == 'GET':
         record = RecordModel.objects.with_id(record_id)
         if record == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this record.')
         else:
-            if str(record.id) != project_id:
+            if str(record.project.id) != project_id:
                 return api_response(401, 'Unauthorized access to this record', 'This record is not part of the provided project.')
             else:
-                prepared = prepare_record(project, env)
+                prepared = prepare_record(record)
                 if prepared[0] == None:
                     return api_response(404, 'Request suggested an empty response', 'Unable to retrieve a record to download.')
                 else:
-                    return fk.send_file(prepared[0], attachment_filename=prepared[1], mimetype='application/zip')
+                    return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
@@ -1696,7 +1894,7 @@ def admin_diff_update(diff_id):
                 diff.proposition = proposition
                 diff.status = status
                 diff.save()
-                return api_response(201, 'Diff updated', app.info())
+                return api_response(201, 'Diff updated', diff.info())
             else:
                 return api_response(204, 'Nothing created', 'You must provide the diff information.')
     else:
@@ -1776,8 +1974,12 @@ def admin_file_upload(group, item_id):
                         _file.delete()
                         _file = item.picture
                     elif group == 'logo':
-                        item = ApplicationModel.objects.with_id(item_id)
-                        description = '%s is the logo file of the application %s'%(file_obj.filename, str(item.id))
+                        if 'app' in group:
+                            item = ApplicationModel.objects.with_id(item_id)
+                            description = '%s is the logo file of the application %s'%(file_obj.filename, str(item.id))
+                        elif 'project' in group:
+                            item = ProjectModel.objects.with_id(item_id)
+                            description = '%s is the logo file of the project %s'%(file_obj.filename, str(item.id))
                         _file.delete()
                         _file = item.logo
                     elif group == 'resource':
@@ -1808,11 +2010,11 @@ def admin_file_upload(group, item_id):
                             return api_response(500, 'An error occured', "%s"%uploaded[1])
                         else:
                             if group == 'input':
-                                item.inputs.append(str(_file.id))
+                                item.resources.append(str(_file.id))
                             elif group == 'output':
-                                item.outputs.append(str(_file.id))
+                                item.resources.append(str(_file.id))
                             elif group == 'dependencie':
-                                item.dependencies.append(str(_file.id))
+                                item.resources.append(str(_file.id))
                             elif group == 'descriptive':
                                 item.resources.append(str(_file.id))
                             elif group == 'diff':
@@ -1820,11 +2022,13 @@ def admin_file_upload(group, item_id):
                             elif group == 'attach':
                                 item.attachments.append(str(_file.id))
                             elif group == 'picture':
+                                s3_delete_file('picture',item.picture.storage)
                                 if item != None:
-                                    item.picture = str(_file.id)
+                                    item.picture = _file
                             elif group == 'logo':
+                                s3_delete_file('logo',item.logo.storage)
                                 if item != None:
-                                    item.logo = str(_file)
+                                    item.logo = _file
                             elif group == 'resource':
                                 item.resources.append(str(_file.id))
                             if item != None:
@@ -1966,9 +2170,33 @@ def admin_file_delete(file_id, item_id, group):
                     s3_delete_file(temp_group, _file.storage)
                 if group == 'logo':
                     _file.storage = 'default-logo.png'
+                    logo_buffer = s3_get_file('logo', 'default-logo.png')
+                    _file.name = 'default-logo.png'
+                    _file.location = 'local'
+                    _file.group = 'logo'
+                    _file.description = 'This is the default image used for the app logo in case none is provided.'
+                    if logo_buffer != None:
+                        old_file_position = logo_buffer.tell()
+                        logo_buffer.seek(0, os.SEEK_END)
+                        p_file.size = logo_buffer.tell()
+                        logo_buffer.seek(old_file_position, os.SEEK_SET)
+                    else:
+                        _file.size = 0
                     _file.save()
                 elif group == 'picture':
                     _file.storage = 'default-picture.png'
+                    picture_buffer = s3_get_file('picture', 'default-picture.png')
+                    _file.name = 'default-picture.png'
+                    _file.location = 'local'
+                    _file.group = 'picture'
+                    _file.description = 'This is the default image used for the user profile picture in case none is provided.'
+                    if picture_buffer != None:
+                        old_file_position = picture_buffer.tell()
+                        picture_buffer.seek(0, os.SEEK_END)
+                        p_file.size = picture_buffer.tell()
+                        picture_buffer.seek(old_file_position, os.SEEK_SET)
+                    else:
+                        _file.size = 0
                     _file.save()
                 else:
                     _file.delete()
@@ -2058,7 +2286,7 @@ def admin_file_delete(file_id, item_id, group):
 def admin_file_update(file_id):
     logTraffic(endpoint='/admin/file/update/<file_id>')
     if fk.request.method == 'POST':
-        _file = FileModel.objects.with_id(app_id)
+        _file = FileModel.objects.with_id(file_id)
         if _file == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
         else:
@@ -2125,7 +2353,7 @@ def admin_message_create():
                 if title == '' and content == '':
                     return api_response(400, 'Missing mandatory fields', 'A message cannot have title and content empty.')
                 
-                sender = UserModel.objects.with_id(sender_id)
+                sender = UserModel.objects(session=sender_id).first()
                 receiver = UserModel.objects.with_id(receiver_id)
                 message, created = MessageModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), sender=sender, receiver=receiver, title=title, attachments=attachments, content=content)
                 if sender == None or receiver == None:
@@ -2175,7 +2403,7 @@ def admin_message_delete(message_id):
 def admin_message_update(message_id):
     logTraffic(endpoint='/admin/message/update/<message_id>')
     if fk.request.method == 'POST':
-        message = MessageModel.objects.with_id(app_id)
+        message = MessageModel.objects.with_id(message_id)
         if message == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this message.')
         else:
@@ -2191,7 +2419,7 @@ def admin_message_update(message_id):
                 if sender_id == None:
                     sender = message.sender
                 else:
-                    sender = UserModel.objects.with_id(sender_id)
+                    sender = UserModel.objects(session=sender_id).first()
                     if sender == None:
                         sender = message.sender
                 if receiver_id == None:
@@ -2202,8 +2430,8 @@ def admin_message_update(message_id):
                         receiver = message.receiver
                 message.sender = sender
                 message.receiver = receiver
-                message.title = name
-                message.content = path
+                message.title = title
+                message.content = content
                 message.attachments.extend(attachments)
                 message.save()
                 return api_response(201, 'Message updated', message.info())

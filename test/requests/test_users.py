@@ -21,9 +21,17 @@ def user_profile_create(user_id="", data={}):
     conn.close()
     return data
 
-def user_show(user_id=""):
+def user_profile_show(user_id=""):
     conn = httplib.HTTPConnection("0.0.0.0", 5100)
     conn.request("GET","%s/user/profile/show/%s"%(base, user_id))
+    response = conn.getresponse()
+    data = response.read()
+    conn.close()
+    return data
+
+def user_show(user_id=""):
+    conn = httplib.HTTPConnection("0.0.0.0", 5100)
+    conn.request("GET","%s/user/show/%s"%(base, user_id))
     response = conn.getresponse()
     data = response.read()
     conn.close()
@@ -65,11 +73,15 @@ if __name__ == '__main__':
         "group":"developer"
     }
 
-    print get_users()
+    # print get_users()
 
-    # print user_create(user1)
-    # print user_create(user2)
-    # print user_create(dev1)
+    # resp1 = json.loads(user_create(user1))
+    # resp2 = json.loads(user_create(user2))
+    # resp3 = json.loads(user_create(dev1))
+
+    # print resp1
+    # print resp2
+    # print resp3
 
     profile_user1 = {
         "fname":"User1",
@@ -87,9 +99,34 @@ if __name__ == '__main__':
 		"about":"I am one of CoRR early stage App developer1."
     }
 
-    # print user_profile_create('56708be79f9d5145158b292a', profile_user1)
-    # print user_profile_create('56708be79f9d5145158b292c', profile_user2)
-    # print user_profile_create('56708be79f9d5145158b292d', profile_dev1)
+    # if resp1['code'] == 201:
+    #     print user_profile_create(resp1['content']['id'], profile_user1)
+    #     del user1['group']
+    #     resp11 = user_login(user1)
+    #     print user_profile_show(resp1['content']['id'])
+    # else:
+    #     print '%d: %s'%(resp1['code'], resp1['content'])
+
+    # if resp2['code'] == 201:
+    #     print user_profile_create(resp2['content']['id'], profile_user2)
+    #     del user2['group']
+    #     resp21 = user_login(user2)
+    #     print user_profile_show(resp2['content']['id'])
+    # else:
+    #     print '%d: %s'%(resp1['code'], resp1['content'])
+
+    # if resp3['code'] == 201:
+    #     print user_profile_create(resp3['content']['id'], profile_user3)
+    #     del user3['group']
+    #     resp31 = user_login(user3)
+    #     print user_profile_show(resp3['content']['id'])
+    # else:
+    #     print '%d: %s'%(resp1['code'], resp1['content'])
+
+
+    print user_profile_create('56731c3a9f9d5110105a27f1', profile_user1)
+    print user_profile_create('56731c3a9f9d5110105a27f4', profile_user2)
+    print user_profile_create('56731c3a9f9d5110105a27f7', profile_dev1)
 
     del user1['group']
     del user2['group']
@@ -98,3 +135,7 @@ if __name__ == '__main__':
     print user_login(user1)
     print user_login(user2)
     print user_login(dev1)
+
+    print user_profile_show('56731c3a9f9d5110105a27f1')
+    print user_profile_show('56731c3a9f9d5110105a27f4')
+    print user_profile_show('56731c3a9f9d5110105a27f7')

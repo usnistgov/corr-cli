@@ -1,18 +1,10 @@
 {
-    "code": 200,
-    "content": {
-        "total_users": 0,
-        "users": []
-    },
-    "title": "Users list"
-}
-{
     "code": 201,
     "content": {
-        "created": "2015-12-15 19:05:36.392132",
+        "created": "2015-12-17 20:26:29.813719",
         "email": "u1_corr@gmail.com",
         "group": "user",
-        "id": "56708be79f9d5145158b292a",
+        "id": "56731c3a9f9d5110105a27f1",
         "total_duration": 0,
         "total_projects": 0,
         "total_records": 0
@@ -22,10 +14,10 @@
 {
     "code": 201,
     "content": {
-        "created": "2015-12-15 19:05:36.392132",
+        "created": "2015-12-17 20:26:29.813719",
         "email": "u2_corr@gmail.com",
         "group": "user",
-        "id": "56708be79f9d5145158b292c",
+        "id": "56731c3a9f9d5110105a27f4",
         "total_duration": 0,
         "total_projects": 0,
         "total_records": 0
@@ -35,10 +27,10 @@
 {
     "code": 201,
     "content": {
-        "created": "2015-12-15 19:05:36.392132",
+        "created": "2015-12-17 20:26:29.813719",
         "email": "d1_corr@gmail.com",
         "group": "developer",
-        "id": "56708be79f9d5145158b292d",
+        "id": "56731c3a9f9d5110105a27f7",
         "total_duration": 0,
         "total_projects": 0,
         "total_records": 0
@@ -46,176 +38,131 @@
     "title": "User account created"
 }
 {
-    "code": 200,
-    "content": {
-        "total_users": 3,
-        "users": [
-            {
-                "apiToken": "3b25f265160ecf0aaefdb415bc52a489085173b4ce46c1fab161dd87504f89ed",
-                "created": "2015-12-15 19:05:36.392000",
-                "email": "u1_corr@gmail.com",
-                "extend": {},
-                "group": "user",
-                "id": "56708be79f9d5145158b292a",
-                "session": "1bb68fb428726688346cea146b2753dcd9b86c3d95fe4094918c96bbc78b7d39",
-                "total_duration": 0,
-                "total_projects": 0,
-                "total_records": 0
-            },
-            {
-                "apiToken": "95f68c3d8e50fcef351aae285717ec356e16bb95bdcecded717e0bee83f8e952",
-                "created": "2015-12-15 19:05:36.392000",
-                "email": "u2_corr@gmail.com",
-                "extend": {},
-                "group": "user",
-                "id": "56708be79f9d5145158b292c",
-                "session": "f797ca5e269fd5a2137b11067a1eae4827be8f13570028cc3d9ff5cbcd5fab52",
-                "total_duration": 0,
-                "total_projects": 0,
-                "total_records": 0
-            },
-            {
-                "apiToken": "5bbd1af8dc1c1c8d4c663a6cb0a72d72cc0b064dafe9bba8a92e5b23ea0da22b",
-                "created": "2015-12-15 19:05:36.392000",
-                "email": "d1_corr@gmail.com",
-                "extend": {},
-                "group": "developer",
-                "id": "56708be79f9d5145158b292d",
-                "session": "53da8a23008daeac776c745f021cd5c994c4dd5dc14c616bd862e78d259f1474",
-                "total_duration": 0,
-                "total_projects": 0,
-                "total_records": 0
-            }
-        ]
-    },
-    "title": "Users list"
-}
-{
     "code": 201,
     "content": {
-        "created": "2015-12-15 19:05:36.394046",
+        "created": "2015-12-17 20:26:29.816434",
         "fname": "User1",
-        "id": "56708e0e9f9d5145158b2930",
+        "id": "56731cbd9f9d5110105a27fb",
         "lname": "CoRR",
-        "picture": "56708e0e9f9d5145158b292f",
-        "user": "56708be79f9d5145158b292a"
+        "picture": "56731cbd9f9d5110105a27fa",
+        "user": "56731c3a9f9d5110105a27f1"
     },
     "title": "Profile created"
 }
 {
     "code": 201,
     "content": {
-        "created": "2015-12-15 19:05:36.394046",
+        "created": "2015-12-17 20:26:29.816434",
         "fname": "User2",
-        "id": "56708e0e9f9d5145158b2931",
+        "id": "56731cbe9f9d5110105a27fe",
         "lname": "CoRR",
-        "picture": "56708e0e9f9d5145158b292f",
-        "user": "56708be79f9d5145158b292c"
+        "picture": "56731cbe9f9d5110105a27fd",
+        "user": "56731c3a9f9d5110105a27f4"
     },
     "title": "Profile created"
 }
 {
     "code": 201,
     "content": {
-        "created": "2015-12-15 19:05:36.394046",
+        "created": "2015-12-17 20:26:29.816434",
         "fname": "Developer1",
-        "id": "56708e0e9f9d5145158b2932",
+        "id": "56731cbe9f9d5110105a2801",
         "lname": "CoRR",
-        "picture": "56708e0e9f9d5145158b292f",
-        "user": "56708be79f9d5145158b292d"
+        "picture": "56731cbe9f9d5110105a2800",
+        "user": "56731c3a9f9d5110105a27f7"
     },
     "title": "Profile created"
+}
+{
+    "code": 201,
+    "content": {
+        "apiToken": "2af0482f74dc27040b81bcbd0d69bfe85381c9026b0edaa194a0c2a69e1f0c9f",
+        "created": "2015-12-17 20:26:29.813000",
+        "email": "u1_corr@gmail.com",
+        "extend": {},
+        "group": "user",
+        "id": "56731c3a9f9d5110105a27f1",
+        "session": "f84375c011876a6f2e8721de682f2781cc4b85f76e9d305cae33564e07b6f275",
+        "total_duration": 0,
+        "total_projects": 0,
+        "total_records": 0
+    },
+    "title": "User account login succeeded"
+}
+{
+    "code": 201,
+    "content": {
+        "apiToken": "ce967787f485d8cb0baeceeec0fecab5df37a297b373178684c4d2cf13345d7f",
+        "created": "2015-12-17 20:26:29.813000",
+        "email": "u2_corr@gmail.com",
+        "extend": {},
+        "group": "user",
+        "id": "56731c3a9f9d5110105a27f4",
+        "session": "fbff9b2fcd8f56a3ceda3353eee12c1f01ef9cd95ac7386b6f88b3149cfc40f1",
+        "total_duration": 0,
+        "total_projects": 0,
+        "total_records": 0
+    },
+    "title": "User account login succeeded"
+}
+{
+    "code": 201,
+    "content": {
+        "apiToken": "07366337c49a026cda30d1cb99679a1b86f7dffb9a44cf9765975a5991d6a849",
+        "created": "2015-12-17 20:26:29.813000",
+        "email": "d1_corr@gmail.com",
+        "extend": {},
+        "group": "developer",
+        "id": "56731c3a9f9d5110105a27f7",
+        "session": "386cc35555057de93542ddd09b3c1e349523103e3ba39d50234209fb9dc36068",
+        "total_duration": 0,
+        "total_projects": 0,
+        "total_records": 0
+    },
+    "title": "User account login succeeded"
 }
 {
     "code": 200,
     "content": {
-        "total_users": 3,
-        "users": [
-            {
-                "apiToken": "3b25f265160ecf0aaefdb415bc52a489085173b4ce46c1fab161dd87504f89ed",
-                "created": "2015-12-15 19:05:36.392000",
-                "email": "u1_corr@gmail.com",
-                "extend": {},
-                "group": "user",
-                "id": "56708be79f9d5145158b292a",
-                "session": "1bb68fb428726688346cea146b2753dcd9b86c3d95fe4094918c96bbc78b7d39",
-                "total_duration": 0,
-                "total_projects": 0,
-                "total_records": 0
-            },
-            {
-                "apiToken": "95f68c3d8e50fcef351aae285717ec356e16bb95bdcecded717e0bee83f8e952",
-                "created": "2015-12-15 19:05:36.392000",
-                "email": "u2_corr@gmail.com",
-                "extend": {},
-                "group": "user",
-                "id": "56708be79f9d5145158b292c",
-                "session": "f797ca5e269fd5a2137b11067a1eae4827be8f13570028cc3d9ff5cbcd5fab52",
-                "total_duration": 0,
-                "total_projects": 0,
-                "total_records": 0
-            },
-            {
-                "apiToken": "5bbd1af8dc1c1c8d4c663a6cb0a72d72cc0b064dafe9bba8a92e5b23ea0da22b",
-                "created": "2015-12-15 19:05:36.392000",
-                "email": "d1_corr@gmail.com",
-                "extend": {},
-                "group": "developer",
-                "id": "56708be79f9d5145158b292d",
-                "session": "53da8a23008daeac776c745f021cd5c994c4dd5dc14c616bd862e78d259f1474",
-                "total_duration": 0,
-                "total_projects": 0,
-                "total_records": 0
-            }
-        ]
+        "about": "I am one of CoRR early stage User1.",
+        "created": "2015-12-17 20:26:29.816000",
+        "extend": {},
+        "fname": "User1",
+        "id": "56731cbd9f9d5110105a27fb",
+        "lname": "CoRR",
+        "organisation": "",
+        "picture": "56731cbd9f9d5110105a27fa",
+        "user": "56731c3a9f9d5110105a27f1"
     },
-    "title": "Users list"
+    "title": "User u1_corr@gmail.com profile"
 }
 {
-    "code": 201,
+    "code": 200,
     "content": {
-        "apiToken": "3b25f265160ecf0aaefdb415bc52a489085173b4ce46c1fab161dd87504f89ed",
-        "created": "2015-12-15 19:05:36.392000",
-        "email": "u1_corr@gmail.com",
+        "about": "I am one of CoRR early stage User2.",
+        "created": "2015-12-17 20:26:29.816000",
         "extend": {},
-        "group": "user",
-        "id": "56708be79f9d5145158b292a",
-        "session": "61c3bbf6eb08138391bfe949d18a114ed577496abfff40ca4c32b51a4b413923",
-        "total_duration": 0,
-        "total_projects": 0,
-        "total_records": 0
+        "fname": "User2",
+        "id": "56731cbe9f9d5110105a27fe",
+        "lname": "CoRR",
+        "organisation": "",
+        "picture": "56731cbe9f9d5110105a27fd",
+        "user": "56731c3a9f9d5110105a27f4"
     },
-    "title": "User account login succeeded"
+    "title": "User u2_corr@gmail.com profile"
 }
 {
-    "code": 201,
+    "code": 200,
     "content": {
-        "apiToken": "95f68c3d8e50fcef351aae285717ec356e16bb95bdcecded717e0bee83f8e952",
-        "created": "2015-12-15 19:05:36.392000",
-        "email": "u2_corr@gmail.com",
+        "about": "I am one of CoRR early stage App developer1.",
+        "created": "2015-12-17 20:26:29.816000",
         "extend": {},
-        "group": "user",
-        "id": "56708be79f9d5145158b292c",
-        "session": "83166126c53305a1d026376a98d75a26df42e36b808082e9a58a40c4eddaf490",
-        "total_duration": 0,
-        "total_projects": 0,
-        "total_records": 0
+        "fname": "Developer1",
+        "id": "56731cbe9f9d5110105a2801",
+        "lname": "CoRR",
+        "organisation": "",
+        "picture": "56731cbe9f9d5110105a2800",
+        "user": "56731c3a9f9d5110105a27f7"
     },
-    "title": "User account login succeeded"
-}
-{
-    "code": 201,
-    "content": {
-        "apiToken": "5bbd1af8dc1c1c8d4c663a6cb0a72d72cc0b064dafe9bba8a92e5b23ea0da22b",
-        "created": "2015-12-15 19:05:36.392000",
-        "email": "d1_corr@gmail.com",
-        "extend": {},
-        "group": "developer",
-        "id": "56708be79f9d5145158b292d",
-        "session": "bf096b8f9b47998048d0afc1bcbcce444f739b3b567e7ee392cea0a0210095c5",
-        "total_duration": 0,
-        "total_projects": 0,
-        "total_records": 0
-    },
-    "title": "User account login succeeded"
+    "title": "User d1_corr@gmail.com profile"
 }

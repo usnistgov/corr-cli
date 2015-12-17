@@ -9,6 +9,8 @@ from corrdb.common.models import StatModel
 import tempfile
 import tarfile
 from StringIO import StringIO
+import zipfile
+from io import BytesIO
 import os
 import json
 import difflib
@@ -21,6 +23,7 @@ import requests
 from datetime import date, timedelta
 from functools import update_wrapper
 from calendar import monthrange
+import time
 
 # from difflib_data import *
 
@@ -305,15 +308,19 @@ def prepare_project(project=None):
     else:
         memory_file = BytesIO()
         with zipfile.ZipFile(memory_file, 'w') as zf:
-            project_dict = json.loads(project.activity_json())
-            comments = project_dict['project']['comments']
-            del project_dict['project']['comments']
-            resources = project_dict['project']['resources']
-            del project_dict['project']['resources']
-            history = project_dict['project']['history']
-            del project_dict['project']['history']
+            project_dict = project.compress()
+            comments = project_dict['comments']
+            del project_dict['comments']
+            resources = project_dict['resources']
+            del project_dict['resources']
+            history = project_dict['history']
+            del project_dict['history']
             records = project_dict['records']
             del project_dict['records']
+            diffs = project_dict['diffs']
+            del project_dict['diffs']
+            application = project_dict['application']
+            del project_dict['application']
             try:
                 project_buffer = StringIO()
                 project_buffer.write(json.dumps(project_dict, sort_keys=True, indent=4, separators=(',', ': ')))
@@ -369,9 +376,31 @@ def prepare_project(project=None):
                 zf.writestr(data, records_buffer.read())
             except:
                 print traceback.print_exc()
+            try:
+                records_buffer = StringIO()
+                records_buffer.write(json.dumps(application, sort_keys=True, indent=4, separators=(',', ': ')))
+                records_buffer.seek(0)
+                data = zipfile.ZipInfo("application.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, records_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                records_buffer = StringIO()
+                records_buffer.write(json.dumps(diffs, sort_keys=True, indent=4, separators=(',', ': ')))
+                records_buffer.seek(0)
+                data = zipfile.ZipInfo("diffs.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, records_buffer.read())
+            except:
+                print traceback.print_exc()
         memory_file.seek(0)
 
-    return [memory_file, "project-%s.zip"%(str(project.id), str(env.id))]
+    return [memory_file, "project-%s.zip"%str(project.id)]
 
 def prepare_record(record=None):
     if record == None:
@@ -382,7 +411,7 @@ def prepare_record(record=None):
         with zipfile.ZipFile(memory_file, 'w') as zf:
             record_dict = record.extended()
             environment = record_dict['head']['environment']
-            del extended['head']['environment']
+            del record_dict['head']['environment']
             comments = record_dict['head']['comments']
             del record_dict['head']['comments']
             resources = record_dict['head']['resources']
@@ -397,10 +426,23 @@ def prepare_record(record=None):
             del record_dict['head']['application']
             parent = record_dict['head']['parent']
             del record_dict['head']['parent']
-            body = record_dict['head']['body']
-            del record_dict['head']['body']
+            body = record_dict['body']
+            del record_dict['body']
             execution = record_dict['head']['execution']
             del record_dict['head']['execution']
+            project = record.project.info()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("project.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
             try:
                 json_buffer = StringIO()
                 json_buffer.write(json.dumps(comments, sort_keys=True, indent=4, separators=(',', ': ')))
@@ -532,7 +574,7 @@ def prepare_record(record=None):
                 zf.writestr(data, json_buffer.read())
             except:
                 print traceback.print_exc()
-            if env.bundle.location != '':
+            if env != None and env.bundle.location != '':
                 try:
                     bundle_buffer = StringIO()
                     if 'http://' in env.bundle.location:
