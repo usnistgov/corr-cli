@@ -1,9 +1,0 @@
-{
-	"api_token":"4f8bb51d7caea54b36365ab32158f734dfa02e520668bd38e8ec1fe7b92392d0",
-	"app_token":"3f810d9cc13ced5dca90a9e869767fadf47bfdf7116de205d7ffb682cc1fcbe2",
-	"name":"Facility for Adsorbent Characterization and Testing",
-	"description":"The NIST Facility for Adsorbent Characterization and Testing (FACT) is a state-of-the-art laboratory recently commissioned with support from the U.S. Department of Energy's Advanced Research Projects Agency-Energy (ARPA-E) to address the challenges inherent to measuring gas and vapor sorption properties.",
-	"goals":"FACT supports programs developing adsorbents and serves the sorbent materials research community by providing impartial testing and characterization of material sorption properties, establishing testing procedures, and disseminating reliable sorbent material property data and measurement best practices.",
-	"tags":["adsorbent","DoE","ARPA-E","gas","vapor","sorption","materials research","measurement","NIST"],
-	"group":"experimental"
-}

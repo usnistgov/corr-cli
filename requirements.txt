@@ -19,3 +19,4 @@ wsgiref==0.1.2
 Requests==2.4.1
 hurry.filesize == 0.9
 calendar
+python-daemon==2.0.1

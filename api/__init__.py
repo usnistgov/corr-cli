@@ -273,8 +273,8 @@ def prepare_env(project=None, env=None):
             if env.bundle.location != '':
                 try:
                     bundle_buffer = StringIO()
-                    if 'http://' in env.bundle.location:
-                        bundle_buffer = web_get_file('bundle', env.bundle.location)
+                    if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
+                        bundle_buffer = web_get_file(env.bundle.location)
                     else:
                         bundle_buffer = s3_get_file('bundle', env.bundle.location)
 
@@ -577,8 +577,8 @@ def prepare_record(record=None):
             if env != None and env.bundle.location != '':
                 try:
                     bundle_buffer = StringIO()
-                    if 'http://' in env.bundle.location:
-                        bundle_buffer = web_get_file('bundle', env.bundle.location)
+                    if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
+                        bundle_buffer = web_get_file(env.bundle.location)
                     else:
                         bundle_buffer = s3_get_file('bundle', env.bundle.location)
 
@@ -593,8 +593,8 @@ def prepare_record(record=None):
                 try:
                     bundle_buffer = StringIO()
                     data = None
-                    if 'http://' in resource['storage']:
-                        bundle_buffer = web_get_file(resource['group'], resource['storage'])
+                    if 'http://' in resource['storage'] or 'https://' in resource['storage']:
+                        bundle_buffer = web_get_file(resource['storage'])
                         data = zipfile.ZipInfo("%s-%s"%(resource['group'], resource['storage'].split('/')[-1]))
                     else:
                         bundle_buffer = s3_get_file(resource['group'], resource['storage'])

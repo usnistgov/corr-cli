@@ -461,3 +461,43 @@ TypeError: object of type 'instancemethod' has no len()
     },
     "title": "Application Sumatra"
 }
+{
+    "code": 200,
+    "content": {
+        "about": "This application is the CoRR native client. It is an event based simulation management tool. It uses the system calls and processes table stack and some information extraction to make the record more sustainable and reusable. CoRR-Cmd support parallel and distributed simulation.",
+        "access": "deactivated",
+        "created": "2015-12-17 20:26:29.817000",
+        "developer": "56731c3a9f9d5110105a27f7",
+        "extend": {},
+        "id": "56731d849f9d5110105a280b",
+        "logo": "56731d849f9d5110105a280a",
+        "name": "CoRR-Cmd",
+        "network": "0.0.0.0",
+        "resources": [],
+        "storage": null,
+        "token": "a07e6c383a5ce8ba4497c6ebce2c6ed065b1cf20a4a57d263932187d7b85b655",
+        "users": [],
+        "visibile": false
+    },
+    "title": "Application CoRR-Cmd"
+}
+{
+    "code": 200,
+    "content": {
+        "about": "Sumatra is a tool for managing and tracking projects based on numerical simulation and/or analysis, with the aim of supporting reproducible research. It can be thought of as an automated electronic lab notebook for computational projects.",
+        "access": "deactivated",
+        "created": "2015-12-17 20:26:29.817000",
+        "developer": "56731c3a9f9d5110105a27f7",
+        "extend": {},
+        "id": "56731d859f9d5110105a280f",
+        "logo": "56731d859f9d5110105a280e",
+        "name": "Sumatra",
+        "network": "0.0.0.0",
+        "resources": [],
+        "storage": null,
+        "token": "dad86479d3f0e4b1c6ed17b8ab02a9df4fa65e61761d5952f45770c19fb5194a",
+        "users": [],
+        "visibile": false
+    },
+    "title": "Application Sumatra"
+}

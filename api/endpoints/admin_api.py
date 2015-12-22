@@ -28,44 +28,7 @@ import datetime
 import random
 import string
 import os
-
-# @app.route(API_URL + '/admin/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-# @crossdomain(origin='*')
-# def admin_clear():
-#     logTraffic(endpoint='/admin/clear')
-#     if fk.request.method == 'GET':
-#         users = UserModel.objects()
-#         accesses = AccessModel.objects()
-#         # traffics = TrafficModel.objects()
-#         files = FileModel.objects()
-#         stats = StatModel.objects()
-#         projects = ProjectModel.objects()
-#         records = RecordModel.objects()
-#         bodies = RecordBodyModel.objects()
-#         diffs = DiffModel.objects()
-#         apps = ApplicationModel.objects()
-#         comments = CommentModel.objects()
-#         messages = MessageModel.objects()
-#         envs = EnvironmentModel.objects()
-#         bundles = BundleModel.objects()
-#         versions = VersionModel.objects()
-#         users.delete()
-#         accesses.delete()
-#         files.delete()
-#         stats.delete()
-#         projects.delete()
-#         # traffics.delete()
-#         records.delete()
-#         bodies.delete()
-#         diffs.delete()
-#         apps.delete()
-#         comments.delete()
-#         messages.delete()
-#         bundles.delete()
-#         versions.delete()
-#         return api_response(200, 'Platform Cleared', 'All the platform data has been emptied.')
-#     else:
-#         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+import thread
 
 # admin stuff
 @app.route(API_URL + '/admin/stats', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
@@ -985,6 +948,16 @@ def admin_projects_clear():
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
+@app.route(API_URL + '/admin/envs/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_envs_clear():
+    logTraffic(endpoint='/admin/envs/clear')
+    if fk.request.method == 'GET':
+        envs = EnvironmentModel.objects()
+        envs.delete()
+        return api_response(200, 'Environments deleted', 'All the environments have been deleted.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 ### admin projects
 # 566728709f9d5109b8de3f91
@@ -1362,23 +1335,35 @@ def admin_project_env_push(project_id):
                 if not created:
                     return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                 else:
+                    version, created = VersionModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
                     if version_dict != None:
-                        version, created = VersionModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), system=version_dict.get('system','unknown'), baseline=version_dict.get('baseline',''), marker=version_dict.get('marker',''))
+                        version.system = version_dict.get('system','unknown')
+                        version.baseline = version_dict.get('baseline','')
+                        version.marker = version_dict.get('marker','')
+                        version.save()
                         env.version = version
+                    bundle, created = BundleModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
                     if bundle_dict != None:
-                        bundle, created = BundleModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), scope=bundle_dict.get('scope','unknown'))
+                        bundle.scope = bundle_dict.get('scope','unknown')
                         location = bundle_dict.get('location', '')
-                        if 'http://' in location: #only allow web hosted third party content links to be updated here.
-                            bundle_buffer = web_get_file(location)
+                        if 'http://' in location or 'https://' in location: #only allow web hosted third party content links to be updated here.
                             bundle.location = location
-                            bundle.mimetype = mimetypes.guess_type(location)[0]
-                            old_file_position = bundle_buffer.tell()
-                            bundle_buffer.seek(0, os.SEEK_END)
-                            bundle.size = bundle_buffer.tell()
-                            bundle_buffer.seek(old_file_position, os.SEEK_SET)
                             bundle.save()
+                            def handle_file_resolution(_bundle):
+                                # print _bundle
+                                bundle = BundleModel.objects.with_id(_bundle)
+                                bundle_buffer = web_get_file(location)
+                                bundle.mimetype = mimetypes.guess_type(location)[0]
+                                old_file_position = bundle_buffer.tell()
+                                bundle_buffer.seek(0, os.SEEK_END)
+                                bundle.size = bundle_buffer.tell()
+                                bundle_buffer.seek(old_file_position, os.SEEK_SET)
+                                bundle.save()
+                            thread.start_new_thread(handle_file_resolution, (str(bundle.id),))
                         env.bundle = bundle
                     env.save()
+                    project.history.append(str(env.id))
+                    project.save()
                     return api_response(201, 'Environment created', env.info())
         else:
             return api_response(204, 'Nothing created', 'You must provide the file information.')
@@ -1396,7 +1381,7 @@ def admin_project_env_update(project_id, env_id):
             if project == None:
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
             else:
-                if env_id not in [str(e.id) for e in project.history]:
+                if env_id not in [str(e.id) for e in project._history()]:
                     return api_response(404, 'Request suggested an empty response', 'Unable to find this project environment.')
                 else:
                     env = EnvironmentModel.objects.with_id(env_id)
@@ -1417,21 +1402,26 @@ def admin_project_env_update(project_id, env_id):
                         if bundle_dict != None:
                             bundle =  env.bundle
                             location = bundle_dict.get('location', '')
-                            if 'http://' in location: #only allow web hosted third party content links to be updated here.
-                                bundle_buffer = web_get_file(location)
-                                bundle.location = location
-                                bundle.mimetype = mimetypes.guess_type(location)[0]
-                                old_file_position = bundle_buffer.tell()
-                                bundle_buffer.seek(0, os.SEEK_END)
-                                bundle.size = bundle_buffer.tell()
-                                bundle_buffer.seek(old_file_position, os.SEEK_SET)
                             bundle.scope = bundle_dict.get('scope', bundle.scope)
-                            bundle.save()
+                            if 'http://' in location or 'https://' in location: #only allow web hosted third party content links to be updated here.
+                                bundle.location = location
+                                bundle.save()
+                                def handle_file_resolution(_bundle):
+                                    # print _bundle
+                                    bundle = BundleModel.objects.with_id(_bundle)
+                                    bundle_buffer = web_get_file(location)
+                                    bundle.mimetype = mimetypes.guess_type(location)[0]
+                                    old_file_position = bundle_buffer.tell()
+                                    bundle_buffer.seek(0, os.SEEK_END)
+                                    bundle.size = bundle_buffer.tell()
+                                    bundle_buffer.seek(old_file_position, os.SEEK_SET)
+                                    bundle.save()
+                                thread.start_new_thread(handle_file_resolution, (str(bundle.id),))
                         env.group = group
                         env.system = system
                         env.specifics = specifics
                         env.save()
-                        return api_response(200, 'Project %s environment %s'%(project.name, env_id), env.extended())
+                        return api_response(200, 'Project %s environment %s updated'%(project.name, env_id), env.extended())
         else:
             return api_response(204, 'Nothing created', 'You must provide the file information.')
     else:
@@ -1439,7 +1429,7 @@ def admin_project_env_update(project_id, env_id):
 
 @app.route(API_URL + '/admin/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
-def admin_project_env_download():
+def admin_project_env_download(project_id, env_id):
     logTraffic(endpoint='/admin/project/env/download/<project_id>/<env_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
@@ -1920,7 +1910,7 @@ def admin_files():
 def admin_file_upload(group, item_id):
     logTraffic(endpoint='/admin/file/upload/<group>/<item_id>')
     if fk.request.method == 'POST':
-        if group not in ["input", "output", "dependencie", "descriptive", "diff", "resource-record", "resource-env", "attach-comment", "attach-message", "picture" , "logo" , "resource"]:
+        if group not in ["input", "output", "dependencie", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
             return api_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
         else:
             if fk.request.files:
@@ -1938,57 +1928,73 @@ def admin_file_upload(group, item_id):
                         file_obj.seek(old_file_position, os.SEEK_SET)
                     else:
                         size = 0
-                    path = ''
                     storage = '%s_%s'%(item_id, file_obj.filename)
                     location = 'local'
                     mimetype = mimetypes.guess_type(storage)[0]
                     group_ = group
                     description = ''
                     item = None
+                    owner = None
                     if group == 'input':
                         item = RecordModel.objects.with_id(item_id)
+                        owner = item.project.owner
                         description = '%s is an input file for the record %s'%(file_obj.filename, str(item.id))
                     elif group == 'output':
                         item = RecordModel.objects.with_id(item_id)
+                        owner = item.project.owner
                         description = '%s is an output file for the record %s'%(file_obj.filename, str(item.id))
                     elif group == 'dependencie':
                         item = RecordModel.objects.with_id(item_id)
+                        owner = item.project.owner
                         description = '%s is an dependency file for the record %s'%(file_obj.filename, str(item.id))
                     elif group == 'descriptive':
                         item = ProjectModel.objects.with_id(item_id)
+                        owner = item.owner
                         description = '%s is a resource file for the project %s'%(file_obj.filename, str(item.id))
                     elif group == 'diff':
                         item = DiffModel.objects.with_id(item_id)
+                        owner = item.sender
                         description = '%s is a resource file for the collaboration %s'%(file_obj.filename, str(item.id))
                     elif 'attach' in group:
                         if 'message' in group:
                             item = MessageModel.objects.with_id(item_id)
+                            owner = item.sender
                             description = '%s is an attachement file for the message %s'%(file_obj.filename, str(item.id))
                         elif 'comment' in group:
                             item = CommentModel.objects.with_id(item_id)
+                            owner = item.sender
                             description = '%s is an attachement file for the comment %s'%(file_obj.filename, str(item.id))
                         group_ = group.split('-')[0]
+                    elif group == 'bundle':
+                        item = BundleModel.objects.with_id(item_id)
                     elif group == 'picture':
                         item = ProfileModel.objects.with_id(item_id)
+                        owner = item.user
                         description = '%s is the picture file of the profile %s'%(file_obj.filename, str(item.id))
                         _file.delete()
                         _file = item.picture
-                    elif group == 'logo':
+                    elif 'logo' in group:
                         if 'app' in group:
                             item = ApplicationModel.objects.with_id(item_id)
+                            owner = item.developer
                             description = '%s is the logo file of the application %s'%(file_obj.filename, str(item.id))
                         elif 'project' in group:
                             item = ProjectModel.objects.with_id(item_id)
+                            owner = item.owner
                             description = '%s is the logo file of the project %s'%(file_obj.filename, str(item.id))
                         _file.delete()
                         _file = item.logo
-                    elif group == 'resource':
+                    elif 'resource' in group:
                         if 'record' in group:
                             item = RecordModel.objects.with_id(item_id)
+                            owner = item.project.owner
                             description = '%s is an resource file for the record %s'%(file_obj.filename, str(item.id))
                         elif 'env' in group:
                             item = EnvironmentModel.objects.with_id(item_id)
                             description = '%s is a resource file for the environment %s'%(file_obj.filename, str(item.id))
+                        elif 'app' in group:
+                            item = ApplicationModel.objects.with_id(item_id)
+                            description = '%s is a resource file for the app %s'%(file_obj.filename, str(item.id))
                         group_ = group.split('-')[0]
 
                     if item == None:
@@ -1998,7 +2004,7 @@ def admin_file_upload(group, item_id):
                         _file.description = description
                         _file.encoding = encoding
                         _file.size = size
-                        _file.path = path
+                        # _file.path = path
                         _file.storage = storage
                         _file.location = location
                         _file.mimetype = mimetype
@@ -2019,17 +2025,29 @@ def admin_file_upload(group, item_id):
                                 item.resources.append(str(_file.id))
                             elif group == 'diff':
                                 item.resources.append(str(_file.id))
-                            elif group == 'attach':
+                            elif group == 'bundle':
+                                _file.delete()
+                                if item.location != storage:
+                                    s3_delete_file('bundle',item.location)
+                                item.encoding = encoding
+                                item.size = size
+                                item.scope = 'local'
+                                item.location = storage
+                                item.mimetype = mimetype
+                                item.save()
+                            elif 'attach' in group:
                                 item.attachments.append(str(_file.id))
                             elif group == 'picture':
-                                s3_delete_file('picture',item.picture.storage)
+                                if item.picture.location != storage:
+                                    s3_delete_file('picture',item.picture.storage)
                                 if item != None:
                                     item.picture = _file
-                            elif group == 'logo':
-                                s3_delete_file('logo',item.logo.storage)
+                            elif 'logo' in group:
+                                if item.logo.location != storage:
+                                    s3_delete_file('logo',item.logo.storage)
                                 if item != None:
                                     item.logo = _file
-                            elif group == 'resource':
+                            elif 'resource' in group:
                                 item.resources.append(str(_file.id))
                             if item != None:
                                 item.save()
@@ -2059,6 +2077,12 @@ def admin_file_download(file_id):
             if file_obj == None:
                 return api_response(404, 'Request suggested an empty response', 'No content found for this file.')
             else:
+                # return fk.send_file(
+                #     file_obj,
+                #     file_meta.mimetype,
+                #     # as_attachment=True,
+                #     attachment_filename=file_meta.name,
+                # )
                 if file_meta.group == 'logo' or file_meta.group == 'picture':
                     return fk.send_file(
                         file_obj,
@@ -2067,7 +2091,7 @@ def admin_file_download(file_id):
                         attachment_filename=file_meta.name,
                     )
                 else:
-                    if file_meta.name.split('.')[1] in ['pdf', 'txt']:
+                    if file_meta.name.split('.')[1] in ['jpg', 'pdf', 'txt']:
                         return fk.send_file(
                             file_obj,
                             file_meta.mimetype,
@@ -2114,19 +2138,25 @@ def admin_file_create():
     if fk.request.method == 'POST':
         if fk.request.data:
             data = json.loads(fk.request.data)
-            encoding = data.get('developer', '')
-            size = data.get('developer', 0)
-            name = data.get('developer', '')
-            path = data.get('developer', '')
-            storage = data.get('developer', '')
+            encoding = data.get('encoding', '')
+            size = data.get('size', 0)
+            name = data.get('name', '')
+            storage = data.get('storage', '')
+            owner_id = data.get('owner', None)
             location = data.get('location', 'undefined')
             mimetype = data.get('developer', mimetypes.guess_type(location)[0])
             group = data.get('group', 'undefined')
             description = data.get('description', '')
-            if storage == '' or name == '':
-                return api_response(400, 'Missing mandatory fields', 'A file should have at least a name and a storage reference (s3 key or url).')
+            owner = None
+            if owner_id != None:
+                owner = UserModel.objects.with_id(owner_id)
+            if storage == '' or name == '' or (owner_id != None and owner == None):
+                return api_response(400, 'Missing mandatory fields', 'A file should have at least a name and a storage reference (s3 key or url). Also when a owner is provided he should exist.')
             else:
-                _file, created = FileModel.objects.get_or_create(encoding=encoding, name=name, mimetype=mimetype, size=size, path=path, storage=storage, location=location, group=group, description=description)
+                if owner == None:
+                    _file, created = FileModel.objects.get_or_create(encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
+                else:
+                    _file, created = FileModel.objects.get_or_create(owner=owner, encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
                 if not created:
                     return api_response(200, 'File already exists', _file.info())
                 else:
@@ -2150,40 +2180,79 @@ def admin_file_show(file_id):
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/admin/file/delete/<group>/<item_id>/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/file/delete/<item_id>/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
-def admin_file_delete(file_id, item_id, group):
-    logTraffic(endpoint='/admin/file/delete/<group>/<item_id>/<file_id>')
+def admin_file_delete(item_id, file_id):
+    logTraffic(endpoint='/admin/file/delete/<item_id>/<file_id>')
     if fk.request.method == 'GET':
         _file = FileModel.objects.with_id(file_id)
         if _file == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
         else:
-            # Check if the user owns the endpoint before deleting it.
-            if group not in ["input", "output", "dependencie", "diff", "resource-project", "resource-record", "resource-env", "attach-comment", "attach-message", "picture" , "logo"]:
-                return api_response(405, 'Method not allowed for this group', 'This endpoint supports only a limited number of groups.')
-            else:
-                if _file.location == 'local':
-                    temp_group = group
-                    if 'attach' in _file.group or 'resource' in _file.group:
-                        temp_group = group.split('-')[0]
-                    s3_delete_file(temp_group, _file.storage)
-                if group == 'logo':
-                    _file.storage = 'default-logo.png'
-                    logo_buffer = s3_get_file('logo', 'default-logo.png')
-                    _file.name = 'default-logo.png'
-                    _file.location = 'local'
-                    _file.group = 'logo'
-                    _file.description = 'This is the default image used for the app logo in case none is provided.'
-                    if logo_buffer != None:
-                        old_file_position = logo_buffer.tell()
-                        logo_buffer.seek(0, os.SEEK_END)
-                        p_file.size = logo_buffer.tell()
-                        logo_buffer.seek(old_file_position, os.SEEK_SET)
-                    else:
-                        _file.size = 0
-                    _file.save()
-                elif group == 'picture':
+            item = None
+            if _file.group == 'input':
+                item = RecordModel.objects.with_id(item_id)
+                if item != None:
+                    try:
+                        _file.delete()
+                        item.inputs.remove(file_id)
+                        if _file.location == 'local':
+                            s3_delete_file(_file.group, _file.storage)
+                    except ValueError:
+                        pass
+            elif _file.group == 'output':
+                item = RecordModel.objects.with_id(item_id)
+                if item != None:
+                    try:
+                        _file.delete()
+                        item.outputs.remove(file_id)
+                        if _file.location == 'local':
+                            s3_delete_file(_file.group, _file.storage)
+                    except ValueError:
+                        pass
+            elif _file.group == 'dependencie':
+                item = RecordModel.objects.with_id(item_id)
+                if item != None:
+                    try:
+                        _file.delete()
+                        item.dependencies.remove(file_id)
+                        if _file.location == 'local':
+                            s3_delete_file(_file.group, _file.storage)
+                    except ValueError:
+                        pass
+            elif _file.group == 'diff':
+                item = DiffModel.objects.with_id(item_id)
+                if item != None:
+                    try:
+                        _file.delete()
+                        item.resources.remove(file_id)
+                        if _file.location == 'local':
+                            s3_delete_file(_file.group, _file.storage)
+                    except ValueError:
+                        pass
+            elif _file.group == 'attach':
+                item = MessageModel.objects.with_id(item_id)
+                if item != None:
+                    try:
+                        _file.delete()
+                        item.attachments.remove(file_id)
+                        if _file.location == 'local':
+                            s3_delete_file(_file.group, _file.storage)
+                    except ValueError:
+                        pass
+                else:
+                    item = CommentModel.objects.with_id(item_id)
+                    if item != None:
+                        try:
+                            _file.delete()
+                            item.attachments.remove(file_id)
+                            if _file.location == 'local':
+                                s3_delete_file(_file.group, _file.storage)
+                        except ValueError:
+                            pass
+            elif _file.group == 'picture':
+                item = ProfileModel.objects.with_id(item_id)
+                if item != None:
                     _file.storage = 'default-picture.png'
                     picture_buffer = s3_get_file('picture', 'default-picture.png')
                     _file.name = 'default-picture.png'
@@ -2198,86 +2267,100 @@ def admin_file_delete(file_id, item_id, group):
                     else:
                         _file.size = 0
                     _file.save()
-                else:
-                    _file.delete()
+                    if _file.location == 'local':
+                        s3_delete_file(_file.group, _file.storage)
 
-                item = None
-                if group == 'input':
-                    item = RecordModel.objects.with_id(item_id)
-                    try:
-                        item.inputs.remove(file_id)
-                    except ValueError:
-                        pass
-                elif group == 'output':
-                    item = RecordModel.objects.with_id(item_id)
-                    try:
-                        item.outputs.remove(file_id)
-                    except ValueError:
-                        pass
-                elif group == 'dependencie':
-                    item = RecordModel.objects.with_id(item_id)
-                    try:
-                        item.dependencies.remove(file_id)
-                    except ValueError:
-                        pass
-                elif group == 'diff':
-                    item = DiffModel.objects.with_id(item_id)
+            elif _file.group == 'logo':
+                item = ApplicationModel.objects.with_id(item_id)
+                if item != None:
+                    _file.storage = 'default-logo.png'
+                    logo_buffer = s3_get_file('logo', 'default-logo.png')
+                    _file.name = 'default-logo.png'
+                    _file.location = 'local'
+                    _file.group = 'logo'
+                    _file.description = 'This is the default image used for the app logo in case none is provided.'
+                    if logo_buffer != None:
+                        old_file_position = logo_buffer.tell()
+                        logo_buffer.seek(0, os.SEEK_END)
+                        p_file.size = logo_buffer.tell()
+                        logo_buffer.seek(old_file_position, os.SEEK_SET)
+                    else:
+                        _file.size = 0
+                    _file.save()
+                    if _file.location == 'local':
+                        s3_delete_file(_file.group, _file.storage)
+                else:
+                    item = ProjectModel.objects.with_id(item_id)
+                    if item != None:
+                        _file.storage = 'default-project.png'
+                        logo_buffer = s3_get_file('logo', 'default-project.png')
+                        _file.name = 'default-project.png'
+                        _file.location = 'local'
+                        _file.group = 'logo'
+                        _file.description = 'This is the default image used for the project logo in case none is provided.'
+                        if logo_buffer != None:
+                            old_file_position = logo_buffer.tell()
+                            logo_buffer.seek(0, os.SEEK_END)
+                            p_file.size = logo_buffer.tell()
+                            logo_buffer.seek(old_file_position, os.SEEK_SET)
+                        else:
+                            _file.size = 0
+                        _file.save()
+                        if _file.location == 'local':
+                            s3_delete_file(_file.group, _file.storage)
+
+            elif _file.group == 'resource':
+                item = RecordModel.objects.with_id(item_id)
+                if item != None:
                     try:
                         item.resources.remove(file_id)
+                        _file.delete()
+                        if _file.location == 'local':
+                            s3_delete_file(_file.group, _file.storage)
                     except ValueError:
                         pass
-                elif group == 'attach':
-                    if 'message' in group:
-                        item = MessageModel.objects.with_id(item_id)
-                        try:
-                            item.attachments.remove(file_id)
-                        except ValueError:
-                            pass
-                    elif 'comment' in group:
-                        item = CommentModel.objects.with_id(item_id)
-                        try:
-                            item.attachments.remove(file_id)
-                        except ValueError:
-                            pass
-                    # group = group.split('-')[0]
-                elif group == 'picture':
-                    item = ProfileModel.objects.with_id(item_id)
-                    # No change. We keep default picture
-                elif group == 'logo':
-                    item = ApplicationModel.objects.with_id(item_id)
-                    # No change. We keep default logo
-                elif group == 'resource':
-                    if 'record' in group:
-                        item = RecordModel.objects.with_id(item_id)
-                        try:
-                            item.attachments.remove(file_id)
-                        except ValueError:
-                            pass
-                    elif 'env' in group:
-                        item = EnvironmentModel.objects.with_id(item_id)
-                        try:
-                            item.attachments.remove(file_id)
-                        except ValueError:
-                            pass
-                    elif 'project' in group:
-                        item = ProjectModel.objects.with_id(item_id)
-                        try:
-                            item.attachments.remove(file_id)
-                        except ValueError:
-                            pass
-                    # group = group.split('-')[0]
-                if item == None:
-                    # I wonder if i should make this legal.
-                    # Because one can delete a file without 
-                    if item_id in _file.storage or item_id in _file.name:
-                        logStat(deleted=True, file_obj=_file)
-                        return api_response(200, 'Deletion succeeded', 'The file %s was succesfully deleted.'%_file.name)
-                    else:
-                        return api_response(400, 'Missing mandatory instance', 'A file should reference an existing item.')
                 else:
-                    item.save()
-                logStat(deleted=True, file_obj=_file)
-                return api_response(200, 'Deletion succeeded', 'The file %s was succesfully deleted.'%_file.name)
+                    item = EnvironmentModel.objects.with_id(item_id)
+                    if item != None:
+                        try:
+                            item.resources.remove(file_id)
+                            _file.delete()
+                            if _file.location == 'local':
+                                s3_delete_file(_file.group, _file.storage)
+                        except ValueError:
+                            pass
+                    else:
+                        item = ProjectModel.objects.with_id(item_id)
+                        if item != None:
+                            try:
+                                item.resources.remove(file_id)
+                                _file.delete()
+                                if _file.location == 'local':
+                                    s3_delete_file(_file.group, _file.storage)
+                            except ValueError:
+                                pass
+                        else:
+                            item = ApplicationModel.objects.with_id(item_id)
+                            if item != None:
+                                try:
+                                    item.resources.remove(file_id)
+                                    _file.delete()
+                                    if _file.location == 'local':
+                                        s3_delete_file(_file.group, _file.storage)
+                                except ValueError:
+                                    pass
+            if item == None:
+                if item_id in _file.storage or item_id in _file.name:
+                    _file.delete()
+                    s3_delete_file(_file.group, _file.storage)
+                    logStat(deleted=True, file_obj=_file)
+                    return api_response(200, 'Deletion succeeded', 'The file %s was succesfully deleted.'%_file.name)
+                else:
+                    return api_response(400, 'Missing mandatory instance', 'A file should reference an existing item.')
+            else:
+                item.save()
+            logStat(deleted=True, file_obj=_file)
+            return api_response(200, 'Deletion succeeded', 'The file %s was succesfully deleted.'%_file.name)
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
@@ -2315,7 +2398,7 @@ def admin_file_update(file_id):
                 _file.group = group
                 _file.description = description
                 _file.save()
-                return api_response(201, 'File updated', app.info())
+                return api_response(201, 'File updated', _file.info())
             else:
                 return api_response(204, 'Nothing created', 'You must provide the file information.')
     else:

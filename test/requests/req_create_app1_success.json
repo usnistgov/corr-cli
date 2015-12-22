@@ -1,5 +1,0 @@
-{
-	"developer":"56620d859f9d513814fa072a",
-	"name":"CoRR-Cmd",
-	"about":"This application is the CoRR native client. It is an event based simulation management tool. It uses the system calls and processes table stack and some information extraction to make the record more sustainable and reusable. CoRR-Cmd support parallel and distributed simulation."
-}
