@@ -5,7 +5,8 @@ from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import ApplicationModel 
 from corrdb.common.models import TrafficModel
-from corrdb.common.models import StatModel       
+from corrdb.common.models import StatModel  
+from corrdb.common.models import AccessModel     
 import tempfile
 import tarfile
 from StringIO import StringIO
@@ -44,7 +45,7 @@ def check_api(token):
 def check_app(token):
     for application in ApplicationModel.objects():
         print "%s -- %s." %(str(application.developer.id), application.name)
-    return UserModel.objects(app_token=token).first()
+    return ApplicationModel.objects(app_token=token).first()
 
 # def docker_gen(current_user, project):
 #     docker_tar = tarfile.open("/tmp/"+str(current_user.id)+"-"+project.name+"-docker.tar", "w")
@@ -698,6 +699,7 @@ def delete_record_files(record):
 def api_response(code, title, content):
     import flask as fk
     response = {'code':code, 'title':title, 'content':content}
+    # print response
     return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
 
 def s3_upload_file(file_meta=None, file_obj=None):
@@ -833,6 +835,9 @@ def logTraffic(endpoint=''):
     else:
         traffic.interactions = 1
         traffic.save()
+
+def logAccess(app=None, scope='root', endpoint=''):
+    (traffic, created) = AccessModel.objects.get_or_create(application=app, scope=scope, endpoint="%s%s"%(API_URL, endpoint))
 
 def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
     category = ''

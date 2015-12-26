@@ -769,3 +769,27 @@ TypeError: admin_file_delete() got an unexpected keyword argument 'item_id'
     "content": "The file logo.jpg was succesfully deleted.",
     "title": "Deletion succeeded"
 }
+{
+    "code": 404,
+    "content": "Unable to find this file.",
+    "title": "Request suggested an empty response"
+}
+{
+    "code": 200,
+    "content": {
+        "created_at": "2015-12-18 17:01:56.700000",
+        "description": "This a resource pdf file of a PyMKS paper.",
+        "encoding": "",
+        "extend": {},
+        "group": "resource",
+        "id": "56743c0d9f9d5123f6d3effe",
+        "location": "local",
+        "mimetype": null,
+        "name": "566b18159f9d516b595d7e19_pymks-paper-2015.pdf",
+        "owner": "public",
+        "path": null,
+        "size": 0,
+        "storage": "566b18159f9d516b595d7e19_pymks-paper-2015.pdf"
+    },
+    "title": "File 566b18159f9d516b595d7e19_pymks-paper-2015.pdf"
+}

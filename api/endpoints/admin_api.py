@@ -3,7 +3,7 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from api import app, API_URL, crossdomain, check_api, api_response, s3_delete_file, s3_get_file, web_get_file, s3_upload_file, data_pop, merge_dicts, logStat, logTraffic, prepare_env, prepare_record, prepare_project
+from api import app, API_URL, crossdomain, check_api, api_response, s3_delete_file, s3_get_file, web_get_file, s3_upload_file, data_pop, merge_dicts, logStat, logTraffic, logAccess, prepare_env, prepare_record, prepare_project
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -2470,7 +2470,7 @@ def admin_message_show(message_id):
 def admin_message_delete(message_id):
     logTraffic(endpoint='/admin/message/delete/<message_id>')
     if fk.request.method == 'GET':
-        message = MessageModel.objects.with_id(file_id)
+        message = MessageModel.objects.with_id(message_id)
         if message == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this message.')
         else:

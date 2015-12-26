@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     # print get_files()
 
-    # print file_show('56743c0d9f9d5123f6d3effe')
+    print file_show('56743c0d9f9d5123f6d3effe')
     # print file_show('56743c459f9d51240e66212f')
 
     # file2['description'] = 'This the CoRR jpg logo image file.'
@@ -100,4 +100,4 @@ if __name__ == '__main__':
     # When a file is created with a reference to any item in the plaform. Its name does not have
     # A reference to an existing item so deleting it requires this trick.
     # A script to purge orphan files will follow this logic to clean the database and the storage.
-    print file_delete('logo.jpg', '56743c459f9d51240e66212f')
+    # print file_delete('logo.jpg', '56743c459f9d51240e66212f')
