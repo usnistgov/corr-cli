@@ -2,7 +2,7 @@ import httplib
 import json
 
 # conn = httplib.HTTPSConnection("http://0.0.0.0:5100")
-base = "/api/v1/private/admin"
+base = "/api/v1/admin"
 headers = {"Accept": "application/json"}
 
 def record_create(data={}):

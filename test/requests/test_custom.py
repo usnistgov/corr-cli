@@ -1,7 +1,7 @@
 import httplib
 import json
 
-base = "/api/v1/private/admin"
+base = "/api/v1/admin"
 headers = {"Accept": "application/json"}
 
 def user_home(comment_id=''):

@@ -2,7 +2,7 @@ import httplib
 import json
 
 # conn = httplib.HTTPSConnection("http://0.0.0.0:5100")
-base = "/api/v1/private"
+base = "/api/v1"
 headers = {"Accept": "application/json"}
 
 def get_apps():

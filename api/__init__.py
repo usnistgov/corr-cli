@@ -824,7 +824,7 @@ def web_get_file(url):
 
 
 API_VERSION = 1
-API_URL = '/api/v{0}/private'.format(API_VERSION)
+API_URL = '/api/v{0}'.format(API_VERSION)
 
 def logTraffic(endpoint=''):
     # created_at=datetime.datetime.utcnow()
@@ -839,7 +839,7 @@ def logTraffic(endpoint=''):
 def logAccess(app=None, scope='root', endpoint=''):
     (traffic, created) = AccessModel.objects.get_or_create(application=app, scope=scope, endpoint="%s%s"%(API_URL, endpoint))
 
-def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
+def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, file_obj=None, comment=None):
     category = ''
     periode = ''
     traffic = 0

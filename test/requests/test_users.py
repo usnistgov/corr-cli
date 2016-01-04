@@ -2,7 +2,7 @@ import httplib
 import json
 
 # conn = httplib.HTTPSConnection("http://0.0.0.0:5100")
-base = "/api/v1/private/admin"
+base = "/api/v1/admin"
 headers = {"Accept": "application/json"}
 
 def user_create(data={}):
@@ -139,3 +139,5 @@ if __name__ == '__main__':
     print user_profile_show('56731c3a9f9d5110105a27f1')
     print user_profile_show('56731c3a9f9d5110105a27f4')
     print user_profile_show('56731c3a9f9d5110105a27f7')
+
+    

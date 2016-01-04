@@ -150,3 +150,4 @@ def app_connectivity(app_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
     else:
         return api_response(401, 'Unauthorized access to the API', 'This is not an app token.')
+
