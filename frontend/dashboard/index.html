@@ -1015,7 +1015,7 @@
             var session = parts[1];
             // var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             // console.log(session);
-            // xmlhttp.open("GET", "http://localhost:5200/cloud/v1/user/dashboard/"+session);
+            // xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v1/user/dashboard/"+session);
             // xmlhttp.send();
             // xmlhttp.onreadystatechange=function()
             // {
@@ -1041,10 +1041,10 @@
             user.session = parts[1];
             console.log(user.session);
             user.trusted();
-            document.getElementById("nav-home-2").href = "http://localhost:5000/?session="+user.session;
-            document.getElementById("nav-home").href = "http://localhost:5000/?session="+user.session;
-            document.getElementById("nav-api").href = "http://localhost:5000/dashboard/api/?session="+user.session;
-            document.getElementById("nav-dashboard").href = "http://localhost:5000/dashboard/?session="+user.session;
+            document.getElementById("nav-home-2").href = "http://0.0.0.0:5000/?session="+user.session;
+            document.getElementById("nav-home").href = "http://0.0.0.0:5000/?session="+user.session;
+            document.getElementById("nav-api").href = "http://0.0.0.0:5000/dashboard/api/?session="+user.session;
+            document.getElementById("nav-dashboard").href = "http://0.0.0.0:5000/dashboard/?session="+user.session;
 
             var space = new Space(user.session);
             space.dashboard();
