@@ -136,7 +136,7 @@ def admin_comment_send(group):
             sender = UserModel.objects(session=sender_id).first()
             if item == None or sender == None:
                 return api_response(400, 'Missing mandatory fields', 'A comment creation requires a existing item and a existing sender.')
-            comment, created = CommentModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), sender=sender, title=title, content=content)
+            comment, created = CommentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=sender, title=title, content=content)
             logStat(comment=comment)
             item.comments.append(str(comment.id))
             item.save()
@@ -174,6 +174,27 @@ def admin_comment_all(group, item_id):
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
+@app.route(API_URL + '/admin/comment/update/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_comment_update(comment_id):
+    logTraffic(endpoint='/admin/comment/update/<comment_id>')
+    if fk.request.method == 'POST':
+        if fk.request.data:
+            data = json.loads(fk.request.data)
+            comment = CommentModel.objects.with_id(comment_id)
+            if comment == None:
+                return api_response(404, 'Request suggested an empty response', 'Unable to find this comment.')
+            else:
+                comment.title = data.get('title', comment.title)
+                comment.content = data.get('content', comment.content)
+                comment.extend(data.get('attachments', []))
+                comment.save()
+                return api_response(200, 'comment %s updated'%comment_id, comment.info())
+        else:
+            return api_response(204, 'Nothing created', 'You must provide the information to update.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
+
 @app.route(API_URL + '/admin/comment/show/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_comment_show(comment_id):
@@ -184,6 +205,20 @@ def admin_comment_show(comment_id):
             return api_response(404, 'Request suggested an empty response', 'Unable to find this comment.')
         else:
             return api_response(200, 'Comment %s'%str(comment.id), comment.extended())
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/comment/delete/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_comment_delete(comment_id):
+    logTraffic(endpoint='/admin/comment/delete/<comment_id>')
+    if fk.request.method == 'GET':
+        comment = CommentModel.objects.with_id(comment_id)
+        if comment == None:
+            return api_response(404, 'Request suggested an empty response', 'Unable to find this comment.')
+        else:
+            comment.delete()
+            return api_response(200, 'Comment %s'%comment_id, 'All information about the comment was removed.')
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
@@ -259,7 +294,7 @@ def admin_app_create():
                 #     logo_location = 'local'
                 #     logo_group = 'logo'
                 #     logo_description = 'This is the application %s logo.'%name
-                logo, logo_created = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+                logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
                 app, created = None, False
                 if developer == None or developer.group != 'developer':
                     return api_response(400, 'A field is not applicable', 'The application user has to be a developer.')
@@ -331,6 +366,7 @@ def admin_app_update(app_id):
         else:
             if fk.request.data:
                 data = json.loads(fk.request.data)
+
                 developer_id = data.get('developer', None)
                 name = data.get('name', app.name)
                 about = data.get('about', app.about)
@@ -549,12 +585,12 @@ def admin_user_login():
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/admin/user/token/update/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/user/token/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
-def admin_user_token_update(session_id):
-    logTraffic(endpoint='/admin/user/token/update/<session_id>')
+def admin_user_token_update(user_id):
+    logTraffic(endpoint='/admin/user/token/update/<user_id>')
     if fk.request.method == 'GET':
-        user = UserModel.objects(session=session_id).first()
+        user = UserModel.objects.with_id(user_id)
         if user == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this user.')
         else:
@@ -684,7 +720,7 @@ def admin_user_profile_create(user_id):
                 #     picture_location = 'local'
                 #     picture_group = 'picture'
                 #     picture_description = 'This is the user %s profile picture.'%fname
-                picture, picture_created = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
+                picture, picture_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
                 profile, created = None, False
                 if picture == None:
                     profile, created = ProfileModel.objects.get_or_create(user=user, fname=fname, lname=lname, organisation=organisation, about=about)
@@ -1040,7 +1076,7 @@ def admin_project_create():
                 logo_location = 'local'
                 logo_group = 'logo'
                 logo_description = 'This is the default image used for the project logo in case none is provided.'
-                logo, logo_created = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+                logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
                 
                 application = None
                 owner = None
@@ -1186,6 +1222,7 @@ def admin_project_update(project_id):
         else:
             if fk.request.data:
                 data = json.loads(fk.request.data)
+                
                 application_id = data.get('application', None)
                 owner_id = data.get('owner', None)
                 name = data.get('name', project.name)
@@ -1320,6 +1357,7 @@ def admin_project_env_push(project_id):
     if fk.request.method == 'POST':
         if fk.request.data:
             data = json.loads(fk.request.data)
+
             group = data.get('group', 'undefined')
             system = data.get('system', 'undefined')
             specifics = data.get('specifics', {})
@@ -1331,7 +1369,7 @@ def admin_project_env_push(project_id):
             if project == None:
                 return api_response(400, 'Missing mandatory fields', 'Unable to find this project.')
             else:
-                env, created = EnvironmentModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), group=group, system=system, specifics=specifics)
+                env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
                 if not created:
                     return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                 else:
@@ -1422,6 +1460,154 @@ def admin_project_env_update(project_id, env_id):
                         env.specifics = specifics
                         env.save()
                         return api_response(200, 'Project %s environment %s updated'%(project.name, env_id), env.extended())
+        else:
+            return api_response(204, 'Nothing created', 'You must provide the file information.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
+
+@app.route(API_URL + '/admin/project/env/update/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_env_update(env_id):
+    logTraffic(endpoint='/admin/project/env/update/<env_id>')
+    if fk.request.method == 'POST':
+        if fk.request.data:
+            data = json.loads(fk.request.data)
+            env = EnvironmentModel.objects.with_id(env_id)
+            if env == None:
+                return api_response(404, 'Request suggested an empty response', 'Unable to load this project environment.')
+            else:
+                group = data.get('group', env.group)
+                system = data.get('system', env.system)
+                specifics = data.get('specifics', env.specifics)
+                version_dict = data.get('version', None)
+                bundle_dict = data.get('bundle', None)
+                if version_dict != None:
+                    version =  env.version
+                    version.system = version_dict.get('system', version.system)
+                    version.baseline = version_dict.get('baseline', version.baseline)
+                    version.marker = version_dict.get('marker', version.marker)
+                    version.save()
+                if bundle_dict != None:
+                    bundle =  env.bundle
+                    location = bundle_dict.get('location', '')
+                    bundle.scope = bundle_dict.get('scope', bundle.scope)
+                    if 'http://' in location or 'https://' in location: #only allow web hosted third party content links to be updated here.
+                        bundle.location = location
+                        bundle.save()
+                        def handle_file_resolution(_bundle):
+                            # print _bundle
+                            bundle = BundleModel.objects.with_id(_bundle)
+                            bundle_buffer = web_get_file(location)
+                            bundle.mimetype = mimetypes.guess_type(location)[0]
+                            old_file_position = bundle_buffer.tell()
+                            bundle_buffer.seek(0, os.SEEK_END)
+                            bundle.size = bundle_buffer.tell()
+                            bundle_buffer.seek(old_file_position, os.SEEK_SET)
+                            bundle.save()
+                        thread.start_new_thread(handle_file_resolution, (str(bundle.id),))
+                env.group = group
+                env.system = system
+                env.specifics = specifics
+                env.save()
+                return api_response(200, 'Project %s environment %s updated'%(project.name, env_id), env.extended())
+        else:
+            return api_response(204, 'Nothing created', 'You must provide the file information.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
+
+@app.route(API_URL + '/admin/project/env/show/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_env_show(env_id):
+    logTraffic(endpoint='/admin/project/env/show/<env_id>')
+    if fk.request.method == 'GET':
+        env = EnvironmentModel.objects.with_id(env_id)
+        if env == None:
+            return api_response(404, 'Request suggested an empty response', 'Unable to load this project environment.')
+        else:
+            return api_response(200, 'Project %s environment %s'%(project.name, env_id), env.extended())
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/project/env/delete/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_env_delete(env_id):
+    logTraffic(endpoint='/admin/project/env/delete/<env_id>')
+    if fk.request.method == 'GET':
+        env = EnvironmentModel.objects.with_id(env_id)
+        if env == None:
+            return api_response(404, 'Request suggested an empty response', 'Unable to load this project environment.')
+        else:
+            env.delete()
+            bundle = env.bundle
+            if 'http://' not in bundle.location and 'https://' not in bundle.location:
+                s3_delete_file('bundle', bundle.location)
+            #delete the files
+            return api_response(200, 'Environment %s deleted'%env_id, 'All the information about this environment was deleted.')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/project/env/download/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_env_download(project_id, env_id):
+    logTraffic(endpoint='/admin/project/env/download/<env_id>')
+    if fk.request.method == 'GET':
+        env = EnvironmentModel.objects.with_id(env_id)
+        if env == None:
+            return api_response(404, 'Request suggested an empty response', 'Unable to load this project environment.')
+        else:
+            prepared = prepare_env(project, env)
+            if prepared[0] == None:
+                return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
+            else:
+                return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/project/env/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_env_push(project_id):
+    logTraffic(endpoint='/admin/project/env/create')
+    if fk.request.method == 'POST':
+        if fk.request.data:
+            data = json.loads(fk.request.data)
+
+            group = data.get('group', 'undefined')
+            system = data.get('system', 'undefined')
+            specifics = data.get('specifics', {})
+            version_dict = data.get('version', None)
+            bundle_dict = data.get('bundle', None)
+            env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
+            if not created:
+                return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
+            else:
+                version, created = VersionModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                if version_dict != None:
+                    version.system = version_dict.get('system','unknown')
+                    version.baseline = version_dict.get('baseline','')
+                    version.marker = version_dict.get('marker','')
+                    version.save()
+                    env.version = version
+                bundle, created = BundleModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                if bundle_dict != None:
+                    bundle.scope = bundle_dict.get('scope','unknown')
+                    location = bundle_dict.get('location', '')
+                    if 'http://' in location or 'https://' in location: #only allow web hosted third party content links to be updated here.
+                        bundle.location = location
+                        bundle.save()
+                        def handle_file_resolution(_bundle):
+                            # print _bundle
+                            bundle = BundleModel.objects.with_id(_bundle)
+                            bundle_buffer = web_get_file(location)
+                            bundle.mimetype = mimetypes.guess_type(location)[0]
+                            old_file_position = bundle_buffer.tell()
+                            bundle_buffer.seek(0, os.SEEK_END)
+                            bundle.size = bundle_buffer.tell()
+                            bundle_buffer.seek(old_file_position, os.SEEK_SET)
+                            bundle.save()
+                        thread.start_new_thread(handle_file_resolution, (str(bundle.id),))
+                    env.bundle = bundle
+                env.save()
+                return api_response(201, 'Environment created', env.info())
         else:
             return api_response(204, 'Nothing created', 'You must provide the file information.')
     else:
@@ -1559,14 +1745,14 @@ def admin_record_create():
                 # print resources
                 if application != None:
                     if environment != None:
-                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, application=application, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=application, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     else:
-                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, application=application, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=application, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                 else:
                     if environment != None:
-                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     else:
-                        record, created = RecordModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                 if len(data) != 0:
                     body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
                 logStat(record=record)
@@ -1616,6 +1802,7 @@ def admin_record_update(record_id):
         else:
             if fk.request.data:
                 data = json.loads(fk.request.data)
+
                 project_id = data.get('project', None)
                 data_pop(data, 'project')
                 application_id = data.get('application', None)
@@ -1793,7 +1980,7 @@ def admin_diff_create():
                 if sender == None or record_from == None or record_to == None:
                     return api_response(400, 'Missing references mandatory fields', 'A diff should have at least an existing sender, an existing record from where the diff is linked and an existing record to which it is linked.')
                 if (record_to.access != 'private' or (record_from.access == 'private' and record_from.project.owner == sender)) and ((record_from.access == 'private' and record_from.project.owner == sender) or record_from.access != 'private'):
-                    diff, created = DiffModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), sender=sender, targeted=record_to.project.owner, record_from=record_from, record_to=record_to, method=method, resources=resources, proposition=proposition, status=status)
+                    diff, created = DiffModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=sender, targeted=record_to.project.owner, record_from=record_from, record_to=record_to, method=method, resources=resources, proposition=proposition, status=status)
                     if not created:
                         return api_response(200, 'Diff already exists', diff.info())
                     else:
@@ -1846,6 +2033,7 @@ def admin_diff_update(diff_id):
         else:
             if fk.request.data:
                 data = json.loads(fk.request.data)
+
                 sender_id =  data.get('sender', None)
                 record_from_id = data.get('from', None)
                 record_to_id = data.get('to', None)
@@ -1916,7 +2104,7 @@ def admin_file_upload(group, item_id):
             if fk.request.files:
                 file_obj = fk.request.files['file']
                 filename = '%s_%s'%(item_id, file_obj.filename)
-                _file, created = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), name=filename)
+                _file, created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), name=filename)
                 if not created:
                     return api_response(200, 'File already exists with same name for this item', _file.info())
                 else:
@@ -2144,7 +2332,7 @@ def admin_file_create():
             storage = data.get('storage', '')
             owner_id = data.get('owner', None)
             location = data.get('location', 'undefined')
-            mimetype = data.get('developer', mimetypes.guess_type(location)[0])
+            mimetype = data.get('mimetype', mimetypes.guess_type(location)[0])
             group = data.get('group', 'undefined')
             description = data.get('description', '')
             owner = None
@@ -2375,6 +2563,7 @@ def admin_file_update(file_id):
         else:
             if fk.request.data:
                 data = json.loads(fk.request.data)
+
                 encoding = data.get('encoding', _file.encoding)
                 size = data.get('size', _file.size)
                 name = data.get('name', _file.name)
@@ -2438,7 +2627,7 @@ def admin_message_create():
                 
                 sender = UserModel.objects(session=sender_id).first()
                 receiver = UserModel.objects.with_id(receiver_id)
-                message, created = MessageModel.objects.get_or_create(created_at=datetime.datetime.utcnow(), sender=sender, receiver=receiver, title=title, attachments=attachments, content=content)
+                message, created = MessageModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=sender, receiver=receiver, title=title, attachments=attachments, content=content)
                 if sender == None or receiver == None:
                     return api_response(400, 'Missing mandatory fields', 'A message should have at least an existing sender and an existing receiver.')
                 if not created:
@@ -2522,3 +2711,175 @@ def admin_message_update(message_id):
                 return api_response(204, 'Nothing created', 'You must provide the message information.')
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
+
+@app.route(API_URL + '/admin/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_resolve_item(item_id):
+    logTraffic(endpoint='/admin/resolve/<item_id>')
+    if fk.request.method == 'GET':
+        resolution = {'type':'', 'endpoints':[]}
+        if item_id == 'root':
+            resolution['type'] = 'User'
+            # Admin actions in this case.
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['status', '--st'], 'endpoint':'/admin/status'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/admin/profile/show'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/admin/user/picture'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/admin/projects'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/admin/records'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['messages', '--me'], 'endpoint':'/admin/messages'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--cm'], 'endpoint':'/admin/comments'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/admin/diffs'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/admin/files'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search', '--se'], 'endpoint':'/admin/search/<query>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search user', '--su'], 'endpoint':'/admin/user/search/<query>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search project', '--sp'], 'endpoint':'/admin/project/search/<query>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search app', '--sa'], 'endpoint':'/public/app/search/<query>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['users', '--us'], 'endpoint':'/public/users'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['home', '--ho'], 'endpoint':'/admin/user/home'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/admin/apps'})
+
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'developer':'string','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['app-created', '--apc'], 'endpoint':'/admin/app/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'owner':'string', 'encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['file-create', '--fic'], 'endpoint':'/admin/file/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'session':'string','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['diff-create', '--dic'], 'endpoint':'/admin/diff/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['env-create', '--enc'], 'endpoint':'/admin/env/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['record-create', '--rrc'], 'endpoint':'/admin/record/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'application':'string','owner':'string','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['project-create', '--pjc'], 'endpoint':'/admin/project/create'})
+            # resolution['endpoints'].append({'methods':['POST'], 'struct':{'title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/comment/<group>'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'sender':'string','receiver':'string','title':'string', 'content':'string', 'attachments':'list'}, 'meta':['message-create', '--mec'], 'endpoint':'/admin/message/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'string', 'password':'string', 'passwordAgain':'string', 'group':'string'}, 'meta':['user-create', '--usc'], 'endpoint':'/admin/user/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-create', '--pfc'], 'endpoint':'/admin/user/profile/create/<selected.id>'})
+            
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'<credential.email>', 'password':'<credential.password>'}, 'meta':['login', '--lg'], 'endpoint':'/admin/user/login'})
+
+            return api_response(200, 'Root resolution results', resolution)
+        item = UserModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'User'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/user/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/admin/user/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'email':'string', 'password':'string', 'passwordAgain':'string', 'group':'string'}, 'meta':['user-update', '--uup'], 'endpoint':'/admin/user/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/admin/user/picture/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/admin/profile/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-update', '--pup'], 'endpoint':'/admin/user/profile/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token-update', '--tup'], 'endpoint':'/admin/user/token/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/admin/user/projects/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/admin/user/records/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/admin/user/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['messages', '--me'], 'endpoint':'/admin/user/messages/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/admin/user/apps/<selected.id>'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'developer':'<selected.id>','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['app-created', '--apc'], 'endpoint':'/admin/app/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'owner':'<selected.id>','encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['file-create', '--fic'], 'endpoint':'/admin/file/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'session':'<selected.session>','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['diff-create', '--dic'], 'endpoint':'/admin/diff/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['env-create', '--enc'], 'endpoint':'/admin/env/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['record-create', '--rrc'], 'endpoint':'/admin/record/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'application':'string','owner':'<selected.id>','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['project-create', '--pjc'], 'endpoint':'/admin/project/create'})
+            # resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/comment/<group>'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'sender':'<selected.id>','receiver':'string','title':'string', 'content':'string', 'attachments':'list'}, 'meta':['message-create', '--mec'], 'endpoint':'/admin/message/create'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-create', '--pfc'], 'endpoint':'/admin/user/profile/create/<selected.id>'})
+
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        item = MessageModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'Message'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/message/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'title':'string', 'content':'string', 'attachments':'list'}, 'meta':['show', '--up'], 'endpoint':'/admin/message/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/admin/message/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        item = CommentModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'Comment'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/comment/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'title':'string', 'content':'string'}, 'meta':['show', '--up'], 'endpoint':'/admin/comment/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/admin/comment/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        item = ProjectModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'Project'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/project/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'application':'string','owner':'string','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['update', '--up'], 'endpoint':'/admin/project/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET', 'DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/project/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['history', '--hi'], 'endpoint':'/admin/project/envs/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['head', '--he'], 'endpoint':'/admin/project/env/head/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['next', '--ne'], 'endpoint':'/admin/project/env/next/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/admin/project/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/admin/project/records/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/admin/project/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/project/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/admin/project/logo/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/comment/project'})
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        item = RecordModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'Record'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/record/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['update', '--up'], 'endpoint':'/admin/record/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/record/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['env', '--en'], 'endpoint':'/admin/record/env/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/admin/record/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/admin/record/diffs/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/admin/record/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/record/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/comment/record'})
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        item = EnvironmentModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'Environment'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/env/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['update', '--up'], 'endpoint':'/admin/env/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/env/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/env/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/comment/env'})
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        item = DiffModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'Diff'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/diff/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'sender':'string','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['update', '--up'], 'endpoint':'/admin/diff/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/diff/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/admin/diff/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/admin/diff/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/diff/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/comment/diff'})
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        item = FileModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'File'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/file/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['update', '--ud'], 'endpoint':'/admin/file/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/file/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/file/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/comment/file'})
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        item = ApplicationModel.objects.with_id(item_id)
+        if item != None:
+            resolution['type'] = 'Application'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/app/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'developer':'string','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['update', '--up'], 'endpoint':'/admin/app/update/<selected.id>'})
+            resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/file/upload/<group>/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/app/delete/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['connectivity', '--co'], 'endpoint':'/admin/app/connectivity/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/admin/app/logo/<selected.id>'})
+            return api_response(200, 'Item %s resolution results'%item_id, resolution)
+
+        if item == None:
+            return api_response(404, 'Request suggested an empty response', 'Unable to find this diff.')
+        else:
+            return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')

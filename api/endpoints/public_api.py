@@ -31,23 +31,23 @@ import os
 import thread
 
 
-@app.route(API_URL + '/public/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
-def public_apps():
-    logTraffic(endpoint='/admin/apps')
-    if fk.request.method == 'GET':
-        apps = ApplicationModel.objects()
-        apps_json = {'total_apps':len(apps), 'apps':[]}
-        for application in apps:
-            apps_json['apps'].append(application.extended())
-        return api_response(200, 'Developers applications', apps_json)
-    else:
-        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+# @app.route(API_URL + '/public/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @crossdomain(origin='*')
+# def public_apps():
+#     logTraffic(endpoint='/admin/apps')
+#     if fk.request.method == 'GET':
+#         apps = ApplicationModel.objects()
+#         apps_json = {'total_apps':len(apps), 'apps':[]}
+#         for application in apps:
+#             apps_json['apps'].append(application.extended())
+#         return api_response(200, 'Developers applications', apps_json)
+#     else:
+#         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_app_show(app_id):
-    logTraffic(endpoint='/admin/app/show/<app_id>')
+    logTraffic(endpoint='/public/app/show/<app_id>')
     if fk.request.method == 'GET':
         app = ApplicationModel.objects.with_id(app_id)
         if app == None:
@@ -60,7 +60,7 @@ def public_app_show(app_id):
 @app.route(API_URL + '/public/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_app_logo(app_id):
-    logTraffic(endpoint='/admin/app/logo/<app_id>')
+    logTraffic(endpoint='/public/app/logo/<app_id>')
     if fk.request.method == 'GET':
         app = ApplicationModel.objects.with_id(app_id)
         if app != None:
@@ -112,7 +112,7 @@ def public_app_logo(app_id):
 @app.route(API_URL + '/public/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_users():
-    logTraffic(endpoint='/admin/users')
+    logTraffic(endpoint='/public/users')
     if fk.request.method == 'GET':
         users = UserModel.objects()
         users_dict = {'total_users':len(users), 'users':[]}
@@ -125,7 +125,7 @@ def public_users():
 @app.route(API_URL + '/public/user/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_user_show(user_id):
-    logTraffic(endpoint='/admin/user/show/<user_id>')
+    logTraffic(endpoint='/public/user/show/<user_id>')
     if fk.request.method == 'GET':
         user = UserModel.objects.with_id(user_id)
         if user == None:
@@ -138,7 +138,7 @@ def public_user_show(user_id):
 @app.route(API_URL + '/public/user/profile/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_user_profile_show(user_id):
-    logTraffic(endpoint='/admin/user/profile/show/<user_id>')
+    logTraffic(endpoint='/public/user/profile/show/<user_id>')
     if fk.request.method == 'GET':
         user = UserModel.objects.with_id(user_id)
         if user == None:
@@ -155,7 +155,7 @@ def public_user_profile_show(user_id):
 @app.route(API_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_user_picture(user_id):
-    logTraffic(endpoint='/admin/user/picture/<user_id>')
+    logTraffic(endpoint='/public/user/picture/<user_id>')
     if fk.request.method == 'GET':
         user = UserModel.objects.with_id(user_id)
         if user != None:
@@ -211,10 +211,10 @@ def public_user_picture(user_id):
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/public/projects/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/public/user/projects/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_user_projects(user_id):
-    logTraffic(endpoint='/admin/projects')
+    logTraffic(endpoint='/public/user/projects')
     if fk.request.method == 'GET':
     	user = UserModel.objects.with_id(user_id)
     	if user == None:
@@ -227,10 +227,24 @@ def public_user_projects(user_id):
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
+@app.route(API_URL + '/public/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def public_projects(user_id):
+    logTraffic(endpoint='/public/projects')
+    if fk.request.method == 'GET':
+        projects = ProjectModel.objects()
+        projects_dict = {'total_projects':len(projects), 'projects':[]}
+        for project in projects:
+            if project.access == 'public':
+                projects_dict['projects'].append(project.extended())
+        return api_response(200, 'Projects list', projects_dict)
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 @app.route(API_URL + '/public/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_comments(project_id):
-    logTraffic(endpoint='/admin/project/comments/<project_id>')
+    logTraffic(endpoint='/public/project/comments/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -244,6 +258,19 @@ def public_project_comments(project_id):
                     comments_dict['comments'].append(comment.info())
             comments_dict['total_comments'] = len(comments_dict['comments'])
             return api_response(200, 'Project comment list', comments_dict)
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/public/comment/show/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def public_comment_show(comment_id):
+    logTraffic(endpoint='/public/comment/show/<comment_id>')
+    if fk.request.method == 'GET':
+        comment = CommentModel.objects.with_id(comment_id)
+        if comment == None:
+            return api_response(404, 'Request suggested an empty response', 'Unable to find this comment.')
+        else:
+            return api_response(200, 'Project %s info'%comment_id, comment.info())
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
@@ -345,9 +372,9 @@ def public_project_download(project_id):
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/public/project/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/public/project/history/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
-def public_project_envs(project_id):
+def public_project_history(project_id):
     logTraffic(endpoint='/admin/project/envs/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
@@ -581,7 +608,7 @@ def public_file_download(file_id):
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/admin/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/public/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_file_show(file_id):
     logTraffic(endpoint='/admin/file/show/<file_id>')
@@ -638,86 +665,126 @@ def public_app_search(app_name):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 
+@app.route(API_URL + '/public/apps/<user_id>', methods=['GET'])
+def public_user_apps(user_id):
+    current_user = UserModel.objects.with_id(user_id)
+    if current_user is not None:
+        if current_user.group == "developer":
+            if fk.request.method == 'GET':
+                apps = ApplicationModel.objects(developer=current_user)
+                apps_json = {'total_apps':len(apps), 'apps':[]}
+                for application in apps:
+                    apps_json['apps'].append(application.extended())
+                return api_response(200, 'Developer\'s applications', apps_json)
+            else:
+                return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+        else:
+            return api_response(404, 'Request suggested an empty response', 'This user is not allowed to create applications.')
+    else:
+        return api_response(404, 'Request suggested an empty response', 'Unable to find this user.')
+
+@app.route(API_URL + '/public/apps', methods=['GET'])
+def public_apps():
+    if fk.request.method == 'GET':
+        apps = ApplicationModel.objects()
+        apps_json = {'total_apps':len(apps), 'apps':[]}
+        for application in apps:
+            apps_json['apps'].append(application.extended())
+        return api_response(200, 'Applications', apps_json)
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 @app.route(API_URL + '/public/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_resolve_item(item_id):
-    logTraffic(endpoint='/<api_token>/<app_token>/resolve/<item_id>')
+    logTraffic(endpoint='/public/resolve/<item_id>')
     if fk.request.method == 'GET':
         resolution = {'class':'', 'endpoints':[]}
         if item_id == 'root':
-            return api_response(404, 'Root cannot be resolved in public', 'Please load your account API token.')
+            resolution['type'] = 'Public'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['users', '--us'], 'endpoint':'/public/users'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pr'], 'endpoint':'/public/projects'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/files'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/public/diffs'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/public/apps'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'<credential.email>', 'password':'<credential.password>'}, 'meta':['login', '--lg'], 'endpoint':'/public/user/login'})
+            return api_response(200, 'Public default resolution result', resolution)
         item = UserModel.objects.with_id(item_id)
         if item != None:
-            resolution['class'] = 'UserModel'
-            resolution['endpoints'].append({'meta':['show', '--sh'], 'endpoint':'/public/user/show/<item_id>'})
-            resolution['endpoints'].append({'meta':['picture', '--pc'], 'endpoint':'/public/user/picture/<item_id>'})
-            resolution['endpoints'].append({'meta':['profile', '--pf'], 'endpoint':'/public/profile/show/<item_id>'})
-            resolution['endpoints'].append({'meta':['projects', '--pj'], 'endpoint':'/public/user/projects/<item_id>'})
+            resolution['type'] = 'User'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/user/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/public/user/picture/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/public/user/profile/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/public/user/projects/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/public/user/apps/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
+            resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'<credential.email>', 'password':'<credential.password>'}, 'meta':['login', '--lg'], 'endpoint':'/public/user/login'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = MessageModel.objects.with_id(item_id)
         if item != None:
-            return api_response(404, 'MessageModel items cannot be resolved in public', 'Please load your account API token.')
+            return api_response(404, 'Message items cannot be resolved in public', 'Please load your account API token.')
 
         item = CommentModel.objects.with_id(item_id)
         if item != None:
-            resolution['class'] = 'CommentModel'
-            resolution['endpoints'].append({'meta':['show', '--sh'], 'endpoint':'/<api_token>/<app_token>/comment/show/<item_id>'})
+            resolution['type'] = 'Comment'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/comment/show/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = ProjectModel.objects.with_id(item_id)
         if item != None:
-            resolution['class'] = 'ProjectModel'
-            resolution['endpoints'].append({'meta':['show', '--sh'], 'endpoint':'/public/project/show/<item_id>'})
-            resolution['endpoints'].append({'meta':['history', '--hi'], 'endpoint':'/public/project/history/<item_id>'})
-            resolution['endpoints'].append({'meta':['comments', '--co'], 'endpoint':'/public/project/comments/<item_id>'})
-            resolution['endpoints'].append({'meta':['records', '--re'], 'endpoint':'/public/project/records/<item_id>'})
-            resolution['endpoints'].append({'meta':['files', '--fi'], 'endpoint':'/public/project/files/<item_id>'})
-            resolution['endpoints'].append({'meta':['download', '--do'], 'endpoint':'/public/project/download/<item_id>'})
-            resolution['endpoints'].append({'meta':['logo', '--lo'], 'endpoint':'/public/project/logo/<item_id>'})
+            resolution['type'] = 'Project'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/project/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['history', '--hi'], 'endpoint':'/public/project/history/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/project/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/public/project/records/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/project/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/project/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/public/project/logo/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = RecordModel.objects.with_id(item_id)
         if item != None:
-            resolution['class'] = 'RecordModel'
-            resolution['endpoints'].append({'meta':['show', '--sh'], 'endpoint':'/public/record/show/<item_id>'})
-            resolution['endpoints'].append({'meta':['env', '--en'], 'endpoint':'/public/record/env/<item_id>'})
-            resolution['endpoints'].append({'meta':['comments', '--co'], 'endpoint':'/public/record/comments/<item_id>'})
-            resolution['endpoints'].append({'meta':['diffs', '--di'], 'endpoint':'/public/record/diffs/<item_id>'})
-            resolution['endpoints'].append({'meta':['files', '--fi'], 'endpoint':'/public/record/files/<item_id>'})
-            resolution['endpoints'].append({'meta':['download', '--do'], 'endpoint':'/public/record/download/<item_id>'})
+            resolution['type'] = 'Record'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/record/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['env', '--en'], 'endpoint':'/public/record/env/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/record/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/public/record/diffs/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/record/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/record/download/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = EnvironmentModel.objects.with_id(item_id)
         if item != None:
-            resolution['class'] = 'EnvironmentModel'
-            resolution['endpoints'].append({'meta':['show', '--sh'], 'endpoint':'/public/env/show/<item_id>'})
-            resolution['endpoints'].append({'meta':['download', '--do'], 'endpoint':'/public/env/download/<item_id>'})
+            resolution['type'] = 'Environment'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/env/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/env/download/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = DiffModel.objects.with_id(item_id)
         if item != None:
-            resolution['class'] = 'DiffModel'
-            resolution['endpoints'].append({'meta':['show', '--sh'], 'endpoint':'/public/diff/show/<item_id>'})
-            resolution['endpoints'].append({'meta':['comments', '--co'], 'endpoint':'/public/diff/comments/<item_id>'})
-            resolution['endpoints'].append({'meta':['files', '--fi'], 'endpoint':'/public/diff/files/<item_id>'})
-            resolution['endpoints'].append({'meta':['download', '--do'], 'endpoint':'/public/diff/download/<item_id>'})
+            resolution['type'] = 'Diff'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/diff/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/diff/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/diff/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/diff/download/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = FileModel.objects.with_id(item_id)
         if item != None:
-            resolution['class'] = 'FileModel'
-            resolution['endpoints'].append({'meta':['show', '--sh'], 'endpoint':'/public/file/show/<item_id>'})
-            resolution['endpoints'].append({'meta':['download', '--do'], 'endpoint':'/public/file/download/<item_id>'})
+            resolution['type'] = 'File'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/file/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/file/download/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = ApplicationModel.objects.with_id(item_id)
         if item != None:
-            resolution['class'] = 'ApplicationModel'
-            resolution['endpoints'].append({'meta':['show', '--sh'], 'endpoint':'/public/app/show/<item_id>'})
-            resolution['endpoints'].append({'meta':['search', '--se'], 'endpoint':'/public/app/search/<query>'})
-            resolution['endpoints'].append({'meta':['connectivity', '--co'], 'endpoint':'/public/app/connectivity/<item_id>'})
-            resolution['endpoints'].append({'meta':['logo', '--lo'], 'endpoint':'/public/app/logo/<item_id>'})
+            resolution['type'] = 'Application'
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/app/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search', '--se'], 'endpoint':'/public/app/search/<query>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['connectivity', '--co'], 'endpoint':'/public/app/connectivity/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/public/app/logo/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         if item == None:
