@@ -1,0 +1,11 @@
+Docopt==0.6.2
+Pymongo==2.8
+Twill==1.8.0
+Cssselect==0.9.1
+Mongoengine==0.8.7
+Nose==1.3.4
+Werkzeug==0.9.6
+itsdangerous==0.24
+wsgiref==0.1.2
+Requests==2.4.1
+Click==3.3
