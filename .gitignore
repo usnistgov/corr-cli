@@ -1,0 +1,3 @@
+*.pyc
+corr-db/data
+corr-db/corrdb.egg-info
