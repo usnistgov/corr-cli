@@ -4,6 +4,10 @@
 
 ## Building docker containers
 
+Make sure the docker deamon is started.
+In Linux:
+service docker start
+
 After configuring docker based on your platform, do:
 
     $ git clone https://github.com/faical-yannick-congo/corr-api.git

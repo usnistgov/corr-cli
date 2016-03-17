@@ -1,3 +1,4 @@
 *.pyc
-corr-db/data
-corr-db/corrdb.egg-info
+corr-db/data/
+corr-db/corrdb.egg-info/
+corr-view/frontend/_site

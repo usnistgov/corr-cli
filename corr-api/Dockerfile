@@ -11,8 +11,8 @@ RUN apt-get install -y git
 
 # Install corr-db
 RUN rm -rf corr-db
-RUN git clone https://github.com/faical-yannick-congo/corr-db.git
-RUN cd /corr-db; python setup.py develop
+RUN git clone https://github.com/usnistgov/corr.git
+RUN cd /corr/corr-db; python setup.py develop
 
 # Install pip
 RUN easy_install pip
