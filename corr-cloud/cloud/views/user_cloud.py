@@ -42,8 +42,10 @@ def user_register():
             application = stormpath_manager.application
             email = data.get('email', '').lower()
             password = data.get('password', '')
-            fname = data.get('fname', '')
-            lname = data.get('lname', '')
+            username = data.get('username', 'username')
+            fname = data.get('fname', 'FirstName')
+            lname = data.get('lname', 'LastName')
+            group = data.get('group', 'user')
             picture_link = data.get('picture', '')
             admin = data.get('admin', {})
             if picture_link == '':
@@ -52,44 +54,125 @@ def user_register():
                 picture = {'scope':'remote', 'location':picture_link}
             organisation = data.get('organisation', 'No organisation provided')
             about = data.get('about', 'Nothing about me yet.')
-            if email == '' or '@' not in email or username == '':
+            if email == '' or '@' not in email or password == '':
                 return fk.make_response("The email field cannot be empty.", status.HTTP_400_BAD_REQUEST)
             else:
                 try:
-                    _user = application.accounts.create({
-                        'email': email,
-                        'password': password
-                        # "username" : username,
-                        # "given_name" : "Empty",
-                        # "middle_name" : "Empty",
-                        # "surname" : "Empty"
-                    })
-                    while True:
-                        try:
-                            # Many trials because of API key generation failures some times.
-                            (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'DDSMSession_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
-                            if email == "root@":
-                                user_model.group = "admin"
-                                user_model.save()
-                            if len(admin) != 0:
-                                try:
-                                    _admin = application.accounts.create({
-                                        'email': admin["email"],
-                                        'password': admin["password"]
-                                    })
-                                    if _admin != None:
-                                        admin_model = UserModel.objects(email=admin["email"]).first()
-                                        if admin_model.group == "admin":
-                                            user_model.group = "admin"
-                                            user_model.save()
-                                except:
-                                    pass
-                            if created:
-                                (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
-                            break
-                        except:
-                            print str(traceback.print_exc())
+                    _account = None
+                    user_model = None
+                    try:
+                        _account = application.authenticate_account(
+                            email,
+                            password,
+                        ).account
+                    except:
+                        _account = None
+                    if _account != None:
+                        user_model = UserModel.objects(email=email).first()
 
+                    # _user = application.accounts.create({
+                    #     'email': email,
+                    #     'password': password
+                    #     # "username" : username,
+                    #     # "given_name" : "Empty",
+                    #     # "middle_name" : "Empty",
+                    #     # "surname" : "Empty"
+                    # })
+                    if user_model == None:
+                        print "User Model does not exist."
+                        while True:
+                            # Many trials because of API key generation failures some times.
+                            try:
+                                if group != "admin":
+                                    if _account == None:
+                                        try:
+                                            _user = application.accounts.create({
+                                                'email': email,
+                                                'password': password,
+                                                "username" : username,
+                                                "given_name" : "undefined",
+                                                "middle_name" : "undefined",
+                                                "surname" : "undefined",
+                                            })
+                                        except:
+                                            pass
+                                    if _user != None:
+                                        print "created!!!"
+                                        (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                                    else:
+                                        print "Unauthorized admin account creation. Could not create user!"
+                                        return fk.make_response('Unauthorized admin account creation. Could not create user!', status.HTTP_401_UNAUTHORIZED)
+                                else:
+                                # # Many trials because of API key generation failures some times.
+                                # (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'DDSMSession_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                                    if email == "root@coor.gov":
+                                        if _account == None:
+                                            try:
+                                                _user = application.accounts.create({
+                                                    'email': email,
+                                                    'password': password,
+                                                    "username" : "Root",
+                                                    "given_name" : "undefined",
+                                                    "middle_name" : "undefined",
+                                                    "surname" : "CoRR"
+                                                })
+                                            except:
+                                                pass
+                                        if _user != None:
+                                            (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group="admin", api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                                        else:
+                                            print "You are forbidden to do this."
+                                            return fk.make_response('You are forbidden to do this.', status.HTTP_401_UNAUTHORIZED)
+                                    else:
+                                        if len(admin) != 0:
+                                            try:
+                                                _admin = application.authenticate_account(
+                                                    admin["email"],
+                                                    admin["password"],
+                                                ).account
+                                            except:
+                                                _admin = None
+                                            admin_account = UserModel.objects(email=email).first()
+                                            if admin_account != None and _admin != None:
+                                                if account.group == "admin":
+                                                    if _account == None:
+                                                        try:
+                                                            _user = application.accounts.create({
+                                                                'email': email,
+                                                                'password': password,
+                                                                "username" : username,
+                                                                "given_name" : "undefined",
+                                                                "middle_name" : "undefined",
+                                                                "surname" : "undefined"
+                                                            })
+                                                        except:
+                                                            pass
+                                                    if _user != None:
+                                                        (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                                                        # admin_model = UserModel.objects(email=admin["email"]).first()
+                                                        # if admin_model.group == "admin":
+                                                        #     user_model.group = "admin"
+                                                        #     user_model.save()
+                                                    else:
+                                                        print "Unauthorized admin account creation. Could not create user!"
+                                                        return fk.make_response('Unauthorized admin account creation. Could not create user!', status.HTTP_401_UNAUTHORIZED)
+                                                else:
+                                                    print "Unauthorized admin account creation. Referee is not an admin."
+                                                    return fk.make_response('Unauthorized admin account creation. Referee is not an admin.', status.HTTP_401_UNAUTHORIZED)
+                                            else:
+                                                print "Unauthorized admin account creation. Unknown admin referee."
+                                                return fk.make_response('Unauthorized admin account creation. Unknown admin referee.', status.HTTP_401_UNAUTHORIZED)
+                                        else:
+                                            print "Unauthorized admin account creation. No provided admin referee."
+                                            return fk.make_response('Unauthorized admin account creation. No provided admin referee.', status.HTTP_401_UNAUTHORIZED)
+                                if created:
+                                    (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
+                                break
+                            except:
+                                print str(traceback.print_exc())
+                    else:
+                        print "This user already exists."
+                        return fk.make_response('This user already exists.', status.HTTP_401_UNAUTHORIZED)
 
                     print "Token %s"%user_model.api_token
                     print fk.request.headers.get('User-Agent')
@@ -112,6 +195,7 @@ def user_register():
                     # return fk.redirect('http://0.0.0.0:5000/%s'%user_model.session)
                 except:
                     print str(traceback.print_exc())
+                    print "This user already exists."
                     return fk.make_response('This user already exists.', status.HTTP_401_UNAUTHORIZED)
         else:
             return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
@@ -239,9 +323,12 @@ def user_login():
                     account = UserModel.objects(email=email).first()
                     if account == None and _user != None:
                         # Sync with stormpath here... :-)
-                        account, created = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'DDSMSession_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
-                        if created:
-                            (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=account, fname="None", lname="None", organisation="None", about="None")
+                        # account, created = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'DDSMSession_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                        # if created:
+                        #     (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=account, fname="None", lname="None", organisation="None", about="None")
+                        # We do not allow this anymore. Registration handles this. Yet the account type has to be provided
+                        # Because we have to make a difference between admin, developer and user later.
+                        return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
                     print "Token %s"%account.api_token
                     print fk.request.headers.get('User-Agent')
                     print fk.request.remote_addr
@@ -654,7 +741,7 @@ def user_profile(hash_session):
         user_model = UserModel.objects(session=hash_session).first()
         profile_model, created = ProfileModel.objects.get_or_create(user=user_model, fname="None", lname="None", organisation="None", about="None")
         if created:
-            profile_model.created_at=datetime.datetime.utcnow()
+            profile_model.created_at=str(datetime.datetime.utcnow())
             profile_model.save()
         print fk.request.path
         if user_model is None:
