@@ -2,7 +2,7 @@ import httplib
 import json
 
 # conn = httplib.HTTPSConnection("http://0.0.0.0:5100")
-base = "/api/v1/admin"
+base = "/api/v0.1/admin"
 headers = {"Accept": "application/json"}
 
 def user_create(data={}):

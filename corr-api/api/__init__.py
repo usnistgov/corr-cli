@@ -823,7 +823,7 @@ def web_get_file(url):
         return None
 
 
-API_VERSION = 1
+API_VERSION = 0.1
 API_URL = '/api/v{0}'.format(API_VERSION)
 
 def logTraffic(endpoint=''):

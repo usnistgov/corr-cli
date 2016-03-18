@@ -6,9 +6,11 @@ from ..models import BundleModel
 from ..models import VersionModel
 from ..models import CommentModel
 from ..models import FileModel
+from ..models import ApplicationModel
           
 class EnvironmentModel(db.Document):
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
+    application = db.ReferenceField(ApplicationModel)
     possible_group = ["computational", "experimental", "hybrid", "unknown"]
     group = db.StringField(default="unknown", choices=possible_group)
     possible_system = ["container-based", "vm-based", "tool-based", "cloud-based", "device-based", "lab-based", "custom-based", "undefined"]
@@ -49,6 +51,10 @@ class EnvironmentModel(db.Document):
     def info(self):
         data = {'created':str(self.created_at), 'id': str(self.id), 'group':self.group,
         'system':self.system, 'specifics':self.specifics}
+        if self.application != None:
+            data['application'] = str(self.application.id)
+        else:
+            data['application'] = None
         if self.version != None:
             data['version'] = str(self.version.id)
         else:
@@ -69,6 +75,10 @@ class EnvironmentModel(db.Document):
         data['comments'] = [comment.extended() for comment in self._comments()]
         data['resources'] = [resource.extended() for resource in self._resources()]
         data['extend'] = self.extend
+        if self.application != None:
+            data['application'] = self.application.info()
+        else:
+            data['application'] = {}
         if self.version != None:
             data['version'] = self.version.extended()
         else:
