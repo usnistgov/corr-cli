@@ -42,7 +42,7 @@ def user_register():
             application = stormpath_manager.application
             email = data.get('email', '').lower()
             password = data.get('password', '')
-            username = data.get('username', 'username')
+            # username = data.get('username', 'username')
             fname = data.get('fname', 'FirstName')
             lname = data.get('lname', 'LastName')
             group = data.get('group', 'user')
@@ -86,17 +86,17 @@ def user_register():
                                 if group != "admin":
                                     if _account == None:
                                         try:
-                                            _user = application.accounts.create({
+                                            _account = application.accounts.create({
                                                 'email': email,
                                                 'password': password,
-                                                "username" : username,
+                                                "username" : email,
                                                 "given_name" : "undefined",
                                                 "middle_name" : "undefined",
                                                 "surname" : "undefined",
                                             })
                                         except:
-                                            pass
-                                    if _user != None:
+                                            _account = None
+                                    if _account != None:
                                         print "created!!!"
                                         (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
                                     else:
@@ -108,17 +108,17 @@ def user_register():
                                     if email == "root@coor.gov":
                                         if _account == None:
                                             try:
-                                                _user = application.accounts.create({
+                                                _account = application.accounts.create({
                                                     'email': email,
                                                     'password': password,
-                                                    "username" : "Root",
+                                                    "username" : email,
                                                     "given_name" : "undefined",
                                                     "middle_name" : "undefined",
                                                     "surname" : "CoRR"
                                                 })
                                             except:
-                                                pass
-                                        if _user != None:
+                                                _account = None
+                                        if _account != None:
                                             (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group="admin", api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
                                         else:
                                             print "You are forbidden to do this."
@@ -137,17 +137,17 @@ def user_register():
                                                 if account.group == "admin":
                                                     if _account == None:
                                                         try:
-                                                            _user = application.accounts.create({
+                                                            _account = application.accounts.create({
                                                                 'email': email,
                                                                 'password': password,
-                                                                "username" : username,
+                                                                "username" : email,
                                                                 "given_name" : "undefined",
                                                                 "middle_name" : "undefined",
                                                                 "surname" : "undefined"
                                                             })
                                                         except:
                                                             pass
-                                                    if _user != None:
+                                                    if _account != None:
                                                         (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
                                                         # admin_model = UserModel.objects(email=admin["email"]).first()
                                                         # if admin_model.group == "admin":
@@ -316,10 +316,13 @@ def user_login():
                 return fk.make_response("The email field cannot be empty.", status.HTTP_400_BAD_REQUEST)
             else:
                 try:
-                    _user = application.authenticate_account(
-                        email,
-                        password,
-                    ).account
+                    try:
+                        _user = application.authenticate_account(
+                            email,
+                            password,
+                        ).account
+                    except:
+                        _user = None
                     account = UserModel.objects(email=email).first()
                     if account == None and _user != None:
                         # Sync with stormpath here... :-)
@@ -329,6 +332,21 @@ def user_login():
                         # We do not allow this anymore. Registration handles this. Yet the account type has to be provided
                         # Because we have to make a difference between admin, developer and user later.
                         return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
+                    if account != None and _user == None:
+                        try:
+                            _account = application.accounts.create({
+                                'email': email,
+                                'password': password,
+                                "username" : email,
+                                "given_name" : "undefined",
+                                "middle_name" : "undefined",
+                                "surname" : "undefined"
+                            })
+                        except:
+                            _account = None
+                        if _account == None:
+                            print str(traceback.print_exc())
+                            return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
                     print "Token %s"%account.api_token
                     print fk.request.headers.get('User-Agent')
                     print fk.request.remote_addr
