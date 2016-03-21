@@ -4,9 +4,6 @@ import subprocess
 from setuptools import setup, find_packages
 import os
 
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
-
 def git_version():
     def _minimal_ext_cmd(cmd):
         # construct minimal environment
@@ -21,7 +18,7 @@ def git_version():
         env['LC_ALL'] = 'C'
         out = subprocess.Popen(cmd, stdout = subprocess.PIPE, env=env).communicate()[0]
         return out
-    
+
     try:
         out = _minimal_ext_cmd(['git', 'rev-parse', 'HEAD'])
         GIT_REVISION = out.strip().decode('ascii')
@@ -42,7 +39,6 @@ def getVersion(version, release=False):
 
 setup(name='corrdb',
       version=getVersion('alpha-0.1', release=False),
-      install_requires=required,
       description='Package for CoRR Database Models',
       author='Yannick Congo',
       author_email='yannick.congo@gmail.com',
