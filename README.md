@@ -1,7 +1,7 @@
- # Cloud of Reproducible Records
+# Cloud of Reproducible Records
 
 <p align="center">
-    <img src="corr-view/frontend/images/logo.svg"
+    <img src="https://raw.githubusercontent.com/usnistgov/corr/issue25-ansible/corr-view/frontend/images/logo.svg"
          height="130">
 </p>
 
@@ -15,7 +15,7 @@ viewing metadata associated with simulation records.
 * **[INSTALL](INSTALLATION.md)** – installation instructions.
 * **[LICENSE](LICENSE.md)** – the license.
 
-## Installation for Development
+## Installing CoRR for Development
 
 CoRR is designed as a web app and if possible users should try and use
 an exising instance such as
@@ -25,5 +25,5 @@ instructions in [INSTALLATION.md](INSTALLATION.md).
 
 ## Using CoRR
 
-To use CoRR as a user view the help on the website at
+To use CoRR as a user view the help on the live instance at
 [http://corr-root.org/help](http://corr-root.org/help).
