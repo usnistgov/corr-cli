@@ -1,7 +1,7 @@
 # Cloud of Reproducible Records
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/usnistgov/corr/issue25-ansible/corr-view/frontend/images/logo.svg"
+    <img src="https://raw.githubusercontent.com/usnistgov/corr/master/corr-view/frontend/images/logo.svg"
          height="130">
 </p>
 
