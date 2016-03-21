@@ -1,7 +1,7 @@
 # Cloud of Reproducible Records
 
 <p align="center">
-    <img src="corr-view/frontend/images/logo.svg"
+    <img src="https://rawgit.com/usnistgov/corr/master/corr-view/frontend/images/logo.svg"
          height="130"
          alt="CoRR logo"
          class="inline">
