@@ -129,8 +129,12 @@ def user_file_download(app_token="", file_id=""):
     response = requests.get(url)
     # return "Headers: %s"%response.headers
     content = response.content
-    d = response.headers['Content-Disposition']
-    fname = re.findall("filename=(.+)", d)
+    fname = "unknown-name"
+    try:
+        d = response.headers['Content-Disposition']
+        fname = re.findall("filename=(.+)", d)
+    except:
+        pass
     with open(fname[0], 'w') as downloaded_f:
         downloaded_f.write(content)
     return '%s Downloaded'%fname
@@ -223,8 +227,11 @@ def user_download_record(app_token="", record_id=""):
     url = "http://0.0.0.0:5100%s/%s/record/download/%s"%(base, app_token, record_id)
     response = requests.get(url)
     content = response.content
-    d = response.headers['Content-Disposition']
-    fname = re.findall("filename=(.+)", d)
+    try:
+        d = response.headers['Content-Disposition']
+        fname = re.findall("filename=(.+)", d)
+    except:
+        fname = "unknown-name"
     with open(fname[0], 'w') as downloaded_f:
         downloaded_f.write(content)
     return '%s Downloaded'%fname
@@ -324,12 +331,12 @@ def user_project_env_show(app_token="", project_id="", env_id=""):
 
 if __name__ == '__main__':
 
-    print user_status('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
-    print user_home('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
-    print user_search('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', 'User2-CoRR')
-    print user_search('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', 'CoRR')
+    # print user_status('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
+    # print user_home('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
+    # print user_search('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', 'User2-CoRR')
+    # print user_search('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', 'CoRR')
 
-    print user_app_connectivity('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
+    # print user_app_connectivity('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
     
     message1 = {
         "receiver":"56f004079f9d51790fa83168",
@@ -354,13 +361,13 @@ if __name__ == '__main__':
     # print user_message_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', message2)
     # print user_message_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', message3)
     # print user_get_messages('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
-    # print user_message_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f8')
+    # print user_message_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f028d89f9d510187653211')
     # message3['content'] = 'This is yet another updated message done from the user api.'
-    # print user_message_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f8', message3)
-    # print user_message_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f8')
-    # print user_message_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f7')
-    # print user_message_delete('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f7')
-    # print user_message_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f7')
+    # print user_message_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f028d89f9d510187653211', message3)
+    # print user_message_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f028d89f9d510187653211')
+    # print user_message_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f028d89f9d510187653210')
+    # print user_message_delete('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f028d89f9d510187653210')
+    # print user_message_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f028d89f9d510187653210')
 
 
     file1 = {
@@ -384,28 +391,28 @@ if __name__ == '__main__':
     }
 
     # print user_get_files('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
-    # print user_file_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56747b939f9d51373dc0a5ec')
-    # print user_file_download('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56747b939f9d51373dc0a5ec')
+    # print user_file_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f0065f9f9d5179bb5569c5')
+    # print user_file_download('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f0065f9f9d5179bb5569c5')
     # print user_file_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', file1)
     # print user_file_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', file2)
     # print user_get_files('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
 
-    # print user_file_upload('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', 'attach-message', '567b106b9f9d517f31ec24f8', '0602096.pdf')
+    # print user_file_upload('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', 'attach-message', '56f028d89f9d510187653211', '0602096.pdf')
     # print user_get_files('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
     # # Show the uploaded file and download it.
-    # print user_file_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56731cbd9f9d5110105a27fa')
-    # print user_file_download('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56731cbd9f9d5110105a27fa')
+    # print user_file_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f02f2a9f9d51041c2c9e01')
+    # print user_file_download('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f02f2a9f9d51041c2c9e01')
 
     #File 2 download
-    # print user_file_download('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f8')
+    # print user_file_download('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f02c169f9d51031bf667e1')
 
     # file1['description'] = 'This is an updated description of the PyMKS paper.'
-    # print user_file_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f8', file1)
-    # print user_file_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f8')
+    # print user_file_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f02bf99f9d51031bf667df', file1)
+    # print user_file_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f02bf99f9d51031bf667df')
 
     # # File 1 delete
-    # print user_file_delete('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f7')
-    # print user_file_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567b106b9f9d517f31ec24f7')
+    # print user_file_delete('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f02bf99f9d51031bf667df')
+    # print user_file_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f02bf99f9d51031bf667df')
 
     
     project1 = {
@@ -470,50 +477,50 @@ if __name__ == '__main__':
         }
     }
 
-    # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8')
-    # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c')
+    # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204')
+    # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207')
     # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029')
     
-    # print user_project_envs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8')
-    # print user_project_envs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c')
+    # print user_project_envs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204')
+    # print user_project_envs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207')
 
-    # print user_project_env_next('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8', env1)
-    # print user_project_env_next('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', env2)
+    # print user_project_env_next('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204', env1)
+    # print user_project_env_next('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', env2)
     # print user_project_env_next('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029', env3)
 
-    # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8')
-    # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c')
+    # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204')
+    # print user_project_envs_head('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207')
 
-    # print user_project_envs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8')
-    # print user_project_envs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c')
+    # print user_project_envs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204')
+    # print user_project_envs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207')
 
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8', '5684068b9f9d5134b5e01335')
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', '56747b939f9d51373dc0a5ea')
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', '5684068b9f9d5134b5e01338')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204', '56f038189f9d5106ecaa3bfe')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', '56f038189f9d5106ecaa3c01')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', '5684068b9f9d5134b5e01338')
     # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029', '56840b129f9d5137d5675488')
     
     # !!!Second parameter is the bundle id.
-    # print user_update_env_bundle('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '5684068b9f9d5134b5e01337', '/home/fyc/Documents/Projects/NIST/CoRR/github/demo-sumatra.tar')
-    # print user_update_env_bundle('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56840b129f9d5137d567548a', '/home/fyc/Documents/Projects/NIST/CoRR/github/presentation_11-23-2015.pdf')
+    # print user_update_env_bundle('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f038189f9d5106ecaa3c00', '/home/fyc/Documents/Projects/NIST/CoRR/github/demo-sumatra.tar')
+    # print user_update_env_bundle('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f038189f9d5106ecaa3c03', '/home/fyc/Documents/Projects/NIST/CoRR/github/presentation_11-23-2015.pdf')
     # print user_update_env_bundle('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56747b939f9d51373dc0a5ec', '/home/fyc/Documents/Projects/NIST/CoRR/github/Howe_chapter.pdf')
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8', '5684068b9f9d5134b5e01335')
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', '56747b939f9d51373dc0a5ea')
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', '5684068b9f9d5134b5e01338')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204', '56f038189f9d5106ecaa3bfe')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', '56f038189f9d5106ecaa3c01')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', '5684068b9f9d5134b5e01338')
     # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029', '56840b129f9d5137d5675488')
     # env2['bundle']['location'] = "https://s3-us-west-2.amazonaws.com/ddsm-bucket/5595f1b789adcc1556eb41cd-5597914cc922f075f076fa35-unknown.tar"
-    # print user_project_env_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', '5684068b9f9d5134b5e01338', env2)
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', '5684068b9f9d5134b5e01338')
+    # print user_project_env_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', '56f038189f9d5106ecaa3c01', env2)
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', '56f038189f9d5106ecaa3c01')
 
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8', '5684068b9f9d5134b5e01335')
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', '56747b939f9d51373dc0a5ea')
-    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c', '5684068b9f9d5134b5e01338')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204', '56f038189f9d5106ecaa3bfe')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', '56f038189f9d5106ecaa3c01')
+    # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', '5684068b9f9d5134b5e01338')
     # print user_project_env_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029', '56840b129f9d5137d5675488')
 
 
     # Records
 
     record1 = {
-        "project":"568405659f9d51159513e6a8",
+        "project":"56f035f89f9d51064e12e204",
         "system":{
             "architecture_bits": "64bit",
             "architecture_linkage": "ELF",
@@ -593,7 +600,7 @@ if __name__ == '__main__':
     }
 
     record2 = {
-        "project":"567321a49f9d511391055d1c",
+        "project":"56f035f89f9d51064e12e207",
         "system":{
             "architecture_bits": "64bit",
             "architecture_linkage": "ELF",
@@ -731,39 +738,39 @@ if __name__ == '__main__':
         ]
     }
 
-    # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8')
-    # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c')
+    # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204')
+    # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207')
     # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029')
 
-    # print user_record_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8', record1)
-    # print user_record_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029', record2)
+    # print user_record_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204', record1)
+    # print user_record_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207', record2)
     # print user_record_create('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029', record3)
 
-    # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568405659f9d51159513e6a8')
-    # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567321a49f9d511391055d1c')
+    # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e204')
+    # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f035f89f9d51064e12e207')
     # print user_get_records('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568409159f9d5136e4351029')
 
-    # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b33')
-    # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567322d09f9d5113c3a63dea')
+    # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f045ca9f9d510b764381f1')
+    # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f045ca9f9d510b764381f4')
     # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b36')
     # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b38')
 
-    # print user_record_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b33', {'access':'public'})
-    # print user_record_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567322d09f9d5113c3a63dea', {'access':'private'})
+    # print user_record_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f045ca9f9d510b764381f1', {'access':'public'})
+    # print user_record_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f045ca9f9d510b764381f4', {'access':'private'})
     # print user_record_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b36', {'access':'public'})
     # print user_record_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b38', {'access':'public'})
 
-    # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b33')
-    # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '567322d09f9d5113c3a63dea')
+    # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f045ca9f9d510b764381f1')
+    # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f045ca9f9d510b764381f4')
     # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b36')
     # print user_record_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b38')
 
-    # print user_download_record('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '568550149f9d513065c68b33')
+    # print user_download_record('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f045ca9f9d510b764381f1')
 
     # ++ Diff
     diff1 = {
-        "from":"568550149f9d513065c68b36",
-        "to":"568550149f9d513065c68b38",
+        "from":"56f045ca9f9d510b764381f4",
+        "to":"56f045ca9f9d510b764381f1",
         "method":"default",
         "proposition":"reproduced",
         "status":"proposed"
@@ -784,14 +791,14 @@ if __name__ == '__main__':
 
     # print user_get_diffs('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9')
 
-    # print user_diff_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '5685596a9f9d514743604331')
+    # print user_diff_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f04ed99f9d510e567e7623')
     # print user_diff_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '5685596a9f9d514743604332')
 
-    # diff2['status'] = 'agreed'
+    # diff1['status'] = 'agreed'
 
-    # print user_diff_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '5685596a9f9d514743604332', diff2)
+    # print user_diff_update('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f04ed99f9d510e567e7623', diff1)
 
-    # print user_diff_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '5685596a9f9d514743604332')
+    # print user_diff_show('9646216f8e0001cc4bd26dd6fcd213b50f4e44ddeee74c78436677bebc67aee9', '56f04ed99f9d510e567e7623')
 
 
 

@@ -41,7 +41,7 @@ class RecordModel(db.Document):
         self.id = ObjectId()
 
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.datetime.utcnow()
+        self.updated_at = str(datetime.datetime.utcnow())
         return super(RecordModel, self).save(*args, **kwargs)
     
     def update_fields(self, data):
@@ -147,6 +147,13 @@ class RecordModel(db.Document):
         data['head']['comments'] = [comment.extended() for comment in self._comments()]
         data['head']['resources'] = [resource.extended() for resource in self._resources()]
         data['head']['rationels'] = self.rationels
+        if self.environment != None:
+            if self.environment.application != None:
+                data['head']['application'] = self.environment.application.extended()
+            else:
+                data['head']['application'] = {}
+        else:
+            data['head']['application'] = {}
         data['extend'] = self.extend
         # if self.application != None:
         #     data['head']['application'] = self.application.info()

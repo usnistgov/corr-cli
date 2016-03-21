@@ -19,6 +19,7 @@ import traceback
 def apps_get(api_token):
     current_user = check_api(api_token)
     if current_user is not None:
+        logTraffic(endpoint='/<api_token>/developer/apps')
         print current_user.group
         if current_user.group == "developer" or current_user.group == "user":
             if fk.request.method == 'GET':
@@ -45,7 +46,7 @@ def app_logo(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logTraffic(endpoint='/<api_token>/developer/application/logo/<app_id>')
+            logTraffic(endpoint='/<api_token>/developer/app/logo/<app_id>')
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
                 if app != None:
@@ -103,6 +104,7 @@ def app_access(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
+            logTraffic(endpoint='/<api_token>/developer/app/access/<app_id>')
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
                 if app != None:
@@ -127,6 +129,7 @@ def app_search(api_token, app_name):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
+            logTraffic(endpoint='/<api_token>/developer/app/search/<app_name>')
             if fk.request.method == 'GET':
                 apps = ApplicationModel.objects(name__icontains=app_name)
                 apps_dict = {'total_apps':0, 'apps':[]}
@@ -147,11 +150,11 @@ def app_search(api_token, app_name):
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
 # Link for the application tool to test connectivity
-@app.route(API_URL + '/<app_token>/connectivity', methods=['GET'])
+@app.route(API_URL + '/<app_token>/app/connectivity', methods=['GET'])
 def app_connectivity(app_token):
     current_app = check_app(app_token)
     if current_app is not None:
-        logAccess(current_app,'api', '/<app_token>/connectivity')
+        logAccess(current_app,'api', '/<app_token>/app/connectivity')
         if fk.request.method == 'GET':
             name = current_app.name if current_app.name != '' and current_app.name != None else 'unknown'
             return api_response(200, 'Application %s is accessible'%name, current_app.info())

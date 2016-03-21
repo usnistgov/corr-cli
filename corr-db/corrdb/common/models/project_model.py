@@ -76,10 +76,10 @@ class ProjectModel(db.Document):
 
     def extended(self):
         data = self.info()
-        if self.application != None:
-            data['application'] = self.application.info()
-        else:
-            data['application'] = {}
+        # if self.application != None:
+        #     data['application'] = self.application.info()
+        # else:
+        #     data['application'] = {}
         data['tags'] = self.tags
         data['goals'] = self.goals
         data['history'] = [env.extended() for env in self._history()]

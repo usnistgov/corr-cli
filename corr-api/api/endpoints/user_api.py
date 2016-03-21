@@ -244,7 +244,7 @@ def user_messages(api_token, app_token):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/message/create', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/message/create', methods=['POST'])
 @crossdomain(origin='*')
 def user_message_create(api_token, app_token):
     logTraffic(endpoint='/private/<api_token>/<app_token>/message/create')
@@ -338,7 +338,7 @@ def user_message_delete(api_token, app_token, message_id):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/message/update/<message_id>', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/message/update/<message_id>', methods=['POST'])
 @crossdomain(origin='*')
 def user_message_update(api_token, app_token, message_id):
     logTraffic(endpoint='/private/<api_token>/<app_token>/message/update/<message_id>')
@@ -420,7 +420,7 @@ def user_files(api_token, app_token):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/file/upload/<group>/<item_id>', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/file/upload/<group>/<item_id>', methods=['POST'])
 @crossdomain(origin='*')
 def user_file_upload(api_token, app_token, group, item_id):
     logTraffic(endpoint='/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
@@ -691,7 +691,7 @@ def user_file_download(api_token, app_token, file_id):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/file/create', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/file/create', methods=['POST'])
 @crossdomain(origin='*')
 def user_file_create(api_token, app_token):
     logTraffic(endpoint='/private/<api_token>/<app_token>/file/create')
@@ -1016,7 +1016,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/file/update/<file_id>', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/file/update/<file_id>', methods=['POST'])
 @crossdomain(origin='*')
 def user_file_update(api_token, app_token, file_id):
     logTraffic(endpoint='/private/<api_token>/<app_token>/file/update/<file_id>')
@@ -1034,8 +1034,10 @@ def user_file_update(api_token, app_token, file_id):
                 if _file == None:
                     return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
                 else:
-                    if _file.owner != 'public' and _file.owner != str(current_user.id):
+                    if _file.owner != None and _file.owner != str(current_user.id):
                         return api_response(401, 'Unauthorized access', 'This file is private and you are not the owner.')
+                    elif _file.owner == None:
+                        return api_response(401, 'Undefined access', 'This file is public and we do not allow public file upates yet.')
                     else:
                         if fk.request.data:
                             data = json.loads(fk.request.data)
@@ -1085,7 +1087,7 @@ def user_projects(api_token, app_token):
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/projects')
             if fk.request.method == 'GET':
-                projects = ProjectModel.objects(owner=current_user, application=current_app)
+                projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 projects_dict = {'total_projects':len(projects), 'projects':[]}
                 for project in projects:
                     projects_dict['projects'].append(project.extended())
@@ -1107,7 +1109,7 @@ def user_projects_clear(api_token, app_token):
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/projects/clear')
             if fk.request.method == 'GET':
-                projects = ProjectModel.objects(owner=current_user, application=current_app)
+                projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 projects.delete()
                 return api_response(200, 'User %s Projects deleted'%str(current_user.id), 'All the projects have been deleted.')
             else:
@@ -1127,7 +1129,7 @@ def user_envs_clear(api_token, app_token):
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/envs/clear')
             if fk.request.method == 'GET':
-                projects = ProjectModel.objects(owner=current_user, application=current_app)
+                projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 for project in projects:
                     for env_id in project.history:
                         env = EnvironmentModel.objects.with_id(env_id)
@@ -1170,7 +1172,7 @@ def user_project_comments(api_token, app_token, project_id):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/project/create', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/project/create', methods=['POST'])
 @crossdomain(origin='*')
 def user_project_create(api_token, app_token):
     logTraffic(endpoint='/private/<api_token>/<app_token>/project/create')
@@ -1225,7 +1227,7 @@ def user_project_create(api_token, app_token):
                     if not created:
                         return api_response(200, 'Project already exists', project.info())
                     else:
-                        project.application = current_app
+                        # project.application = current_app
                         project.description = description
                         project.goals = goals
                         project.tags = tags
@@ -1411,7 +1413,7 @@ def user_project_update(api_token, app_token, project_id):
                     else:
                         if fk.request.data:
                             data = json.loads(fk.request.data)
-                            application_id = data.get('application', None)
+                            # application_id = data.get('application', None)
                             owner_id = data.get('owner', None)
                             name = data.get('name', project.name)
                             description = data.get('description', project.description)
@@ -1425,12 +1427,12 @@ def user_project_update(api_token, app_token, project_id):
                             application = None
                             owner = None
                             cloned_from = None
-                            if application_id == None:
-                                application = project.application
-                            else:
-                                project = ApplicationModel.objects.with_id(application_id)
-                                if application == None:
-                                    application = project.application
+                            # if application_id == None:
+                            #     application = project.application
+                            # else:
+                            #     project = ApplicationModel.objects.with_id(application_id)
+                            #     if application == None:
+                            #         application = project.application
                             if owner_id == None:
                                 owner = project.owner
                             else:
@@ -1447,7 +1449,7 @@ def user_project_update(api_token, app_token, project_id):
                                 if cloned_from == None:
                                     cloned_from = project.cloned_from
 
-                            project.application = application
+                            # project.application = application
                             project.owner = owner
                             project.name = name
                             project.description = description
@@ -1586,7 +1588,7 @@ def user_project_env_show(api_token, app_token, project_id, env_id):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/project/env/next/<project_id>', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/project/env/next/<project_id>', methods=['POST'])
 @crossdomain(origin='*')
 def user_project_env_push(api_token, app_token, project_id):
     logTraffic(endpoint='/private/<api_token>/<app_token>/project/env/next/<project_id>')
@@ -1616,18 +1618,18 @@ def user_project_env_push(api_token, app_token, project_id):
                         if project.owner != current_user:
                             return api_response(401, 'Unauthorized access', 'You are not this project owner.')
                         else:
-                            env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
+                            env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics, application = current_app)
                             if not created:
                                 return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                             else:
-                                version, created = VersionModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                                version, created = VersionModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()))
                                 if version_dict != None:
                                     version.system = version_dict.get('system','unknown')
                                     version.baseline = version_dict.get('baseline','')
                                     version.marker = version_dict.get('marker','')
                                     version.save()
                                     env.version = version
-                                bundle, created = BundleModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                                bundle, created = BundleModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()))
                                 if bundle_dict != None:
                                     bundle.scope = bundle_dict.get('scope','unknown')
                                     location = bundle_dict.get('location', '')
@@ -1655,7 +1657,7 @@ def user_project_env_push(api_token, app_token, project_id):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>', methods=['POST'])
 @crossdomain(origin='*')
 def user_project_env_update(api_token, app_token, project_id, env_id):
     logTraffic(endpoint='/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
@@ -1810,7 +1812,7 @@ def user_records_clear(api_token, app_token, project_id):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/project/record/create/<project_id>', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/project/record/create/<project_id>', methods=['POST'])
 @crossdomain(origin='*')
 def user_record_create(api_token, app_token, project_id):
     logTraffic(endpoint='/private/<api_token>/<app_token>/record/create')
@@ -1882,9 +1884,9 @@ def user_record_create(api_token, app_token, project_id):
                         #             resources.append(res)
                         # print resources
                         if environment != None:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=current_app, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                         else:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=current_app, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                         
                         if len(data) != 0:
                             body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
@@ -1948,7 +1950,7 @@ def user_record_delete(api_token, app_token, record_id):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/record/update/<record_id>', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/record/update/<record_id>', methods=['POST'])
 @crossdomain(origin='*')
 def user_record_update(api_token, app_token, record_id):
     logTraffic(endpoint='/private/<api_token>/<app_token>/record/update/<record_id>')
@@ -1973,7 +1975,7 @@ def user_record_update(api_token, app_token, record_id):
                             data = json.loads(fk.request.data)
                             project_id = data.get('project', None)
                             data_pop(data, 'project')
-                            application_id = data.get('application', None)
+                            # application_id = data.get('application', None)
                             data_pop(data, 'application')
                             parent_id = data.get('parent', None)
                             data_pop(data, 'parent')
@@ -2002,7 +2004,7 @@ def user_record_update(api_token, app_token, record_id):
                             rationels = data.get('rationels', [])
                             data_pop(data, 'rationels')
                             project = None
-                            application = None
+                            # application = None
                             parent = None
                             environment = None
                             cloned_from = None
@@ -2012,12 +2014,12 @@ def user_record_update(api_token, app_token, record_id):
                                 project = ProjectModel.objects.with_id(project_id)
                                 if project == None:
                                     project = record.project
-                            if application_id == None:
-                                application = record.application
-                            else:
-                                record = ApplicationModel.objects.with_id(application_id)
-                                if application == None:
-                                    application = record.application
+                            # if application_id == None:
+                            #     application = record.application
+                            # else:
+                            #     record = ApplicationModel.objects.with_id(application_id)
+                            #     if application == None:
+                            #         application = record.application
                             if parent_id == None:
                                 parent = record.parent
                             else:
@@ -2043,7 +2045,7 @@ def user_record_update(api_token, app_token, record_id):
                                 if cloned_from == None:
                                     cloned_from = record.cloned_from
                             record.project = project
-                            record.application = application
+                            # record.application = application
                             record.parent = parent
                             record.label = label
                             record.system = system
@@ -2128,7 +2130,7 @@ def user_diffs(api_token, app_token):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/private/<api_token>/<app_token>/diff/create', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/diff/create', methods=['POST'])
 @crossdomain(origin='*')
 def user_diff_create(api_token, app_token):
     logTraffic(endpoint='/private/<api_token>/<app_token>/diff/create')
@@ -2231,7 +2233,7 @@ def user_diff_delete(api_token, app_token, diff_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 #++++
-@app.route(API_URL + '/private/<api_token>/<app_token>/diff/update/<diff_id>', methods=['GET'])
+@app.route(API_URL + '/private/<api_token>/<app_token>/diff/update/<diff_id>', methods=['POST'])
 @crossdomain(origin='*')
 def user_diff_update(api_token, app_token, diff_id):
     logTraffic(endpoint='/private/<api_token>/<app_token>/diff/update/<diff_id>')

@@ -59,8 +59,8 @@ if __name__ == '__main__':
 
     # print get_apps()
 
-    print app_show('56f0065f9f9d5179bb5569c6')
-    print app_show('56f0065f9f9d5179bb5569c9')
+    # print app_show('56f0065f9f9d5179bb5569c6')
+    # print app_show('56f0065f9f9d5179bb5569c9')
 
     # print app_delete('56f0065f9f9d5179bb5569c6')
     # print app_delete('56f0065f9f9d5179bb5569c9')
