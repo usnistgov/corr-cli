@@ -2,7 +2,8 @@ import httplib
 import json
 
 # conn = httplib.HTTPSConnection("http://0.0.0.0:5100")
-base = "/api/v1/admin"
+# Root CoRR api token.
+base = "/api/v0.1/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/admin"
 headers = {"Accept": "application/json"}
 
 def app_create(data={}):
@@ -41,12 +42,12 @@ if __name__ == '__main__':
 
 
     app1 = {
-        "developer":"56731c3a9f9d5110105a27f7",
+        "developer":"56f004079f9d51790fa8316a",
         "name":"CoRR-Cmd",
         "about":"This application is the CoRR native client. It is an event based simulation management tool. It uses the system calls and processes table stack and some information extraction to make the record more sustainable and reusable. CoRR-Cmd support parallel and distributed simulation."
     }
     app2 = {
-        "developer":"56731c3a9f9d5110105a27f7",
+        "developer":"56f004079f9d51790fa8316a",
         "name":"Sumatra",
         "about":"Sumatra is a tool for managing and tracking projects based on numerical simulation and/or analysis, with the aim of supporting reproducible research. It can be thought of as an automated electronic lab notebook for computational projects."
     }
@@ -58,10 +59,13 @@ if __name__ == '__main__':
 
     # print get_apps()
 
-    # print app_delete('56731d849f9d5110105a280b')
-    # print app_delete('56731d859f9d5110105a280f')
+    print app_show('56f0065f9f9d5179bb5569c6')
+    print app_show('56f0065f9f9d5179bb5569c9')
+
+    # print app_delete('56f0065f9f9d5179bb5569c6')
+    # print app_delete('56f0065f9f9d5179bb5569c9')
 
     # print get_apps()
 
-    print app_show('56731d849f9d5110105a280b')
-    print app_show('56731d859f9d5110105a280f')
+    # print app_show('56f0065f9f9d5179bb5569c6')
+    # print app_show('56f0065f9f9d5179bb5569c9')

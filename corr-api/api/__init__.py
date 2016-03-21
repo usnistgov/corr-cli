@@ -47,6 +47,14 @@ def check_app(token):
         print "%s -- %s." %(str(application.developer.id), application.name)
     return ApplicationModel.objects(app_token=token).first()
 
+def check_admin(token):
+    user_model = UserModel.objects(api_token=token).first()
+    if user_model == None:
+        return None
+    else:
+        print user_model.group
+        return user_model if user_model.group == "admin" else None
+
 # def docker_gen(current_user, project):
 #     docker_tar = tarfile.open("/tmp/"+str(current_user.id)+"-"+project.name+"-docker.tar", "w")
 #     # print project.docker
@@ -839,7 +847,7 @@ def logTraffic(endpoint=''):
 def logAccess(app=None, scope='root', endpoint=''):
     (traffic, created) = AccessModel.objects.get_or_create(application=app, scope=scope, endpoint="%s%s"%(API_URL, endpoint))
 
-def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, file_obj=None, comment=None):
+def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
     category = ''
     periode = ''
     traffic = 0

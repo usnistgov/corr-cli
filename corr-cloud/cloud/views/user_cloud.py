@@ -83,7 +83,7 @@ def user_register():
                         while True:
                             # Many trials because of API key generation failures some times.
                             try:
-                                if group != "admin":
+                                if group != "admin" and email != "root@corr.gov":
                                     if _account == None:
                                         try:
                                             _account = application.accounts.create({
@@ -95,6 +95,7 @@ def user_register():
                                                 "surname" : "undefined",
                                             })
                                         except:
+                                            print str(traceback.print_exc())
                                             _account = None
                                     if _account != None:
                                         print "created!!!"
@@ -105,7 +106,7 @@ def user_register():
                                 else:
                                 # # Many trials because of API key generation failures some times.
                                 # (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'DDSMSession_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
-                                    if email == "root@coor.gov":
+                                    if email == "root@corr.gov":
                                         if _account == None:
                                             try:
                                                 _account = application.accounts.create({
@@ -117,6 +118,7 @@ def user_register():
                                                     "surname" : "CoRR"
                                                 })
                                             except:
+                                                print str(traceback.print_exc())
                                                 _account = None
                                         if _account != None:
                                             (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group="admin", api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
@@ -146,7 +148,7 @@ def user_register():
                                                                 "surname" : "undefined"
                                                             })
                                                         except:
-                                                            pass
+                                                            print str(traceback.print_exc())
                                                     if _account != None:
                                                         (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
                                                         # admin_model = UserModel.objects(email=admin["email"]).first()

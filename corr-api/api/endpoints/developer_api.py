@@ -15,7 +15,7 @@ import traceback
 
 # In 0.1 allow user to have same privileges as developer
 
-@app.route(API_URL + '/<api_token>/applications', methods=['GET'])
+@app.route(API_URL + '/<api_token>/developer/apps', methods=['GET'])
 def apps_get(api_token):
     current_user = check_api(api_token)
     if current_user is not None:
@@ -40,12 +40,12 @@ def apps_get(api_token):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/<api_token>/application/logo/<app_id>', methods=['GET'])
+@app.route(API_URL + '/<api_token>/developer/app/logo/<app_id>', methods=['GET'])
 def app_logo(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logTraffic(endpoint='/<api_token>/application/logo/<app_id>')
+            logTraffic(endpoint='/<api_token>/developer/application/logo/<app_id>')
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
                 if app != None:
@@ -98,7 +98,7 @@ def app_logo(api_token, app_id):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/<api_token>/application/access/<app_id>', methods=['GET'])
+@app.route(API_URL + '/<api_token>/developer/app/access/<app_id>', methods=['GET'])
 def app_access(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
@@ -122,7 +122,7 @@ def app_access(api_token, app_id):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/<api_token>/application/search/<app_name>', methods=['GET'])
+@app.route(API_URL + '/<api_token>/developer/app/search/<app_name>', methods=['GET'])
 def app_search(api_token, app_name):
     current_user = check_api(api_token)
     if current_user is not None:

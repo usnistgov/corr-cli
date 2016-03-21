@@ -89,8 +89,9 @@ def user_search(api_token, app_token, user_name):
                     index = 0
                     for name in names:
                         if name != '':
-                            if name in profile.fname or name in profile.lname:
-                                exists[index] = True
+                            if profile != None:
+                                if name in profile.fname or name in profile.lname:
+                                    exists[index] = True
                         else:
                             exists[index] = True
                         index += 1
