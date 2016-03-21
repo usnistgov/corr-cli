@@ -14,8 +14,10 @@ See the live instance at <a href="http://corr-root.org/">corr-root.org</a>.
 The Cloud of Reproducible Records (CoRR) is an app for storing and
 viewing metadata associated with simulation records.
 
+[![Gitter Chat](https://img.shields.io/gitter/room/gitterHQ/gitter.svg)](https://gitter.im/usnistgov/corr)
+
 * **[INSTALL](INSTALLATION.md)** – installation instructions.
-* **[LICENSE](LICENSE.md)** – the license.
+* **[LICENSE](LICENSE)** – the license.
 
 ## Installing CoRR for Development
 
