@@ -21,14 +21,14 @@ viewing metadata associated with simulation records.
 
 CoRR is designed as a web app and if possible users should try and use
 an exising instance such as
-[http://corr-root.org](http://corr-root.org:5000). If you wish to install
+[http://corr-root.org:5000](http://corr-root.org:5000). If you wish to install
 an instance of CoRR for development or local usage, then follow the
 instructions in [INSTALLATION.md](INSTALLATION.md).
 
 ## Using CoRR
 
 To use CoRR as a user, view the help on the live instance at
-[http://corr-root.org/help](http://corr-root.org:5000/help).
+[http://corr-root.org:5000/help](http://corr-root.org:5000/help).
 
 ## Links
 
