@@ -1,6 +1,6 @@
 <p align="center">
     <img src="https://rawgit.com/usnistgov/corr/master/corr-view/frontend/images/logo.svg"
-         height="130"
+         height="180"
          alt="CoRR logo"
          class="inline">
 </p>
@@ -28,7 +28,7 @@ instructions in [INSTALLATION.md](INSTALLATION.md).
 ## Using CoRR
 
 To use CoRR as a user, view the help on the live instance at
-[http://corr-root.org/help](http://corr-root.org/help).
+[http://corr-root.org/help](http://corr-root.org:5000/help).
 
 ## Links
 
