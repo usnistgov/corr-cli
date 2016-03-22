@@ -1,6 +1,6 @@
 <p align="center">
     <img src="https://rawgit.com/usnistgov/corr/master/corr-view/frontend/images/logo.svg"
-         height="180"
+         height="240"
          alt="CoRR logo"
          class="inline">
 </p>
