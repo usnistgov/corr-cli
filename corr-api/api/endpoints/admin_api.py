@@ -1198,7 +1198,7 @@ def admin_project_create(api_token):
         if fk.request.method == 'POST':
             if fk.request.data:
                 data = json.loads(fk.request.data)
-                application_id = data.get('app_token', None)
+                # application_id = data.get('app_token', None)
                 owner_id = data.get('api_token', None)
                 name = data.get('name', '')
                 description = data.get('description', '')
@@ -1230,7 +1230,7 @@ def admin_project_create(api_token):
                     logo_description = 'This is the default image used for the project logo in case none is provided.'
                     logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
                     
-                    application = None
+                    # application = None
                     owner = None
                     cloned_from = ''
                     owner = UserModel.objects(api_token=owner_id).first()
@@ -1238,14 +1238,14 @@ def admin_project_create(api_token):
                         cloned = RecordModel.objects.with_id(cloned_from_id)
                         if cloned != None:
                             cloned_from = str(clone.id)
-                    if application_id != None:
-                        application = ApplicationModel.objects(app_token=application_id).first()
-                    if owner == None or (application == None and application_id != None) or (cloned_from == '' and cloned_from_id != '', api_token):
+                    # if application_id != None:
+                    #     application = ApplicationModel.objects(app_token=application_id).first()
+                    if owner == None or (cloned_from == '' and cloned_from_id != ''):
                         return api_response(400, 'Missing references mandatory fields', 'A project should have an existing owner api token and when provided an existing application token and original record.')
-                    if application != None:
-                        project, created = ProjectModel.objects.get_or_create(application=application, owner=owner, name=name)
-                    else:
-                        project, created = ProjectModel.objects.get_or_create(owner=owner, name=name)
+                    # if application != None:
+                    #     project, created = ProjectModel.objects.get_or_create(application=application, owner=owner, name=name)
+                    # else:
+                    project, created = ProjectModel.objects.get_or_create(owner=owner, name=name)
                     if not created:
                         return api_response(200, 'Project already exists', project.info())
                     else:
@@ -1395,7 +1395,7 @@ def admin_project_update(project_id, api_token):
                 if fk.request.data:
                     data = json.loads(fk.request.data)
                     
-                    application_id = data.get('application', None)
+                    # application_id = data.get('application', None)
                     owner_id = data.get('owner', None)
                     name = data.get('name', project.name)
                     description = data.get('description', project.description)
@@ -1409,12 +1409,12 @@ def admin_project_update(project_id, api_token):
                     application = None
                     owner = None
                     cloned_from = None
-                    if application_id == None:
-                        application = project.application
-                    else:
-                        project = ApplicationModel.objects.with_id(application_id)
-                        if application == None:
-                            application = project.application
+                    # if application_id == None:
+                    #     application = project.application
+                    # else:
+                    #     project = ApplicationModel.objects.with_id(application_id)
+                    #     if application == None:
+                    #         application = project.application
                     if owner_id == None:
                         owner = project.owner
                     else:
@@ -1431,7 +1431,7 @@ def admin_project_update(project_id, api_token):
                         if cloned_from == None:
                             cloned_from = project.cloned_from
 
-                    project.application = application
+                    # project.application = application
                     project.owner = owner
                     project.name = name
                     project.description = description
@@ -1549,7 +1549,7 @@ def admin_project_env_push(project_id, api_token):
         if fk.request.method == 'POST':
             if fk.request.data:
                 data = json.loads(fk.request.data)
-
+                application_id = data.get('app_token', None)
                 group = data.get('group', 'undefined')
                 system = data.get('system', 'undefined')
                 specifics = data.get('specifics', {})
@@ -1561,7 +1561,12 @@ def admin_project_env_push(project_id, api_token):
                 if project == None:
                     return api_response(400, 'Missing mandatory fields', 'Unable to find this project.')
                 else:
+                    application = None
+                    if application_id != None:
+                        application = ApplicationModel.objects(app_token=application_id).first()
                     env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
+                    if application != None:
+                        env.application = application
                     if not created:
                         return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                     else:
@@ -1912,8 +1917,8 @@ def admin_record_create(api_token):
                 data = json.loads(fk.request.data)
                 project_id = data.get('project', None)
                 data_pop(data, 'project')
-                application_id = data.get('app_token', None)
-                data_pop(data, 'app_token')
+                # application_id = data.get('app_token', None)
+                # data_pop(data, 'app_token')
                 parent_id = data.get('parent', '')
                 data_pop(data, 'parent')
                 label = data.get('label', 'Recorded at %s'%str(datetime.datetime.utcnow()))
@@ -1945,13 +1950,13 @@ def admin_record_create(api_token):
                     return api_response(400, 'Missing mandatory fields', ' record should have a record to reference itself to.')
                 else:
                     project = None
-                    application = None
+                    # application = None
                     environment = None
                     cloned_from = ''
                     parent = ''
                     project = ProjectModel.objects.with_id(project_id)
-                    if application_id != None:
-                        application = ApplicationModel.objects(app_token=application_id).first()
+                    # if application_id != None:
+                    #     application = ApplicationModel.objects(app_token=application_id).first()
                     if environment_id != None:
                         environment = EnvironmentModel.objects.with_id(environment_id)
 
@@ -1963,7 +1968,7 @@ def admin_record_create(api_token):
                         parent_inst = RecordModel.objects.with_id(parent_id)
                         if parent_inst != None:
                             parent = str(parent_inst.id)
-                    if (project == None and project_id != None) or (application == None and application_id != None) or (environment == None and environment_id != None) or (cloned_from == '' and cloned_from_id != '') or (parent == '' and parent_id != '', api_token):
+                    if (project == None and project_id != None) or (environment == None and environment_id != None) or (cloned_from == '' and cloned_from_id != '') or (parent == '' and parent_id != ''):
                         return api_response(400, 'Missing references mandatory fields', 'A record should have an existing project and when provided an existing application, parent record and original record.')
                     if environment_id == None:
                         history = project.history
@@ -1975,16 +1980,16 @@ def admin_record_create(api_token):
                     #         if res != None:
                     #             resources.append(res)
                     # print resources
-                    if application != None:
-                        if environment != None:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=application, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
-                        else:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=application, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                    # if application != None:
+                    #     if environment != None:
+                    #         record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=application, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                    #     else:
+                    #         record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=application, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                    # else:
+                    if environment != None:
+                        record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     else:
-                        if environment != None:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
-                        else:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                        record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     if len(data) != 0:
                         body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
                     logStat(record=record)
@@ -2049,8 +2054,8 @@ def admin_record_update(record_id, api_token):
 
                     project_id = data.get('project', None)
                     data_pop(data, 'project')
-                    application_id = data.get('application', None)
-                    data_pop(data, 'application')
+                    # application_id = data.get('application', None)
+                    # data_pop(data, 'application')
                     parent_id = data.get('parent', None)
                     data_pop(data, 'parent')
                     label = data.get('label', record.label)
@@ -2088,12 +2093,12 @@ def admin_record_update(record_id, api_token):
                         project = ProjectModel.objects.with_id(project_id)
                         if project == None:
                             project = record.project
-                    if application_id == None:
-                        application = record.application
-                    else:
-                        record = ApplicationModel.objects.with_id(application_id)
-                        if application == None:
-                            application = record.application
+                    # if application_id == None:
+                    #     application = record.application
+                    # else:
+                    #     record = ApplicationModel.objects.with_id(application_id)
+                    #     if application == None:
+                    #         application = record.application
                     if parent_id == None:
                         parent = record.parent
                     else:
@@ -2119,7 +2124,7 @@ def admin_record_update(record_id, api_token):
                         if cloned_from == None:
                             cloned_from = record.cloned_from
                     record.project = project
-                    record.application = application
+                    # record.application = application
                     record.parent = parent
                     record.label = label
                     record.system = system

@@ -48,7 +48,7 @@ def get_records():
 if __name__ == '__main__':
 
     record1 = {
-        "project":"567321a49f9d511391055d1c",
+        "project":"56f161539f9d51478c0a7c45",
         "app_token":"dad86479d3f0e4b1c6ed17b8ab02a9df4fa65e61761d5952f45770c19fb5194a",
         "system":{
             "architecture_bits": "64bit",
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     }
 
     record2 = {
-        "project":"567321a49f9d511391055d20",
+        "project":"56f161539f9d51478c0a7c47",
         "app_token":"a07e6c383a5ce8ba4497c6ebce2c6ed065b1cf20a4a57d263932187d7b85b655",
         "system":{
             "machine": "TGA",
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     }
 
     record3 = {
-        "project":"567321a49f9d511391055d20",
+        "project":"56f161539f9d51478c0a7c47",
         "app_token":"a07e6c383a5ce8ba4497c6ebce2c6ed065b1cf20a4a57d263932187d7b85b655",
         "system":{
             "machine": "IGA",
@@ -198,7 +198,7 @@ if __name__ == '__main__':
     }
 
     record4 = {
-        "project":"56732a619f9d5116675d11b6",
+        "project":"56f161539f9d51478c0a7c49",
         "system":{
             "architecture_bits": "64bit",
             "architecture_linkage": "ELF",
@@ -276,17 +276,17 @@ if __name__ == '__main__':
 
     # print get_records()
 
-    print record_update('567322d09f9d5113c3a63dea', {'access':'public'})
-    print record_update('567322d09f9d5113c3a63ded', {'access':'public'})
-    print record_update('567322d09f9d5113c3a63df0', {'access':'public'})
-    print record_update('56732abb9f9d5116675d11bc', {'access':'public'})
+    print record_update('56f166ff9f9d51486c4fac3b', {'access':'public'})
+    print record_update('56f166ff9f9d51486c4fac3e', {'access':'public'})
+    print record_update('56f166ff9f9d51486c4fac40', {'access':'public'})
+    print record_update('56f166ff9f9d51486c4fac42', {'access':'public'})
 
-    print record_show('567322d09f9d5113c3a63dea')
-    print record_show('567322d09f9d5113c3a63ded')
-    print record_show('567322d09f9d5113c3a63df0')
-    print record_show('56732abb9f9d5116675d11bc')
+    print record_show('56f166ff9f9d51486c4fac3b')
+    print record_show('56f166ff9f9d51486c4fac3e')
+    print record_show('56f166ff9f9d51486c4fac40')
+    print record_show('56f166ff9f9d51486c4fac42')
 
-    # print record_delete('567322d09f9d5113c3a63dea')
-    # print record_delete('567322d09f9d5113c3a63ded')
-    # print record_delete('567322d09f9d5113c3a63df0')
-    # print record_delete('56732abb9f9d5116675d11bc')
+    # print record_delete('56f166ff9f9d51486c4fac3b')
+    # print record_delete('56f166ff9f9d51486c4fac3e')
+    # print record_delete('56f166ff9f9d51486c4fac40')
+    # print record_delete('56f166ff9f9d51486c4fac42')
