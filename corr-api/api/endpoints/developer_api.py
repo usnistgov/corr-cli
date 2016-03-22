@@ -15,7 +15,7 @@ import traceback
 
 # In 0.1 allow user to have same privileges as developer
 
-@app.route(API_URL + '/<api_token>/developer/apps', methods=['GET'])
+@app.route(API_URL + '/<api_token>/developer/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def apps_get(api_token):
     current_user = check_api(api_token)
     if current_user is not None:
@@ -41,7 +41,7 @@ def apps_get(api_token):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/<api_token>/developer/app/logo/<app_id>', methods=['GET'])
+@app.route(API_URL + '/<api_token>/developer/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def app_logo(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
@@ -99,7 +99,7 @@ def app_logo(api_token, app_id):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/<api_token>/developer/app/access/<app_id>', methods=['GET'])
+@app.route(API_URL + '/<api_token>/developer/app/access/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def app_access(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
@@ -124,7 +124,7 @@ def app_access(api_token, app_id):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/<api_token>/developer/app/search/<app_name>', methods=['GET'])
+@app.route(API_URL + '/<api_token>/developer/app/search/<app_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def app_search(api_token, app_name):
     current_user = check_api(api_token)
     if current_user is not None:
@@ -150,7 +150,7 @@ def app_search(api_token, app_name):
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
 # Link for the application tool to test connectivity
-@app.route(API_URL + '/<app_token>/app/connectivity', methods=['GET'])
+@app.route(API_URL + '/<app_token>/app/connectivity', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def app_connectivity(app_token):
     current_app = check_app(app_token)
     if current_app is not None:

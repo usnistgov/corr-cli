@@ -30,6 +30,351 @@ import string
 import os
 import thread
 
+@app.route(API_URL + '/<api_token>/admin/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+def admin_search(api_token, key_words):
+    logTraffic(endpoint='/<api_token>/admin/search/<key_words>')
+    admin_user = check_admin(api_token)
+    if admin_user == None:
+        return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
+    else:
+        if fk.request.method == 'GET':
+            results = {'results':{}, 'total-results':0}
+            results['results']['users'] = {'users-list':[], 'users-total':0}
+            results['results']['apps'] = {'apps-list':[], 'apps-total':0}
+            results['results']['projects'] = {'projects-list':[], 'projects-total':0}
+            results['results']['records'] = {'records-list':[], 'records-total':0}
+            results['results']['envs'] = {'envs-list':[], 'envs-total':0}
+            results['results']['bundles'] = {'bundles-list':[], 'bundles-total':0}
+            results['results']['files'] = {'files-list':[], 'files-total':0}
+            results['results']['versions'] = {'versions-list':[], 'versions-total':0}
+
+            words = key_words.split('-')
+
+            for user in UserModel.objects():
+                exists = [False for word in words]
+                condition = [True for word in words]
+                profile = ProfileModel.objects(user=user).first()
+                index = 0
+                for word in words:
+                    if word != '':
+                        if profile != None:
+                            try:
+                                if word.lower() in user.email.lower():
+                                    exists[index] = True
+                            except:
+                                pass
+                            try:
+                                if word.lower() in profile.fname.lower():
+                                    exists[index] = True
+                            except:
+                                pass
+                            try:
+                                if word.lower() in profile.lname.lower():
+                                    exists[index] = True
+                            except:
+                                pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['users']['users-list'].append({'user':user.info(), 'profile':profile.info()})
+                results['results']['users']['users-total'] = len(results['results']['users']['users-list'])
+
+            for app in ApplicationModel.objects():
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in app.possible_access.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in app.network.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in app.storage.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in app.about.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in app.name.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['apps']['apps-list'].append(app.info())
+                results['results']['apps']['apps-total'] = len(results['results']['apps']['apps-list'])
+
+            for project in ProjectModel.objects():
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in project.name.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in project.description.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in project.goals.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(project.tags).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in project.access.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in project.group.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['projects']['projects-list'].append(project.info())
+                results['results']['projects']['projects-total'] = len(results['results']['projects']['projects-list'])
+
+            for record in RecordModel.objects():
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in record.label.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.tags).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.system).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.execution).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.preparation).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.inputs).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.outputs).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.dependencies).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in record.status.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in record.access.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.rationels).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['records']['records-list'].append(record.info())
+                results['results']['records']['records-total'] = len(results['results']['records']['records-list'])
+
+            for env in EnvironmentModel.objects():
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in env.group.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in env.system.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(env.specifics).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['envs']['envs-list'].append(env.info())
+                results['results']['envs']['envs-total'] = len(results['results']['envs']['envs-list'])
+
+            for bundle in BundleModel.objects():
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in bundle.scope.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in bundle.location.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in bundle.mimetype.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['bundles']['bundles-list'].append(bundle.info())
+                results['results']['bundles']['bundles-total'] = len(results['results']['bundles']['bundles-list'])
+
+            for file_ in FileModel.objects():
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in file_.mimetype.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.name.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.path.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.storage.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.location.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.group.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.description.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['files']['files-list'].append(file_.info())
+                results['results']['files']['files-total'] = len(results['results']['files']['files-list'])
+
+            for version in VersionModel.objects():
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in version.system.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in version.baseline.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in version.marker.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['versions']['versions-list'].append(app.info())
+                results['results']['versions']['versions-total'] = len(results['results']['versions']['versions-list'])
+
+            results['total-results'] += results['results']['users']['users-total']
+            results['total-results'] += results['results']['apps']['apps-total']
+            results['total-results'] += results['results']['projects']['projects-total']
+            results['total-results'] += results['results']['records']['records-total']
+            results['total-results'] += results['results']['envs']['envs-total']
+            results['total-results'] += results['results']['bundles']['bundles-total']
+            results['total-results'] += results['results']['files']['files-total']
+            results['total-results'] += results['results']['versions']['versions-total']
+            
+            return api_response(200, 'Search results for: [%s]'%key_words, results)
+        else:
+            return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 # admin stuff
 @app.route(API_URL + '/<api_token>/admin/stats', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
