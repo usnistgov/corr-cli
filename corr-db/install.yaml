@@ -8,7 +8,7 @@
   with_items:
     - mongodb
 
-- name: install required packages
+- name: install required corrdb packages
   shell: "{{ conda }} env update -n {{ corr_env }} --file {{ corr_path }}/corr-db/requirements.yaml"
 
 - name: install corrdb
@@ -30,6 +30,8 @@
     port: 27017
 
 - name: run the corrdb tests
-  shell: "{{ env_path }}/nosetests"
+  shell: "{{ env_path }}/python -c \"import corrdb; corrdb.test()\""
   args:
     chdir: "{{ corr_path }}/corr-db"
+  async: 1000
+  poll: 0
