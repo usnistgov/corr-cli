@@ -1,0 +1,20 @@
+- name: check if corr is present
+  stat: path="{{ corr_path }}/.git"
+  register: corr_cloned
+
+- name: clone corr repository
+  git:
+    repo: https://github.com/{{ corr_repo }}.git
+    dest: "{{ corr path }}"
+    version: "{{ corr_version }}"
+  when: corr_cloned.stat.exists == False
+
+- name: install corrdb
+  shell: "{{ env_path }}/python setup.py install"
+  args:
+    chdir: "{{ corr_path }}/corr-db"
+
+- name: check import corrdb
+  shell: "{{ python }} -c \"import corrdb\""
+  args:
+    chdir: "{{ corr_path }}/corr-db"

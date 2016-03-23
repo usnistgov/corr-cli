@@ -1,0 +1,20 @@
+- name: playbook to install CoRR
+  hosts: localhost
+  connection: local
+  vars:
+    local_path: "{{ lookup('env', 'HOME') }}"
+    anaconda_path: "{{ local_path }}/anaconda"
+    corr_path: "{{ local_path }}/git/corr"
+    corr_env: corr-test
+    corr_version: master
+    corr_repo: usnistgov/corr
+    conda: "{{ anaconda_path }}/bin/conda"
+    env_path: "{{ anaconda_path }}/envs/{{ corr_env }}/bin"
+    python: "{{ anaconda_path }}/envs/{{ corr_env }}/bin/python"
+  tasks:
+    - include: mongo.yaml
+      tags: db
+    - include: conda.yaml
+      tags: api, cloud, db
+    - include: corrdb.yaml
+      tags: api, cloud, db
