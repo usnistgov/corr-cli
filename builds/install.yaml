@@ -5,7 +5,7 @@
     local_path: "{{ lookup('env', 'HOME') }}"
     anaconda_path: "{{ local_path }}/anaconda"
     corr_path: "{{ local_path }}/git/corr"
-    corr_env: corr-test
+    corr_env: corr
     corr_version: master
     corr_repo: usnistgov/corr
     conda: "{{ anaconda_path }}/bin/conda"
