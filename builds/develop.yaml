@@ -1,0 +1,34 @@
+- name: kill running servers
+  shell: killall {{ python }} /usr/bin/jekyll
+  ignore_errors: yes
+
+- name: wait for 5 seconds
+  wait_for:
+    timeout: 5
+
+- name: run api flask server
+  shell: bash -c "cd {{ corr_path }}/corr-api; {{ python }} run.py &> {{ corr_path }}/api.log"
+  async: 3600
+  poll: 0
+  register: api_server_result
+
+- name: run cloud flask server
+  shell: bash -c "cd {{ corr_path }}/corr-cloud; {{ python }} run.py &> {{ corr_path }}/cloud.log"
+  async: 3600
+  poll: 0
+  register: cloud_server_result
+
+- name: run jekyll server
+  shell: bash -c "cd {{ corr_path }}/corr-view/frontend; /usr/bin/jekyll serve --port 4000 --host 0.0.0.0 &> {{ corr_path }}/view.log"
+  async: 3600
+  poll: 0
+  register: view_server_result
+
+- name: check status
+  async_status:
+    jid: "{{ item.ansible_job_id }}"
+  register: check_result
+  retries: 3600
+  delay: 60
+  with_items: "[{{ api_server_result }}, {{ cloud_server_result }}, {{ view_server_result }}]"
+  until: check_result.finished
