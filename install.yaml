@@ -40,8 +40,13 @@
       shell: "{{ conda }} update conda"
       when: anaconda_dir.stat.exists == False
 
+    - name: check if conda environment exists
+      stat: path="{{ anaconda_path }}/envs/{{ corr_env }}"
+      register: corr_env_dir
+
     - name: create corr conda env
       shell: "{{ conda }} create -n {{ corr_env }} python"
+      when: corr_env_dir.stat.exists == False
 
     - name: check if corr is present
       stat: path="{{ corr_path }}/.git"
