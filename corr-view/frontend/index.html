@@ -18,12 +18,12 @@
     <title>CoRR - Cloud of Reproducible Records</title>
 
     <!-- Favicons-->
-    <link rel="icon" href="images/favicon/logo.png" sizes="32x32">
+    <link rel="icon" href="images/logo.png" sizes="32x32">
     <!-- Favicons-->
-    <link rel="apple-touch-icon-precomposed" href="images/favicon/apple-touch-icon-152x152.png" sizes="152x152">
+    <link rel="apple-touch-icon-precomposed" href="images/logo.png" sizes="152x152">
     <!-- For iPhone -->
     <meta name="msapplication-TileColor" content="#00bcd4">
-    <meta name="msapplication-TileImage" content="images/favicon/logo.svg" sizes="144x144">
+    <meta name="msapplication-TileImage" content="images/logo.png" sizes="144x144">
     <!-- For Windows Phone -->
 
 
@@ -58,21 +58,35 @@
         <div class="navbar-fixed">
             <nav class="cyan">
                 <div class="nav-wrapper">
-                    <h1 class="logo-wrapper cd-headline letters type"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/logo.png" alt="corr logo"</a> <span class="logo-text">CoRR Home</span></h1>
+                    <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
                     <ul class="nav-bar right hide-on-med-and-down">
                         <li class="search-out">
                             <input type="text" class="search-out-text">
                         </li>
-                        <li>    
-                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search"><i class=" nav-action mdi-action-search"></i></a>                              
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">    
+                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
+                                <i class=" nav-action mdi-action-search"></i>
+                            </a>                              
                         </li>
-                        <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen"><i class="nav-action mdi-action-settings-overscan"></i></a>
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="fullscreen">
+                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen">
+                                <i class="nav-action mdi-action-settings-overscan"></i>
+                            </a>
                         </li>
-                        <li><a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light"><i class="nav-action nav-action mdi-action-home"></i></a>
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
+                            <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
+                                <i class="nav-action nav-action mdi-action-home"></i>
+                            </a>
                         </li>
-                        <li><a href="./api" id= "nav-api" class="waves-effect waves-block waves-light"><i class="nav-action nav-action mdi-action-description"></i></a>
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="documentation">
+                            <a href="./api" id= "nav-api" class="waves-effect waves-block waves-light">
+                                <i class="nav-action nav-action mdi-action-description"></i>
+                            </a>
                         </li>                       
-                        <li id="nav-login"><a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse"><i class="nav-action nav-action mdi-navigation-menu"></i></a>
+                        <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="access">
+                            <a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse">
+                                <i class="nav-action nav-action mdi-navigation-menu"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -527,6 +541,9 @@
     <script src="js/cloud.js"></script>
 
      <script type="text/javascript">
+        $(document).ready(function(){
+            $('.tooltipped').tooltip({delay: 50});
+        });
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
         xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v1/public/user/home");
