@@ -9,7 +9,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, upload_picture, CLOUD_URL
+from cloud import app, stormpath_manager, crossdomain, upload_picture, CLOUD_URL, s3_get_file
 import datetime
 import json
 import traceback
@@ -257,10 +257,10 @@ def user_password_renew():
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/<hash_session>/user/password/change', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/password/change', methods=['POST'])
 @crossdomain(origin='*')
 def user_password_change():
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/password/change")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/password/change")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -369,10 +369,10 @@ def user_login():
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/<hash_session>/user/sync', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/sync', methods=['GET'])
 @crossdomain(origin='*')
 def user_sync(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/sync/<hash_session>")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/sync")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -388,10 +388,10 @@ def user_sync(hash_session):
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/<hash_session>/user/logout', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/logout', methods=['GET'])
 @crossdomain(origin='*')
 def user_logout(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/logout/<hash_session>")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/logout")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -418,10 +418,10 @@ def user_logout(hash_session):
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/<hash_session>/user/unregister/', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/unregister', methods=['GET'])
 @crossdomain(origin='*')
 def user_unregister(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/unregister/<hash_session>")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/unregister")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -443,10 +443,10 @@ def user_unregister(hash_session):
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/<hash_session>/user/dashboard', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/dashboard', methods=['GET'])
 @crossdomain(origin='*')
 def user_dashboard(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/dashboard/<hash_session>")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/dashboard")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -533,10 +533,10 @@ def user_dashboard(hash_session):
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/<hash_session>/user/update', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/update', methods=['POST'])
 @crossdomain(origin='*')
 def user_update(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/update/<hash_session>")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/update")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -645,52 +645,112 @@ def user_contactus(): #Setup and start smtp server on the instance
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/<hash_session>/user/picture', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET'])
 @crossdomain(origin='*')
 def user_picture(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/picture")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/picture")
     if not created:
         traffic.interactions += 1 
         traffic.save()
         
-    if fk.request.method == 'GET':
-        user_model = UserModel.objects(session=hash_session).first()
-        print fk.request.path
-        if user_model is None:
-            return fk.make_response('Picture get failed.', status.HTTP_401_UNAUTHORIZED)
-        else:
-            # print "Connected_at: %s"%str(user_model.connected_at)
-            allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
-            # print "Connected_at: %s"%str(user_model.connected_at)
-            if allowance == hash_session:
-                profile_model = ProfileModel.object(user=user_model).first_or_404()
-                if profile_model.picture['scope'] == 'remote':
-                    return fk.redirect(profile_model.picture['location'])
-                elif profile_model.picture['scope'] == 'local':
-                    if profile_model.picture['location']:
-                        #Refuse images that are more than 5Mb
-                        picture = load_picture(profile_model)
-                        print picture[1]
-                        return fk.send_file(
-                            picture[0],
-                            mimetypes.guess_type(picture[1])[0],
-                            as_attachment=True,
-                            attachment_filename=profile_model.picture['location'],
-                        )
-                    else:
-                        print "Failed because of picture location not found."
-                        return fk.make_response('Empty location. Nothing to pull from here!', status.HTTP_204_NO_CONTENT)
-            else:
-                return fk.make_response('Picture get failed.', status.HTTP_401_UNAUTHORIZED)
+    user_model = UserModel.objects(session=hash_session).first()
+    if user_model ==None:
+        return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        
+        if fk.request.method == 'GET':
+            profile = ProfileModel.objects(user=user_model).first()
+            if profile == None:
+                picture_buffer = s3_get_file('picture', 'default-picture.png')
+                if picture_buffer == None:
+                    return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                else:
+                    return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+            else:
+                picture = profile.picture
+                if picture == None:
+                    picture_buffer = s3_get_file('picture', 'default-picture.png')
+                    if picture_buffer == None:
+                        return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                    else:
+                        return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                elif picture.location == 'local' and 'http://' not in picture.storage:
+                    picture_buffer = s3_get_file('picture', picture.storage)
+                    if picture_buffer == None:
+                        return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
+                    else:
+                        return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                elif picture.location == 'remote':
+                    picture_buffer = web_get_file(picture.storage)
+                    if picture_buffer != None:
+                        return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                    else:
+                        picture_buffer = s3_get_file('picture', 'default-picture.png')
+                        if picture_buffer == None:
+                            return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                        else:
+                            return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                else:
+                    # solve the file situation and return the appropriate one.
+                    if 'http://' in picture.storage:
+                        picture.location = 'remote'
+                        picture.save()
+                        picture_buffer = web_get_file(picture.storage)
+                        if picture_buffer != None:
+                            return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                        else:
+                            picture_buffer = s3_get_file('picture', 'default-picture.png')
+                            if picture_buffer == None:
+                                return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                            else:
+                                return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                    else:
+                        picture.location = 'local'
+                        picture.save()
+                        picture_buffer = s3_get_file('picture', picture.storage)
+                        if picture_buffer == None:
+                            return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                        else:
+                            return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+        else:
+            return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+    #     print fk.request.path
+    #     if user_model is None:
+    #         return fk.make_response('Picture get failed.', status.HTTP_401_UNAUTHORIZED)
+    #     else:
+    #         # print "Connected_at: %s"%str(user_model.connected_at)
+    #         allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+    #         print "Allowance: "+allowance
+    #         # print "Connected_at: %s"%str(user_model.connected_at)
+    #         if allowance == hash_session:
+    #             profile_model = ProfileModel.objects(user=user_model).first_or_404()
+    #             if profile_model.picture['scope'] == 'remote':
+    #                 return fk.redirect(profile_model.picture['location'])
+    #             elif profile_model.picture['scope'] == 'local':
+    #                 if profile_model.picture['location']:
+    #                     #Refuse images that are more than 5Mb
+    #                     picture = load_picture(profile_model)
+    #                     print picture[1]
+    #                     return fk.send_file(
+    #                         picture[0],
+    #                         mimetypes.guess_type(picture[1])[0],
+    #                         as_attachment=True,
+    #                         attachment_filename=profile_model.picture['location'],
+    #                     )
+    #                 else:
+    #                     print "Failed because of picture location not found."
+    #                     return fk.make_response('Empty location. Nothing to pull from here!', status.HTTP_204_NO_CONTENT)
+    #         else:
+    #             return fk.make_response('Picture get failed.', status.HTTP_401_UNAUTHORIZED)
+    # else:
+    #     return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/<hash_session>/user/trusted', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/trusted', methods=['GET'])
 @crossdomain(origin='*')
 def user_truested(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/trusted")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/trusted")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -749,10 +809,10 @@ def user_home():
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/<hash_session>/user/profile', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/profile', methods=['GET'])
 @crossdomain(origin='*')
 def user_profile(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/profile")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/profile")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -777,10 +837,10 @@ def user_profile(hash_session):
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/<hash_session>/user/renew', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/renew', methods=['GET'])
 @crossdomain(origin='*')
 def user_renew(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/user/renew")
+    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/<hash_session>/user/renew")
     if not created:
         traffic.interactions += 1 
         traffic.save()
@@ -802,7 +862,7 @@ def user_renew(hash_session):
 
 @app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET'])
 @crossdomain(origin='*')
-def public_user_picture(user_id):
+def cloud_public_user_picture(user_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/user/picture/<user_id>")
     if not created:
         traffic.interactions += 1 

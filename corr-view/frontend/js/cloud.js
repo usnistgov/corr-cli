@@ -1,5 +1,5 @@
 var user = {
-    url: "http://0.0.0.0:5200/cloud/v1",
+    url: "http://0.0.0.0:5200/cloud/v0.1",
     username:"",
     email: "",
     api: "",
@@ -64,7 +64,7 @@ var user = {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", this.url+"/"+this.session+"/user/logout");
+        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/logout");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -133,7 +133,7 @@ var user = {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", this.url+"/"+this.session+"/user/trusted");
+        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/trusted");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -150,7 +150,7 @@ var user = {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", this.url+"/"+this.session+"/user/profile");
+        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/profile");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -200,7 +200,7 @@ var user = {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", this.url+"/"+this.session+"/user/renew");
+        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/renew");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -233,14 +233,14 @@ var user = {
 }
 
 var Space = function (session){
-    var url = "http://0.0.0.0:5200/cloud/v1";
+    var url = "http://0.0.0.0:5200/cloud/v0.1";
     this.session = session;
     this.dash_content = "";
 
     this.dashboard = function() {
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", url+"/"+this.session+"/dashboard/projects");
+        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/projects");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -310,7 +310,7 @@ var Space = function (session){
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log("Project name: "+project_name);
-        xmlhttp.open("GET", url+"/"+this.session+"/project/record/"+project_name);
+        xmlhttp.open("GET", url+"/private/"+this.session+"/project/record/"+project_name);
         console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
@@ -393,7 +393,7 @@ var Space = function (session){
     this.exportToJson = function () {
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", url+"/"+this.session+"/dashboard/projects");
+        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/projects");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -428,11 +428,11 @@ var Space = function (session){
     this.pull = function(project_name, record_id) {
         // var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         // console.log("Project name: "+project_name);
-        // xmlhttp.open("GET", url+"/"+this.session+"/record/pull/"+project_name+"/"+record_id);
-        // console.log(url+"/"+this.session+"/record/pull/"+project_name+"/"+record_id);
+        // xmlhttp.open("GET", url+"/private/"+this.session+"/record/pull/"+project_name+"/"+record_id);
+        // console.log(url+"/private/"+this.session+"/record/pull/"+project_name+"/"+record_id);
         // console.log(this.session);
         // xmlhttp.responseType = 'blob';
-        window.location.replace(url+"/"+this.session+"/record/pull"+"/"+record_id);
+        window.location.replace(url+"/private/"+this.session+"/record/pull"+"/"+record_id);
         // xmlhttp.send();
         // xmlhttp.onreadystatechange=function()
         // {

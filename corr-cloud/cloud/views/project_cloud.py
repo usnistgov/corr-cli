@@ -29,7 +29,7 @@ import mimetypes
 
 #Make a diff_cloud route. to create, update, remove and view diff.
 
-@app.route(CLOUD_URL + '/<hash_session>/project/sync/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/sync/<project_id>', methods=['GET'])
 @crossdomain(origin='*')
 def project_sync(hash_session, project_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/sync/<project_id>")
@@ -59,7 +59,7 @@ def project_sync(hash_session, project_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/project/view/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/view/<project_id>', methods=['GET'])
 @crossdomain(origin='*')
 def project_view(hash_session, project_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/view/<project_id>")
@@ -89,7 +89,7 @@ def project_view(hash_session, project_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')           
 
-@app.route(CLOUD_URL + '/<hash_session>/project/remove/<project_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/remove/<project_id>', methods=['DELETE'])
 @crossdomain(origin='*')
 def project_remove(hash_session, project_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/remove/<project_id>")
@@ -121,7 +121,7 @@ def project_remove(hash_session, project_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/project/comment/<project_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/comment/<project_id>', methods=['POST'])
 @crossdomain(origin='*')
 def project_comment(hash_session, project_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/comment/<project_id>")
@@ -155,7 +155,7 @@ def project_comment(hash_session, project_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/project/comments/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/comments/<project_id>', methods=['GET'])
 @crossdomain(origin='*')
 def project_comments(hash_session, project_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/comments/<project_id>")
@@ -183,7 +183,7 @@ def project_comments(hash_session, project_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/project/edit/<project_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/edit/<project_id>', methods=['POST'])
 @crossdomain(origin='*')
 def project_edit(hash_session, project_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/edit/<project_id>")
@@ -238,7 +238,7 @@ def project_edit(hash_session, project_id):
         return fk.redirect('http://0.0.0.0:5000/error-405/')       
 
 #project_name or project_id
-@app.route(CLOUD_URL + '/<hash_session>/project/record/<project_name>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/record/<project_name>', methods=['GET'])
 @crossdomain(origin='*')
 def project_records(hash_session, project_name):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/record/<project_id>")

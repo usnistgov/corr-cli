@@ -17,7 +17,7 @@ import traceback
 #The API will return some json response at all times. 
 #I will handle my own status and head and content and stamp
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/search', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/search', methods=['GET'])
 @crossdomain(origin='*')
 def private_search(hash_session):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/search")
@@ -117,7 +117,7 @@ def private_search(hash_session):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/projects', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/projects', methods=['GET'])
 @crossdomain(origin='*')
 def project_dashboard(hash_session):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/projects")
@@ -147,7 +147,7 @@ def project_dashboard(hash_session):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/records/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/records/<project_id>', methods=['GET'])
 @crossdomain(origin='*')
 def dashboard_records(hash_session, project_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/records/<project_id>")
@@ -191,7 +191,7 @@ def dashboard_records(hash_session, project_id):
         return fk.redirect('http://0.0.0.0:5000/error-405/')  
 
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def record_diff(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/record/diff/<record_id>")
@@ -235,7 +235,7 @@ def record_diff(hash_session, record_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/reproducibility/assess/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def reproducibility_assess(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/reproducibility/assess/<record_id>")

@@ -30,7 +30,7 @@ import mimetypes
 #meaning having the same actions and same sequence and same calls. In this case only one profile will
 # be linked to many experiment untill a change happens in that sense.
 
-@app.route(CLOUD_URL + '/<hash_session>/record/remove/<record_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/remove/<record_id>', methods=['DELETE'])
 @crossdomain(origin='*')
 def record_remove(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/remove/<record_id>")
@@ -60,7 +60,7 @@ def record_remove(hash_session, record_id):
     else:
        return fk.redirect('http://0.0.0.0:5000/error-405/') 
 
-@app.route(CLOUD_URL + '/<hash_session>/record/comment/<record_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/comment/<record_id>', methods=['POST'])
 @crossdomain(origin='*')
 def record_comment(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/comment/<record_id>")
@@ -98,7 +98,7 @@ def record_comment(hash_session, record_id):
     else:
        return fk.redirect('http://0.0.0.0:5000/error-405/') 
 
-@app.route(CLOUD_URL + '/<hash_session>/record/comments/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/comments/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def record_comments(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/comments/<record_id>")
@@ -123,7 +123,7 @@ def record_comments(hash_session, record_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/') 
 
-@app.route(CLOUD_URL + '/<hash_session>/record/view/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/view/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def record_view(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/view/<record_id>")
@@ -151,7 +151,7 @@ def record_view(hash_session, record_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')      
 
-@app.route(CLOUD_URL + '/<hash_session>/record/edit/<record_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/edit/<record_id>', methods=['POST'])
 @crossdomain(origin='*')
 def record_edit(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/edit/<record_id>")
@@ -196,7 +196,7 @@ def record_edit(hash_session, record_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/record/pull/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/pull/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def pull_record(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/pull/<record_id>")
@@ -332,7 +332,7 @@ def public_pull_record(record_id):
 
 #To be fixed.
 #Implement the quotas here image_obj.tell()
-@app.route(CLOUD_URL + '/<hash_session>/record/file/upload/<record_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/file/upload/<record_id>', methods=['POST'])
 @crossdomain(origin='*')
 def file_add(hash_session, record_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/file/upload/<record_id>")
@@ -396,7 +396,7 @@ def file_add(hash_session, record_id):
         else:
             return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/<hash_session>/record/file/download/<file_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/file/download/<file_id>', methods=['POST'])
 @crossdomain(origin='*')
 def file_download(hash_session, file_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/file/download/<file_id>")
@@ -430,7 +430,7 @@ def file_download(hash_session, file_id):
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/<hash_session>/record/file/remove/<file_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/file/remove/<file_id>', methods=['DELETE'])
 @crossdomain(origin='*')
 def file_remove(hash_session, file_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/file/remove/<file_id>")

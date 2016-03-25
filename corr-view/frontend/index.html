@@ -59,7 +59,7 @@
             <nav class="cyan">
                 <div class="nav-wrapper">
                     <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
-                    <ul class="nav-bar right hide-on-med-and-down">
+                    <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
                         <li class="search-out">
                             <input type="text" class="search-out-text">
                         </li>
@@ -68,22 +68,22 @@
                                 <i class=" nav-action mdi-action-search"></i>
                             </a>                              
                         </li>
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="fullscreen">
+                        <!-- <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="fullscreen">
                             <a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen">
                                 <i class="nav-action mdi-action-settings-overscan"></i>
                             </a>
-                        </li>
+                        </li> -->
                         <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                             <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
                                 <i class="nav-action nav-action mdi-action-home"></i>
                             </a>
                         </li>
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="documentation">
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
                             <a href="./api" id= "nav-api" class="waves-effect waves-block waves-light">
-                                <i class="nav-action nav-action mdi-action-description"></i>
+                                <i class="nav-action mdi-communication-live-help"></i>
                             </a>
                         </li>                       
-                        <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="access">
+                        <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="login">
                             <a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse">
                                 <i class="nav-action nav-action mdi-navigation-menu"></i>
                             </a>
@@ -389,7 +389,7 @@
           <!-- <form class="login-form"> -->
             <div class="row">
               <div class="input-field col s12 center">
-                <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image-login">
+                <img src="images/avatar.jpg" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login">
                 <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
               </div>
             </div>
@@ -438,7 +438,7 @@
           <!-- <form class="login-form"> -->
             <div class="row">
               <div class="input-field col s12 center">
-                <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image-login">
+                <img src="images/avatar.jpg" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
                 <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
               </div>
             </div>
@@ -546,7 +546,7 @@
         });
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v1/public/user/home");
+        xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v0.1/public/user/home");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -592,8 +592,15 @@
             document.getElementById("nav-home-2").href = "http://0.0.0.0:5000/?session="+user.session;
             document.getElementById("nav-home").href = "http://0.0.0.0:5000/?session="+user.session;
             document.getElementById("nav-api").href = "http://0.0.0.0:5000/dashboard/api/?session="+user.session;
-            document.getElementById("nav-login").innerHTML = "<li><a href=\"http://0.0.0.0:5000/dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
-            document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan\"><img src=\"images/avatar.jpg\" alt=\"\" class=\"circle responsive-img valign profile-image\"></a><ul><li><a href=\"#view-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-action-visibility\"></i></a></li><li><a href=\"#edit-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-editor-mode-edit\"></i></a></li></ul>";
+            document.getElementById("nav-login").remove();
+            // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"
+            // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"account\"
+            // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"profile\"
+            document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"http://0.0.0.0:5000/dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
+            document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-settings\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"account\"><a href=\"#view-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-communication-vpn-key\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"profile\"><a href=\"#edit-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-action-account-circle\"></i></a></li></ul>";
+            
+            document.getElementById('account-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
+            document.getElementById('profile-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
             // document.getElementById("view-username").value = user.username;
             // document.getElementById("view-email").value = user.email;
             // document.getElementById("view-api").value = user.api;
@@ -608,6 +615,8 @@
             }
         }
 
+        http://0.0.0.0:5200/cloud/v0.1/private/5b3470fcf23aecd755bac0237fdaa26593a7d85a27076b72269f533bff0c7dca/user/picture
+
         function loginKeyPress(e)
         {
             e = e || window.event;
@@ -616,6 +625,14 @@
                 document.getElementById('buttonLogin').click();
             }
         }
+
+        // document.getElementById('profile-modal').click(function() {
+        //   document.getElementById('user-picture').href = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
+        // });
+
+        // document.getElementById('edit-modal').click(function() {
+        //   document.getElementById('user-picture').href = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
+        // });
 
         function registerKeyPress(e)
         {

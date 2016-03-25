@@ -981,6 +981,8 @@ def admin_user_create(api_token):
                         return api_response(302, 'User already exists', user.info())
                     else:
                         logStat(user=user)
+                        ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user, fname='', lname='', organisation='', about='')
+
                         return api_response(201, 'User account created', user.info())
             else:
                 return api_response(204, 'Nothing created', 'You must provide the file information.')
@@ -1392,7 +1394,13 @@ def admin_user_picture(user_id, api_token):
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 else:
                     picture = profile.picture
-                    if picture.location == 'local' and 'http://' not in picture.storage:
+                    if picture == None:
+                        picture_buffer = s3_get_file('picture', 'default-picture.png')
+                        if picture_buffer == None:
+                            return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                        else:
+                            return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                    elif picture.location == 'local' and 'http://' not in picture.storage:
                         picture_buffer = s3_get_file('picture', picture.storage)
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)

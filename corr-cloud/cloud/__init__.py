@@ -206,6 +206,35 @@ def delete_record_file(record_file):
 
     s3_files.delete_key(record_file.location)
 
+def s3_get_file(group='', key=''):
+    file_buffer = StringIO()
+    try:
+        obj = None
+        if key != '':
+            obj = s3.Object(bucket_name='corr-%ss'%group, key=key)
+        else:
+            if group == 'picture' or group == 'logo':
+                obj = s3.Object(bucket_name='corr-%ss'%group, key='default-%s.png'%group)
+    except:
+        if group == 'picture' or group == 'logo':
+            obj = s3.Object(bucket_name='corr-logos', key='default-%s.png'%group)
+
+    try:
+        res = obj.get()
+        file_buffer.write(res['Body'].read())
+        file_buffer.seek(0)
+        return file_buffer
+    except:
+        return None
+
+def s3_delete_file(group='', key=''):
+    if key not in ["default-logo.png", "default-picture.png"]:
+        s3_files = s3.Bucket('corr-%ss'%group)
+        for _file in s3_files.objects.all():
+            if _file.key == key: 
+                _file.delete()
+                break
+
 
 def load_file(file_model):
 
@@ -269,7 +298,7 @@ def upload_picture(current_user, file_obj):
         return False
         print traceback.print_exc()
 
-CLOUD_VERSION = 1
+CLOUD_VERSION = 0.1
 CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
 
 from . import views
