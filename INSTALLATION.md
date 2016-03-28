@@ -42,7 +42,8 @@ it,
     $ docker build -t corr-test:latest .
     $ docker run -i -p 4000:4000 --net=host -t corr-test:latest
 
-Go to http://localhost:4000 and the front end should be available.
+Go to [http://localhost:4000](http://localhost:4000) and the front end
+should be available.
 
 This version of the Dockerfile is just for testing the Ansible
 installation script and isn't useful for using or developing CoRR.
