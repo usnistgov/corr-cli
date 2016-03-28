@@ -23,7 +23,11 @@ class ProfileModel(db.Document):
 
     def info(self):
         data = {'created':str(self.created_at), 'id': str(self.id), 
-        'user':str(self.user.id), 'fname': self.fname, 'lname': self.lname, 'picture':str(self.picture.id)}
+        'user':str(self.user.id), 'fname': self.fname, 'lname': self.lname}
+        if self.picture != None:
+            data['picture'] = str(self.picture.id)
+        else:
+            data['picture'] = None
         return data
 
     def extended(self):
