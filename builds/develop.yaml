@@ -27,7 +27,7 @@
   register: cloud_server_result
 
 - name: run jekyll server
-  shell: bash -c "cd {{ corr_path }}/corr-view/frontend; /usr/bin/jekyll serve --port 4000 --host 0.0.0.0 &> {{ corr_path }}/view.log"
+  shell: bash -c "cd {{ corr_path }}/corr-view/frontend; /usr/bin/jekyll serve --port 5000 --host 0.0.0.0 &> {{ corr_path }}/view.log"
   async: 3600
   poll: 0
   register: view_server_result

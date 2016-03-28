@@ -28,4 +28,4 @@ WORKDIR /home/testuser/docker
 RUN ./config.bash --tags "install_develop"
 
 CMD ./config.bash --tags "serve_develop"
-EXPOSE 4000
+EXPOSE 5000

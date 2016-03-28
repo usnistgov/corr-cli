@@ -40,9 +40,9 @@ it,
     /path/to/corr
     $ cp builds/Dockerfile-test ./Dockerfile
     $ docker build -t corr-test:latest .
-    $ docker run -i -p 4000:4000 --net=host -t corr-test:latest
+    $ docker run -i -p 5000:5000 --net=host -t corr-test:latest
 
-Go to [http://localhost:4000](http://localhost:4000) and the front end
+Go to [http://localhost:5000](http://localhost:4000) and the front end
 should be available.
 
 This version of the Dockerfile is just for testing the Ansible
