@@ -6,3 +6,4 @@ corr-db/build
 corr-db/corrdb.egg-info
 corr-cloud/apiKey.properties
 corr-view/frontend/_site
+corr-api/test/requests/*_freeze.log
