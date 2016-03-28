@@ -14,9 +14,9 @@ machine. First clone the CoRR repository and then run
 
 This will run an Ansible script that will install all the necessary
 prerequisites to run CoRR. `sudo` privileges are required. Edit
-`builds/install.yaml` to change custom variables such as the version
-of the code to install and the repository URL. To launch the front end
-web app and the API use,
+[`builds/install.yaml`](builds/install.yaml) to change custom
+variables such as the version of the code to install and the
+repository URL. To launch the front end web app and the API use,
 
     $ ./config.bash -K --tags serve_develop
 
@@ -25,14 +25,16 @@ and corr-api as well as jekyll for the frontend.
 
 ## Test Installation with Docker
 
-There is a Docker file in builds, `builds/Dockerfile-test` for testing
-the Ansible installation. To use this, first
+There is a Docker file in builds,
+[`builds/Dockerfile-test`](builds/Dockerfile-test) for testing the
+Ansible installation. To use this, first
 [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/)
 and then launch Docker with
 
     $ sudo docker service start
 
-and then copy the Dockerfile into the base corr directory,
+and then copy the Dockerfile into the base corr directory and build
+it,
 
     $ cd corr; pwd
     /path/to/corr
