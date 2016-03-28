@@ -6,8 +6,8 @@
     anaconda_path: "{{ local_path }}/anaconda"
     corr_path: "{{ local_path }}/git/corr"
     corr_env: corr
-    corr_version: 6dc00b5736db
-    corr_repo: wd15/corr
+    corr_version: master
+    corr_repo: usnistgov/corr
     conda: "{{ anaconda_path }}/bin/conda"
     env_path: "{{ anaconda_path }}/envs/{{ corr_env }}/bin"
     python: "{{ anaconda_path }}/envs/{{ corr_env }}/bin/python"
