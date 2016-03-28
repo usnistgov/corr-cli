@@ -6,4 +6,4 @@ fi
 
 ## be sure to use the system python with ansible at this point
 export PATH=/usr/bin:$PATH
-/usr/bin/ansible-playbook -K builds/install.yaml $@
+/usr/bin/ansible-playbook builds/install.yaml $@

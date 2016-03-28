@@ -1,3 +1,11 @@
+- name: start mongodb
+  service: name=mongodb state=started
+  become: true
+
+- name: wait for mongodb to become available
+  wait_for:
+    port: 27017
+
 - name: kill running servers
   shell: killall {{ python }} /usr/bin/jekyll
   ignore_errors: yes
