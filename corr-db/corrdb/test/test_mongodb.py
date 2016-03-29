@@ -23,7 +23,7 @@ class MongodbTest(TestCase):
 
     def setUp(self):
         self.client = MongoClient('localhost', 27017)
-        self.db = self.client['corr-integrate'] 
+        self.db = self.client['corr-integrate']
         self.user_collection = self.db['usermodel']
         self.project_collection = self.db['projectmodel']
         self.record_collection = self.db['recordmodel']
@@ -37,14 +37,6 @@ class MongodbTest(TestCase):
         # time.sleep(30)
         browser = twill.get_browser()
         browser.go("http://localhost:27017/")
-        self.assertTrue(browser.get_code() in (200, 201))
-
-    def test_MongodbRest(self):
-
-        print "This is a test to check that the api endpoints are working properly."
-        # time.sleep(30)
-        browser = twill.get_browser()
-        browser.go("http://localhost:28017/")
         self.assertTrue(browser.get_code() in (200, 201))
 
     def tearDown(self):
