@@ -18,7 +18,7 @@
 
     - include: clone.yaml
       when: normal_task_list is not defined
-      tags: [install_api, install_cloud, install_db, install_develop]
+      tags: [install_api, install_cloud, install_db, install_develop, serve_develop]
 
     - include: mongo.yaml
       when: normal_task_list is not defined
