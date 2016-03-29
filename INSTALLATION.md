@@ -47,3 +47,10 @@ should be available.
 
 This version of the Dockerfile is just for testing the Ansible
 installation script and isn't useful for using or developing CoRR.
+
+## Config Script
+
+The config script install Ansible and runs the CoRR Ansible playbook. To get all the
+tags available use,
+
+    $ ./config.bash --list-tags
