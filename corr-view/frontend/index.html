@@ -327,12 +327,12 @@
                                     <div class="card-content  green white-text">
                                         <p class="card-stats-title"><i class="mdi-social-group-add"></i> Toatl Users</p>
                                         <h4 class="card-stats-number" id="total-users">N/A</h4>
-                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="green-text text-lighten-5">from last year</span>
-                                        </p>
+                                       <!--  <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="green-text text-lighten-5">from last year</span>
+                                        </p> -->
                                     </div>
-                                    <div class="card-action  green darken-2">
+                                    <!-- <div class="card-action  green darken-2">
                                         <div id="clients-bar"></div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <div class="col s12 m6 l3">
@@ -340,13 +340,13 @@
                                     <div class="card-content purple white-text">
                                         <p class="card-stats-title"><i class="mdi-file-folder"></i> Total Projects</p>
                                         <h4 class="card-stats-number" id="total-projects">N/A</h4>
-                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="purple-text text-lighten-5">from last month</span>
-                                        </p>
+                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="purple-text text-lighten-5">from last month</span>
+                                        </p> -->
                                     </div>
-                                    <div class="card-action purple darken-2">
+                                    <!-- <div class="card-action purple darken-2">
                                         <div id="sales-compositebar"></div>
 
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>                            
                             <div class="col s12 m6 l3">
@@ -354,12 +354,12 @@
                                     <div class="card-content blue-grey white-text">
                                         <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Today Records</p>
                                         <h4 class="card-stats-number" id="total-records">N/A</h4>
-                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="blue-grey-text text-lighten-5">from last week</span>
-                                        </p>
+                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="blue-grey-text text-lighten-5">from last week</span>
+                                        </p> -->
                                     </div>
-                                    <div class="card-action blue-grey darken-2">
+                                    <!-- <div class="card-action blue-grey darken-2">
                                         <div id="profit-tristate"></div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <div class="col s12 m6 l3">
@@ -367,12 +367,12 @@
                                     <div class="card-content deep-purple white-text">
                                         <p class="card-stats-title"><i class="mdi-device-storage"></i> Total Storage</p>
                                         <h4 class="card-stats-number" id="total-storage">N/A</h4>
-                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-down"></i> N/A <span class="deep-purple-text text-lighten-5">from yesterday</span>
-                                        </p>
+                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-down"></i> N/A <span class="deep-purple-text text-lighten-5">from yesterday</span>
+                                        </p> -->
                                     </div>
-                                    <div class="card-action  deep-purple darken-2">
+                                    <!-- <div class="card-action  deep-purple darken-2">
                                         <div id="invoice-line"></div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
 
@@ -497,8 +497,8 @@
     <footer class="page-footer">
         <div class="footer-copyright">
           <div class="container">
-            <span>Copyright © 2015 <a class="grey-text text-lighten-4" href="https://github.com/faical-yannick-congo/ddsm-cloud" target="_blank">DDSM</a> All rights reserved.</span>
-            <span class="right"> Design and Developed by <a class="grey-text text-lighten-4" href="https://www.linkedin.com/pub/yannick-congo/60/16/411">Faical Yannick Palingwende Congo</a></span>
+            <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+            <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr">N/A</a></span>
             </div>
         </div>
     </footer>
@@ -555,6 +555,7 @@
                 console.log(xmlhttp.responseText);
                 var response = JSON.parse(xmlhttp.responseText);
                 console.log(response);
+                var version = response["version"];
                 var users = response["users"];
                 var projects = response["projects"];
                 var records = response["records"];
@@ -566,6 +567,8 @@
                 document.getElementById("total-projects").innerHTML = projects["number"];
                 document.getElementById("total-records").innerHTML = records["number"];
                 document.getElementById("total-storage").innerHTML = storage["size"];
+                console.log("Version: "+version);
+                document.getElementById("footer-version").innerHTML = version;
 
                 console.log("Total Users:"+users["number"]);
                 console.log("Total Projects:"+projects["number"]);

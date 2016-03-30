@@ -625,6 +625,22 @@ def user_contactus(): #Setup and start smtp server on the instance
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@app.route(CLOUD_URL + '/public/version', methods=['GET'])
+@crossdomain(origin='*')
+def public_version(): #Setup and start smtp server on the instance
+    logTraffic(endpoint='/public/version')
+        
+    if fk.request.method == 'GET':
+        version = 'N/A'
+        try:
+            from corrdb import __version__
+            version = __version__
+        except:
+            pass
+        return fk.Response(version, status.HTTP_200_OK)
+    else:
+        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+
 @app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET'])
 @crossdomain(origin='*')
 def user_picture(hash_session):
@@ -774,10 +790,17 @@ def user_home():
 
         storage_stat["size"] = size(amount)
 
+        version = 'N/A'
+        try:
+            from corrdb import __version__
+            version = __version__
+        except:
+            pass
+
         records_stat = {"number":len(records)}
         records_stat["history"] = [json.loads(stat.to_json()) for stat in StatModel.objects(category="record")]
 
-        return fk.Response(json.dumps({'users':users_stat, 'projects':projects_stat, 'records':records_stat, 'storage':storage_stat}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+        return fk.Response(json.dumps({'version':version, 'users':users_stat, 'projects':projects_stat, 'records':records_stat, 'storage':storage_stat}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
