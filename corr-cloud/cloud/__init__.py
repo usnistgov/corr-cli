@@ -1,6 +1,12 @@
 # import jinja2
 import flask as fk
 from corrdb.common.core import setup_app
+from corrdb.common.models import UserModel
+from corrdb.common.models import ProjectModel
+from corrdb.common.models import ApplicationModel
+from corrdb.common.models import TrafficModel
+from corrdb.common.models import StatModel  
+from corrdb.common.models import AccessModel
 import tarfile
 from StringIO import StringIO
 from io import BytesIO
@@ -8,7 +14,7 @@ import zipfile
 import json
 import time
 import boto3
-import traceback
+import traceback 
 
 app = setup_app(__name__)
 
@@ -297,6 +303,92 @@ def upload_picture(current_user, file_obj):
     except:
         return False
         print traceback.print_exc()
+
+def logTraffic(endpoint=''):
+    # created_at=datetime.datetime.utcnow()
+    (traffic, created) = TrafficModel.objects.get_or_create(service="cloud", endpoint="%s%s"%(CLOUD_URL, endpoint))
+    if not created:
+        traffic.interactions += 1 
+        traffic.save()
+    else:
+        traffic.interactions = 1
+        traffic.save()
+
+def logAccess(scope='root', endpoint=''):
+    (traffic, created) = AccessModel.objects.get_or_create(scope=scope, endpoint="%s%s"%(CLOUD_URL, endpoint))
+
+
+def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
+    category = ''
+    periode = ''
+    traffic = 0
+    interval = ''
+    today = datetime.date.today()
+    last_day = monthrange(today.year, today.month)[1]
+
+    if user != None:
+        category = 'user'
+        periode = 'monthly'
+        traffic = 1 * (-1 if deleted else 1)
+        interval = "%s_%s_01-%s_%s_%s"%(today.year, today.month, today.year, today.month, last_day)
+
+    if project != None:
+        category = 'project'
+        periode = 'yearly'
+        traffic = 1 * (-1 if deleted else 1)
+        interval = "%s_01-%s_12"%(today.year, today.year)
+
+    if application != None:
+        category = 'application'
+        periode = 'yearly'
+        traffic = 1 * (-1 if deleted else 1)
+        interval = "%s_01-%s_12"%(today.year, today.year)
+
+    if message != None:
+        category = 'message'
+        periode = 'monthly'
+        traffic = 1 * (-1 if deleted else 1)
+        interval = "%s_%s_01-%s_%s_%s"%(today.year, today.month, today.year, today.month, last_day)
+
+    if record != None:
+        category = 'record'
+        periode = 'daily'
+        traffic = 1 * (-1 if deleted else 1)
+        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
+
+
+    if diff != None:
+        category = 'collaboration'
+        periode = 'daily'
+        traffic = 1 * (-1 if deleted else 1)
+        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
+
+    if file_obj != None:
+        category = 'storage'
+        periode = 'daily'
+        traffic = file_obj.size * (-1 if deleted else 1)
+        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
+
+
+    if comment != None:
+        category = 'comment'
+        periode = 'daily'
+        traffic = 1 * (-1 if deleted else 1)
+        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
+
+
+    #created_at=datetime.datetime.utcnow()
+    (stat, created) = StatModel.objects.get_or_create(interval=interval, category=category, periode=periode)
+    print "Stat Traffic {0}".format(traffic)
+    if not created:
+        print "Not created stat"
+        if (stat.traffic + traffic) >= 0:
+            stat.traffic += traffic
+        stat.save()
+    else:
+        print "Created stat"
+        stat.traffic = traffic
+        stat.save()
 
 CLOUD_VERSION = 0.1
 CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)

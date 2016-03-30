@@ -8,7 +8,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, load_bundle, crossdomain, delete_record_files, delete_record_file, CLOUD_URL
+from cloud import app, stormpath_manager, load_bundle, crossdomain, delete_record_files, delete_record_file, CLOUD_URL, s3_get_file, logStat, logTraffic, logAccess
 import datetime
 import json
 import traceback
@@ -33,16 +33,14 @@ import mimetypes
 @app.route(CLOUD_URL + '/private/<hash_session>/record/remove/<record_id>', methods=['DELETE'])
 @crossdomain(origin='*')
 def record_remove(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/remove/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/remove/<record_id>')
         
     if fk.request.method == 'DELETE':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
             try:
+                logAccess('cloud', '/private/<hash_session>/record/remove/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print str(traceback.print_exc())
@@ -63,16 +61,14 @@ def record_remove(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/comment/<record_id>', methods=['POST'])
 @crossdomain(origin='*')
 def record_comment(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/comment/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/comment/<record_id>')
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
             try:
+                logAccess('cloud', '/private/<hash_session>/record/comment/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print str(traceback.print_exc())
@@ -101,16 +97,14 @@ def record_comment(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/comments/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def record_comments(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/comments/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/comments/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
             try:
+                logAccess('cloud', '/private/<hash_session>/record/comments/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print str(traceback.print_exc())
@@ -126,16 +120,14 @@ def record_comments(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/view/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def record_view(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/view/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/view/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
             try:
+                logAccess('cloud', '/private/<hash_session>/record/view/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print str(traceback.print_exc())
@@ -154,10 +146,7 @@ def record_view(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/edit/<record_id>', methods=['POST'])
 @crossdomain(origin='*')
 def record_edit(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/edit/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/edit/<record_id>')
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
@@ -165,6 +154,7 @@ def record_edit(hash_session, record_id):
         if current_user is None:
             return fk.redirect('http://0.0.0.0:5000/error-401/?action=edit_denied')
         else:
+            logAccess('cloud', '/private/<hash_session>/record/edit/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
@@ -199,10 +189,7 @@ def record_edit(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/pull/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def pull_record(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/pull/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/pull/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -210,6 +197,7 @@ def pull_record(hash_session, record_id):
         if current_user is None:
             return fk.redirect('http://0.0.0.0:5000/error-401/?action=pull_denied')
         else:
+            logAccess('cloud', '/private/<hash_session>/record/pull/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
@@ -250,10 +238,7 @@ def pull_record(hash_session, record_id):
 @app.route(CLOUD_URL + '/public/record/comments/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def public_record_comments(record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/record/comments/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/record/comments/<record_id>')
         
     if fk.request.method == 'GET':
         try:
@@ -270,10 +255,7 @@ def public_record_comments(record_id):
 @app.route(CLOUD_URL + '/public/record/view/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def public_record_view(record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/record/view/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/record/view/<record_id>')
         
     if fk.request.method == 'GET':
         try:
@@ -293,10 +275,7 @@ def public_record_view(record_id):
 @app.route(CLOUD_URL + '/public/record/pull/<record_id>', methods=['GET'])
 @crossdomain(origin='*')
 def public_pull_record(record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/record/pull/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/record/pull/<record_id>')
         
     if fk.request.method == 'GET':
         try:
@@ -335,10 +314,7 @@ def public_pull_record(record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/file/upload/<record_id>', methods=['POST'])
 @crossdomain(origin='*')
 def file_add(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/file/upload/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/file/upload/<record_id>')
     user_model = UserModel.objects(session=hash_session).first()
     if user_model is None:
         return fk.redirect('http://0.0.0.0:5000/?action=update_denied')
@@ -346,6 +322,7 @@ def file_add(hash_session, record_id):
         if fk.request.method == 'POST':
             infos = {}
             try:
+                logAccess('cloud', '/private/<hash_session>/record/file/upload/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print str(traceback.print_exc())
@@ -399,10 +376,7 @@ def file_add(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/file/download/<file_id>', methods=['POST'])
 @crossdomain(origin='*')
 def file_download(hash_session, file_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/file/download/<file_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/file/download/<file_id>')
         
     if fk.request.method == 'GET':
         user_model = UserModel.object.with_id(user_id)
@@ -410,6 +384,7 @@ def file_download(hash_session, file_id):
             return fk.redirect('http://0.0.0.0:5000/error-204/')
         else:
             try:
+                logAccess('cloud', '/private/<hash_session>/record/file/download/<file_id>')
                 record_file = FileModel.objects.with_id(file_id)
             except:
                 print str(traceback.print_exc())
@@ -433,15 +408,13 @@ def file_download(hash_session, file_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/file/remove/<file_id>', methods=['DELETE'])
 @crossdomain(origin='*')
 def file_remove(hash_session, file_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/record/file/remove/<file_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/record/file/remove/<file_id>')
     if fk.request.method == 'DELETE':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
             try:
+                logAccess('cloud', '/private/<hash_session>/record/file/remove/<file_id>')
                 record_file = FileModel.objects.with_id(file_id)
             except:
                 print str(traceback.print_exc())
