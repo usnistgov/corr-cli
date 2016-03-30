@@ -440,9 +440,7 @@ def prepare_record(record=None):
 
     return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
 
-def crossdomain(origin=None, methods=None, headers=None,
-                max_age=21600, attach_to_all=True,
-                automatic_options=True):
+def crossdomain(origin=None, methods=None, headers=None, max_age=21600, attach_to_all=True, automatic_options=True):
     if methods is not None:
         methods = ', '.join(sorted(x.upper() for x in methods))
     if headers is not None and not isinstance(headers, basestring):

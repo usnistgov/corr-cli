@@ -118,7 +118,7 @@ var user = {
         var message = document.getElementById("contactus-message").value;
         console.log(email+" -- "+message)
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-        xmlhttp.open("POST", this.url+"public/user/contactus");
+        xmlhttp.open("POST", this.url+"/public/user/contactus");
         var request = { 'email': email, 'message': message }
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()

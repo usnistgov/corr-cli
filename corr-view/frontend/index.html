@@ -114,7 +114,7 @@
                     <li class="li-hover">
                         <ul class="chat-collapsible" data-collapsible="expandable">
                         <li>
-                            <div class="collapsible-header teal white-text active"><i class="mdi-action-home"></i>Login</div>
+                            <div class="collapsible-header teal white-text active tooltipped" data-position="left" data-delay="50" data-tooltip="login area"><i class="mdi-action-home"></i>Login</div>
                             <div class="collapsible-body recent-activity">
                                 <div class="row margin">
                                   <div class="input-field col s12">
@@ -182,28 +182,11 @@
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i>Contact us</div>
-                            <div class="collapsible-body favorite-associates">
-                                <div class="row margin">
-                                  <div class="input-field col s12">
-                                    <i class="mdi-communication-email prefix"></i>
-                                    <input id="contactus-email" type="email" onkeypress="emailKeyPress(event);">
-                                    <label for="contactus-email" class="center-align">Email</label>
-                                  </div>
-                                </div>
-                                <div class="row margin">
-                                  <div class="input-field col s12">
-                                    <i class="mdi-image-edit prefix"></i>
-                                    <input id="contactus-message" type="text" onkeypress="emailKeyPress(event);">
-                                    <label for="contactus-message" class="center-align">Message</label>
-                                  </div>
-                                </div>
-                                <div class="row">
-                                  <div class="input-field col s12">
-                                    <a id="buttonEmail" onclick="return user.contactus();" class="btn waves-effect waves-light red col s12">Send</a>
-                                  </div>
-                                </div>
-                            </div>
+                            <div class="collapsible-header orange white-text"><i class="mdi-communication-email"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
+                            
+                        </li>
+                        <li>
+                            <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i><a href="mailto:contactus.corr@gmail.com">Email</a></div>
                         </li>
                         </ul>
                     </li>
@@ -497,8 +480,8 @@
     <footer class="page-footer">
         <div class="footer-copyright">
           <div class="container">
-            <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
-            <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr">N/A</a></span>
+            <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+            <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
             </div>
         </div>
     </footer>
