@@ -31,27 +31,33 @@ var user = {
     },
     register: function() {
         // document.getElementById("myText").value
-        var username = document.getElementById("register-username").value;
+        var username = document.getElementById("register-email").value;
         var email = document.getElementById("register-email").value;
         var password = document.getElementById("register-password").value;
         var password_again = document.getElementById("register-password-again").value;
 
         if(password == password_again){
-            console.log(username+" -- "+email+" -- "+password)
+            console.log(username+" -- "+email+" -- "+password);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             xmlhttp.open("POST", this.url+"/public/user/register");
-            var request = { 'email': email, 'password': password, 'username':username }
+            var request = { 'email': email, 'password': password, 'username':username };
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
             {
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     var response = JSON.parse(xmlhttp.responseText);
-                    this.session = response['session']
-                    console.log(this.session)
+                    this.session = response['session'];
+                    console.log(this.session);
                     window.location.replace("http://0.0.0.0:5000/?session="+this.session);
                 } else {
-                    console.log("Registration failed failed");
-                    Materialize.toast('<span>Register failed</span>', 3000);
+                    var response = xmlhttp.responseText;
+                    console.log(response);
+                    console.log("Registration failed");
+                    if(response == ""){
+                        Materialize.toast('<span>Register failed: Unknown reason.</span>', 3000);
+                    }else{
+                        Materialize.toast('<span>Register failed: '+response+'</span>', 3000);
+                    }
                     // window.location.replace("http://0.0.0.0:5000/error-500/");
                 }
             }

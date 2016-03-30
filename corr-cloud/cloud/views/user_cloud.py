@@ -18,6 +18,7 @@ import smtplib
 from email.mime.text import MIMEText
 from hurry.filesize import size
 import hashlib
+from stormpath.error import Error
 
 # CLOUD_VERSION = 1
 # CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
@@ -93,14 +94,20 @@ def user_register():
                                                 "middle_name" : "undefined",
                                                 "surname" : "undefined",
                                             })
-                                        except:
-                                            print str(traceback.print_exc())
+                                        except Error as re:
+                                            print('Message: %s' %re.message)
+                                            print('HTTP Status: %s' %str(re.status))
+                                            print('Developer Message: %s' %re.developer_message)
+                                            print('More Information: %s' %re.more_info)
+                                            print('Error Code: %s' %str(re.code))
+                                            print('Message message: %s' %re.message['message'])
+                                            return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
                                             _account = None
                                     if _account != None:
                                         print "created!!!"
                                         (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
                                     else:
-                                        print "Unauthorized admin account creation. Could not create user!"
+                                        print "Unauthorized account creation. Could not create user!"
                                         return fk.make_response('Unauthorized admin account creation. Could not create user!', status.HTTP_401_UNAUTHORIZED)
                                 else:
                                 # # Many trials because of API key generation failures some times.
@@ -116,8 +123,13 @@ def user_register():
                                                     "middle_name" : "undefined",
                                                     "surname" : "CoRR"
                                                 })
-                                            except:
-                                                print str(traceback.print_exc())
+                                            except Error as re:
+                                                print('Message: %s' %re.message)
+                                                print('HTTP Status: %s' %str(re.status))
+                                                print('Developer Message: %s' %re.developer_message)
+                                                print('More Information: %s' %re.more_info)
+                                                print('Error Code: %s' %str(re.code))
+                                                return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
                                                 _account = None
                                         if _account != None:
                                             (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group="admin", api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
@@ -146,8 +158,14 @@ def user_register():
                                                                 "middle_name" : "undefined",
                                                                 "surname" : "undefined"
                                                             })
-                                                        except:
-                                                            print str(traceback.print_exc())
+                                                        except Error as re:
+                                                            print('Message: %s' %re.message)
+                                                            print('HTTP Status: %s' %str(re.status))
+                                                            print('Developer Message: %s' %re.developer_message)
+                                                            print('More Information: %s' %re.more_info)
+                                                            print('Error Code: %s' %str(re.code))
+                                                            return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
+                                                            _account = None
                                                     if _account != None:
                                                         (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
                                                         # admin_model = UserModel.objects(email=admin["email"]).first()
