@@ -30,20 +30,6 @@ import string
 import os
 import thread
 
-
-# @app.route(API_URL + '/public/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-# @crossdomain(origin='*')
-# def public_apps():
-#     logTraffic(endpoint='/admin/apps')
-#     if fk.request.method == 'GET':
-#         apps = ApplicationModel.objects()
-#         apps_json = {'total_apps':len(apps), 'apps':[]}
-#         for application in apps:
-#             apps_json['apps'].append(application.extended())
-#         return api_response(200, 'Developers applications', apps_json)
-#     else:
-#         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
-
 @app.route(API_URL + '/public/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_app_show(app_id):
@@ -229,7 +215,7 @@ def public_user_projects(user_id):
 
 @app.route(API_URL + '/public/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
-def public_projects(user_id):
+def public_projects():
     logTraffic(endpoint='/public/projects')
     if fk.request.method == 'GET':
         projects = ProjectModel.objects()
@@ -277,7 +263,7 @@ def public_comment_show(comment_id):
 @app.route(API_URL + '/public/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_records(project_id):
-    logTraffic(endpoint='/admin/project/records/<project_id>')
+    logTraffic(endpoint='/public/project/records/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -294,7 +280,7 @@ def public_project_records(project_id):
 @app.route(API_URL + '/public/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_show(project_id):
-    logTraffic(endpoint='/admin/project/show/<project_id>')
+    logTraffic(endpoint='/public/project/show/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -307,7 +293,7 @@ def public_project_show(project_id):
 @app.route(API_URL + '/public/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_logo(project_id):
-    logTraffic(endpoint='/admin/project/logo/<project_id>')
+    logTraffic(endpoint='/public/project/logo/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project != None:
@@ -358,7 +344,7 @@ def public_project_logo(project_id):
 @app.route(API_URL + '/public/project/download/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_download(project_id):
-    logTraffic(endpoint='/admin/project/download/<project_id>')
+    logTraffic(endpoint='/public/project/download/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -375,7 +361,7 @@ def public_project_download(project_id):
 @app.route(API_URL + '/public/project/history/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_history(project_id):
-    logTraffic(endpoint='/admin/project/envs/<project_id>')
+    logTraffic(endpoint='/public/project/envs/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -394,7 +380,7 @@ def public_project_history(project_id):
 @app.route(API_URL + '/public/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_envs_head(project_id):
-    logTraffic(endpoint='/admin/project/envs/head')
+    logTraffic(endpoint='/public/project/envs/head')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -410,7 +396,7 @@ def public_project_envs_head(project_id):
 @app.route(API_URL + '/public/project/env/show/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_env_show(project_id, env_id):
-    logTraffic(endpoint='/admin/project/env/show/<project_id>/<env_id>')
+    logTraffic(endpoint='/public/project/env/show/<project_id>/<env_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -430,7 +416,7 @@ def public_project_env_show(project_id, env_id):
 @app.route(API_URL + '/public/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_env_download(project_id, env_id):
-    logTraffic(endpoint='/admin/project/env/download/<project_id>/<env_id>')
+    logTraffic(endpoint='/public/project/env/download/<project_id>/<env_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -454,7 +440,7 @@ def public_project_env_download(project_id, env_id):
 @app.route(API_URL + '/public/records', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_records():
-    logTraffic(endpoint='/admin/records')
+    logTraffic(endpoint='/public/records')
     if fk.request.method == 'GET':
         records = RecordModel.objects()
         records_dict = {'total_records':len(records), 'records':[]}
@@ -467,7 +453,7 @@ def public_records():
 @app.route(API_URL + '/public/record/show/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_show(record_id):
-    logTraffic(endpoint='/admin/record/show/<record_id>')
+    logTraffic(endpoint='/public/record/show/<record_id>')
     if fk.request.method == 'GET':
         record = RecordModel.objects.with_id(record_id)
         if record == None:
@@ -480,7 +466,7 @@ def public_record_show(record_id):
 @app.route(API_URL + '/public/record/download/<project_id>/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_download(project_id, record_id):
-    logTraffic(endpoint='/admin/record/download/<project_id>/<record_id>')
+    logTraffic(endpoint='/public/record/download/<project_id>/<record_id>')
     if fk.request.method == 'GET':
         record = RecordModel.objects.with_id(record_id)
         if record == None:
@@ -500,7 +486,7 @@ def public_record_download(project_id, record_id):
 @app.route(API_URL + '/public/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_diffs():
-    logTraffic(endpoint='/admin/diffs')
+    logTraffic(endpoint='/public/diffs')
     if fk.request.method == 'GET':
         diffs = DiffModel.objects()
         diffs_dict = {'total_diffs':len(diffs), 'diffs':[]}
@@ -513,7 +499,7 @@ def public_diffs():
 @app.route(API_URL + '/public/diff/show/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_diff_show(diff_id):
-    logTraffic(endpoint='/admin/diff/show/<diff_id>')
+    logTraffic(endpoint='/public/diff/show/<diff_id>')
     if fk.request.method == 'GET':
         diff = DiffModel.objects.with_id(diff_id)
         if diff == None:
@@ -526,7 +512,7 @@ def public_diff_show(diff_id):
 @app.route(API_URL + '/public/files', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_files():
-    logTraffic(endpoint='/admin/files')
+    logTraffic(endpoint='/public/files')
     if fk.request.method == 'GET':
         files = FileModel.objects()
         files_dict = {'total_files':len(files), 'files':[]}
@@ -539,7 +525,7 @@ def public_files():
 @app.route(API_URL + '/public/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_file_download(file_id):
-    logTraffic(endpoint='/admin/file/download/<file_id>')
+    logTraffic(endpoint='/public/file/download/<file_id>')
     if fk.request.method == 'GET':
         file_meta = FileModel.objects.with_id(file_id)
         if file_meta == None:
@@ -611,7 +597,7 @@ def public_file_download(file_id):
 @app.route(API_URL + '/public/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_file_show(file_id):
-    logTraffic(endpoint='/admin/file/show/<file_id>')
+    logTraffic(endpoint='/public/file/show/<file_id>')
     if fk.request.method == 'GET':
         _file = FileModel.objects.with_id(file_id)
         if _file == None:
@@ -624,7 +610,7 @@ def public_file_show(file_id):
 @app.route(API_URL + '/public/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_messages():
-    logTraffic(endpoint='/admin/messages')
+    logTraffic(endpoint='/public/messages')
     if fk.request.method == 'GET':
         messages = MessageModel.objects()
         messages_dict = {'total_messages':len(messages), 'messages':[]}
@@ -637,7 +623,7 @@ def public_messages():
 @app.route(API_URL + '/public/message/show/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_message_show(message_id):
-    logTraffic(endpoint='/admin/message/show/<message_id>')
+    logTraffic(endpoint='/public/message/show/<message_id>')
     if fk.request.method == 'GET':
         message = MessageModel.objects.with_id(message_id)
         if message == None:
@@ -647,7 +633,351 @@ def public_message_show(message_id):
     else:
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/public/app/search/<app_name>', methods=['GET'])
+@app.route(API_URL + '/public/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+def public_search(key_words):
+    logTraffic(endpoint='/public/search/<key_words>')
+    if fk.request.method == 'GET':
+        results = {'results':{}, 'total-results':0}
+        results['results']['users'] = {'users-list':[], 'users-total':0}
+        results['results']['apps'] = {'apps-list':[], 'apps-total':0}
+        results['results']['projects'] = {'projects-list':[], 'projects-total':0}
+        results['results']['records'] = {'records-list':[], 'records-total':0}
+        results['results']['envs'] = {'envs-list':[], 'envs-total':0}
+        results['results']['bundles'] = {'bundles-list':[], 'bundles-total':0}
+        results['results']['files'] = {'files-list':[], 'files-total':0}
+        results['results']['versions'] = {'versions-list':[], 'versions-total':0}
+
+        words = key_words.split('-')
+
+        for user in UserModel.objects():
+            exists = [False for word in words]
+            condition = [True for word in words]
+            profile = ProfileModel.objects(user=user).first()
+            index = 0
+            for word in words:
+                if word != '':
+                    if profile != None:
+                        try:
+                            if word.lower() in user.email.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in profile.fname.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in profile.lname.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                else:
+                    exists[index] = True
+                index += 1
+            if exists == condition:
+                results['results']['users']['users-list'].append({'user':user.info(), 'profile':profile.info()})
+            results['results']['users']['users-total'] = len(results['results']['users']['users-list'])
+
+        for app in ApplicationModel.objects():
+            exists = [False for word in words]
+            condition = [True for word in words]
+            index = 0
+            for word in words:
+                if word != '':
+                    try:
+                        if word.lower() in app.possible_access.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in app.network.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in app.storage.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in app.about.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in app.name.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                else:
+                    exists[index] = True
+                index += 1
+            if exists == condition:
+                results['results']['apps']['apps-list'].append(app.info())
+            results['results']['apps']['apps-total'] = len(results['results']['apps']['apps-list'])
+
+        for project in ProjectModel.objects():
+            if project.access == "public":
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in project.name.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in project.description.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in project.goals.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(project.tags).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in project.access.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in project.group.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['projects']['projects-list'].append(project.info())
+                results['results']['projects']['projects-total'] = len(results['results']['projects']['projects-list'])
+
+        for record in RecordModel.objects():
+            if record.access == "public":
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in record.label.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.tags).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.system).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.execution).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.preparation).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.inputs).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.outputs).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.dependencies).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in record.status.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in record.access.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in str(record.rationels).lower():
+                                exists[index] = True
+                        except:
+                            pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['records']['records-list'].append(record.info())
+                results['results']['records']['records-total'] = len(results['results']['records']['records-list'])
+
+        for env in EnvironmentModel.objects():
+            exists = [False for word in words]
+            condition = [True for word in words]
+            index = 0
+            for word in words:
+                if word != '':
+                    try:
+                        if word.lower() in env.group.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in env.system.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in str(env.specifics).lower():
+                            exists[index] = True
+                    except:
+                        pass
+                else:
+                    exists[index] = True
+                index += 1
+            if exists == condition:
+                results['results']['envs']['envs-list'].append(env.info())
+            results['results']['envs']['envs-total'] = len(results['results']['envs']['envs-list'])
+
+        for bundle in BundleModel.objects():
+            exists = [False for word in words]
+            condition = [True for word in words]
+            index = 0
+            for word in words:
+                if word != '':
+                    try:
+                        if word.lower() in bundle.scope.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in bundle.location.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in bundle.mimetype.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                else:
+                    exists[index] = True
+                index += 1
+            if exists == condition:
+                results['results']['bundles']['bundles-list'].append(bundle.info())
+            results['results']['bundles']['bundles-total'] = len(results['results']['bundles']['bundles-list'])
+
+        for file_ in FileModel.objects():
+            if file_.owner == None:
+                exists = [False for word in words]
+                condition = [True for word in words]
+                index = 0
+                for word in words:
+                    if word != '':
+                        try:
+                            if word.lower() in file_.mimetype.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.name.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.path.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.storage.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.location.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.group.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                        try:
+                            if word.lower() in file_.description.lower():
+                                exists[index] = True
+                        except:
+                            pass
+                    else:
+                        exists[index] = True
+                    index += 1
+                if exists == condition:
+                    results['results']['files']['files-list'].append(file_.info())
+                results['results']['files']['files-total'] = len(results['results']['files']['files-list'])
+
+        for version in VersionModel.objects():
+            exists = [False for word in words]
+            condition = [True for word in words]
+            index = 0
+            for word in words:
+                if word != '':
+                    try:
+                        if word.lower() in version.system.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in version.baseline.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                    try:
+                        if word.lower() in version.marker.lower():
+                            exists[index] = True
+                    except:
+                        pass
+                else:
+                    exists[index] = True
+                index += 1
+            if exists == condition:
+                results['results']['versions']['versions-list'].append(version.info())
+            results['results']['versions']['versions-total'] = len(results['results']['versions']['versions-list'])
+
+        results['total-results'] += results['results']['users']['users-total']
+        results['total-results'] += results['results']['apps']['apps-total']
+        results['total-results'] += results['results']['projects']['projects-total']
+        results['total-results'] += results['results']['records']['records-total']
+        results['total-results'] += results['results']['envs']['envs-total']
+        results['total-results'] += results['results']['bundles']['bundles-total']
+        results['total-results'] += results['results']['files']['files-total']
+        results['total-results'] += results['results']['versions']['versions-total']
+
+        return api_response(200, 'Search results for: [%s]'%key_words, results)
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/public/app/search/<app_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def public_app_search(app_name):
     if fk.request.method == 'GET':
         apps = ApplicationModel.objects(name__icontains=app_name)
@@ -665,7 +995,7 @@ def public_app_search(app_name):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 
-@app.route(API_URL + '/public/apps/<user_id>', methods=['GET'])
+@app.route(API_URL + '/public/apps/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def public_user_apps(user_id):
     current_user = UserModel.objects.with_id(user_id)
     if current_user is not None:
@@ -683,7 +1013,7 @@ def public_user_apps(user_id):
     else:
         return api_response(404, 'Request suggested an empty response', 'Unable to find this user.')
 
-@app.route(API_URL + '/public/apps', methods=['GET'])
+@app.route(API_URL + '/public/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def public_apps():
     if fk.request.method == 'GET':
         apps = ApplicationModel.objects()
@@ -702,23 +1032,23 @@ def public_resolve_item(item_id):
         resolution = {'class':'', 'endpoints':[]}
         if item_id == 'root':
             resolution['type'] = 'Public'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['users', '--us'], 'endpoint':'/public/users'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pr'], 'endpoint':'/public/projects'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/files'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/public/diffs'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/public/apps'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['users', '--us'], 'endpoint':'/public/users'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['projects', '--pr'], 'endpoint':'/public/projects'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/files'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/public/diffs'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/public/apps'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
             resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'<credential.email>', 'password':'<credential.password>'}, 'meta':['login', '--lg'], 'endpoint':'/public/user/login'})
             return api_response(200, 'Public default resolution result', resolution)
         item = UserModel.objects.with_id(item_id)
         if item != None:
             resolution['type'] = 'User'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/user/show/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/public/user/picture/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/public/user/profile/show/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/public/user/projects/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/public/user/apps/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/user/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/public/user/picture/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/public/user/profile/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/public/user/projects/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/public/user/apps/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
             resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'<credential.email>', 'password':'<credential.password>'}, 'meta':['login', '--lg'], 'endpoint':'/public/user/login'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
@@ -729,62 +1059,62 @@ def public_resolve_item(item_id):
         item = CommentModel.objects.with_id(item_id)
         if item != None:
             resolution['type'] = 'Comment'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/comment/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/comment/show/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = ProjectModel.objects.with_id(item_id)
         if item != None:
             resolution['type'] = 'Project'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/project/show/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['history', '--hi'], 'endpoint':'/public/project/history/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/project/comments/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/public/project/records/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/project/files/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/project/download/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/public/project/logo/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/project/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['history', '--hi'], 'endpoint':'/public/project/history/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/project/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/public/project/records/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/project/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/project/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/public/project/logo/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = RecordModel.objects.with_id(item_id)
         if item != None:
             resolution['type'] = 'Record'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/record/show/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['env', '--en'], 'endpoint':'/public/record/env/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/record/comments/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/public/record/diffs/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/record/files/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/record/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/record/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['env', '--en'], 'endpoint':'/public/record/env/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/record/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/public/record/diffs/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/record/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/record/download/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = EnvironmentModel.objects.with_id(item_id)
         if item != None:
             resolution['type'] = 'Environment'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/env/show/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/env/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/env/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/env/download/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = DiffModel.objects.with_id(item_id)
         if item != None:
             resolution['type'] = 'Diff'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/diff/show/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/diff/comments/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/diff/files/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/diff/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/diff/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/public/diff/comments/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/public/diff/files/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/diff/download/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = FileModel.objects.with_id(item_id)
         if item != None:
             resolution['type'] = 'File'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/file/show/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/file/download/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/file/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/public/file/download/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         item = ApplicationModel.objects.with_id(item_id)
         if item != None:
             resolution['type'] = 'Application'
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/app/show/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search', '--se'], 'endpoint':'/public/app/search/<query>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['connectivity', '--co'], 'endpoint':'/public/app/connectivity/<selected.id>'})
-            resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/public/app/logo/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/public/app/show/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['search', '--se'], 'endpoint':'/public/app/search/<query>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['connectivity', '--co'], 'endpoint':'/public/app/connectivity/<selected.id>'})
+            resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/public/app/logo/<selected.id>'})
             return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
         if item == None:

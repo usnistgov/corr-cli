@@ -3,14 +3,14 @@ from ..models import FileModel
 from ..models import CommentModel
 from ..models import ProjectModel
 from ..models import EnvironmentModel
-from ..models import ApplicationModel
+# from ..models import ApplicationModel
 import datetime
 import json
 from bson import ObjectId
 
 class RecordModel(db.Document):
     project = db.ReferenceField(ProjectModel, reverse_delete_rule=db.CASCADE, required=True)
-    application = db.ReferenceField(ApplicationModel)
+    # application = db.ReferenceField(ApplicationModel)
     parent = db.StringField(max_length=256)# parent record id #db.ReferenceField(RecordModel, reverse_delete_rule=db.CASCADE)
     label = db.StringField()
     tags = db.ListField(db.StringField())
@@ -41,7 +41,7 @@ class RecordModel(db.Document):
         self.id = ObjectId()
 
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.datetime.utcnow()
+        self.updated_at = str(datetime.datetime.utcnow())
         return super(RecordModel, self).save(*args, **kwargs)
     
     def update_fields(self, data):
@@ -102,10 +102,10 @@ class RecordModel(db.Document):
         data['head']['inputs'] = len(self.inputs)
         data['head']['outputs'] = len(self.outputs)
         data['head']['dependencies'] = len(self.dependencies)
-        if self.application != None:
-            data['head']['application'] = str(self.application.id)
-        else:
-            data['head']['application'] = None
+        # if self.application != None:
+        #     data['head']['application'] = str(self.application.id)
+        # else:
+        #     data['head']['application'] = None
         if self.environment != None:
             data['head']['environment'] = str(self.environment.id)
         else:
@@ -147,11 +147,18 @@ class RecordModel(db.Document):
         data['head']['comments'] = [comment.extended() for comment in self._comments()]
         data['head']['resources'] = [resource.extended() for resource in self._resources()]
         data['head']['rationels'] = self.rationels
-        data['extend'] = self.extend
-        if self.application != None:
-            data['head']['application'] = self.application.info()
+        if self.environment != None:
+            if self.environment.application != None:
+                data['head']['application'] = self.environment.application.extended()
+            else:
+                data['head']['application'] = {}
         else:
             data['head']['application'] = {}
+        data['extend'] = self.extend
+        # if self.application != None:
+        #     data['head']['application'] = self.application.info()
+        # else:
+        #     data['head']['application'] = {}
         if self.environment != None:
             data['head']['environment'] = self.environment.extended()
         else:

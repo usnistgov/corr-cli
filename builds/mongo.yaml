@@ -1,0 +1,7 @@
+---
+- name: install mongodb
+  apt:
+    name: mongodb
+    state: present
+    force: yes
+  become: true

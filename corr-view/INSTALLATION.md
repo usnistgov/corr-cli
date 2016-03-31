@@ -7,7 +7,7 @@
 After configuring docker based on your platform, do:
 
     $ git clone https://github.com/faical-yannick-congo/corr-view.git
-    $ cd sumatra-view
+    $ cd corr-view
     $ docker build -t corr-view .
 
 Befor you can run the containers, figureout the docker vm or interface

@@ -23,7 +23,7 @@ class FileModel(db.Document):
 
     def info(self):
         data = {'created_at':str(self.created_at), 'id': str(self.id), 
-        'name':self.name, 'encoding':self.encoding, 'mimetype': self.mimetype, 'size': self.size, 'path': self.path, 'location':self.location}
+        'name':self.name, 'encoding':self.encoding, 'mimetype': self.mimetype, 'size': self.size, 'storage': self.storage, 'location':self.location}
         if self.owner != None:
             data['owner'] = str(self.owner.id)
         else:
@@ -32,7 +32,6 @@ class FileModel(db.Document):
 
     def extended(self):
         data = self.info()
-        data['path'] = self.path
         data['storage'] = self.storage
         data['group'] = self.group
         data['description'] = self.description

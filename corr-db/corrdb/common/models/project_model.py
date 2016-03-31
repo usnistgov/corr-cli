@@ -4,13 +4,13 @@ from ..models import UserModel
 from ..models import FileModel
 from ..models import CommentModel
 from ..models import EnvironmentModel
-from ..models import ApplicationModel
+# from ..models import ApplicationModel
 import json
 from bson import ObjectId
           
 class ProjectModel(db.Document):
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
-    application = db.ReferenceField(ApplicationModel)
+    # application = db.ReferenceField(ApplicationModel)
     logo = db.ReferenceField(FileModel)
     owner = db.ReferenceField(UserModel, reverse_delete_rule=db.CASCADE, required=True)
     name = db.StringField(required=True)
@@ -64,10 +64,10 @@ class ProjectModel(db.Document):
         'owner':str(self.owner.id), 'name': self.name, 'access':self.access, 'tags':len(self.tags), 
         'duration': str(self.duration), 'records':self.record_count, 'environments':len(self.history),
         'diffs':self.diff_count, 'comments':len(self.comments), 'resources':len(self.resources)}
-        if self.application != None:
-            data['application'] = str(self.application.id)
-        else:
-            data['application'] = None
+        # if self.application != None:
+        #     data['application'] = str(self.application.id)
+        # else:
+        #     data['application'] = None
         if self.logo != None:
             data['logo'] = str(self.logo.id)
         else:
@@ -76,10 +76,10 @@ class ProjectModel(db.Document):
 
     def extended(self):
         data = self.info()
-        if self.application != None:
-            data['application'] = self.application.info()
-        else:
-            data['application'] = {}
+        # if self.application != None:
+        #     data['application'] = self.application.info()
+        # else:
+        #     data['application'] = {}
         data['tags'] = self.tags
         data['goals'] = self.goals
         data['history'] = [env.extended() for env in self._history()]
