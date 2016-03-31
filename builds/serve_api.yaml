@@ -1,0 +1,33 @@
+## Deploy a production environment using Nginx
+
+- name: install nginx
+  apt:
+    name: nginx-full
+    state: present
+    force: yes
+  become: true
+
+- name:
+  service: name=nginx state=started
+  become: true
+
+- name: copy ini template
+  template: src={{ corr_path }}/builds/corrapi.py.j2 dest={{ corr_path }}/builds/corrapi.py
+
+- name: copy service template
+  template: src={{ corr_path }}/builds/corrapi.service.j2 dest=/lib/systemd/system/corrapi.service
+  become: true
+
+- name: update systemd
+  command: systemctl daemon-reload
+  become: true
+
+- name: run server
+  service: name=corrapi state=started
+  become: true
+
+- pause: prompt="Press enter to exit and kill running servers."
+
+- name: kill servers
+  service: name=corrapi state=stopped
+  become: true

@@ -18,3 +18,4 @@ dependencies:
     - flask-api
     - flask-stormpath
     - hurry.filesize
+    - uwsgi

@@ -7,20 +7,24 @@
     port: 27017
 
 - name: copy templates
-  template: src={{ corr_path }}/builds/{{ item }}.j2 dest=/lib/systemd/system/{{ item }}.service
+  template: src={{ corr_path }}/builds/{{ item }}.service.j2 dest=/lib/systemd/system/{{ item }}.service
   become: true
   with_items:
-    - jekyll
-    - corrapi
-    - corrcloud
+    - jekyll_develop
+    - corrapi_develop
+    - corrcloud_develop
+
+- name: update systemd
+  command: systemctl daemon-reload
+  become: true
 
 - name: run servers
   service: name={{ item }} state=started
   become: true
   with_items:
-    - jekyll
-    - corrapi
-    - corrcloud
+    - jekyll_develop
+    - corrapi_develop
+    - corrcloud_develop
 
 - pause: prompt="Press enter to exit and kill running servers."
 
@@ -28,6 +32,6 @@
   service: name={{ item }} state=stopped
   become: true
   with_items:
-    - jekyll
-    - corrapi
-    - corrcloud
+    - jekyll_develop
+    - corrapi_develop
+    - corrcloud_develop
