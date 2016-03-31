@@ -1,5 +1,6 @@
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProfileModel
+from corrdb.common.models import ApplicationModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
 from corrdb.common.models import RecordModel
@@ -789,6 +790,8 @@ def user_home():
         projects = ProjectModel.objects()
         records = RecordModel.objects()
         environments = EnvironmentModel.objects()
+        apps = ApplicationModel.objects()
+        traffic = TrafficModel.objects()
         print fk.request.path
 
         users_stat = {"number":len(users)}
@@ -799,6 +802,13 @@ def user_home():
 
         storage_stat = {}
         storage_stat["history"] = [json.loads(stat.to_json()) for stat in StatModel.objects(category="storage")]
+
+        apps_stat = {"size":len(apps)}
+        apps_stat["history"] = [json.loads(app.to_json()) for app in StatModel.objects(category="application")]
+
+        traffic_stat = {"size":len(traffic)}
+        traffic_stat["history"] = [json.loads(tr.to_json()) for tr in traffic]
+
         amount = 0
         for user in users:
             try:
@@ -818,7 +828,7 @@ def user_home():
         records_stat = {"number":len(records)}
         records_stat["history"] = [json.loads(stat.to_json()) for stat in StatModel.objects(category="record")]
 
-        return fk.Response(json.dumps({'version':version, 'users':users_stat, 'projects':projects_stat, 'records':records_stat, 'storage':storage_stat}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+        return fk.Response(json.dumps({'version':version, 'traffic':traffic_stat, 'users':users_stat, 'apps':apps_stat, 'projects':projects_stat, 'records':records_stat, 'storage':storage_stat}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 

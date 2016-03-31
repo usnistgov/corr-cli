@@ -114,7 +114,7 @@
                     <li class="li-hover">
                         <ul class="chat-collapsible" data-collapsible="expandable">
                         <li>
-                            <div class="collapsible-header teal white-text active tooltipped" data-position="left" data-delay="50" data-tooltip="login area"><i class="mdi-action-home"></i>Login</div>
+                            <div class="collapsible-header teal white-text active"><i class="mdi-action-home"></i>Login</div>
                             <div class="collapsible-body recent-activity">
                                 <div class="row margin">
                                   <div class="input-field col s12">
@@ -182,7 +182,7 @@
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header orange white-text"><i class="mdi-communication-email"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
+                            <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
                             
                         </li>
                         <li>
@@ -305,10 +305,10 @@
                     <!--card stats start-->
                     <div id="card-stats">
                         <div class="row">
-                            <div class="col s12 m6 l3">
+                            <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content  green white-text">
-                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Toatl Users</p>
+                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Total Users</p>
                                         <h4 class="card-stats-number" id="total-users">N/A</h4>
                                        <!--  <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="green-text text-lighten-5">from last year</span>
                                         </p> -->
@@ -318,9 +318,23 @@
                                     </div> -->
                                 </div>
                             </div>
-                            <div class="col s12 m6 l3">
+                            <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content purple white-text">
+                                        <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Total Applications</p>
+                                        <h4 class="card-stats-number" id="total-apps">N/A</h4>
+                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="purple-text text-lighten-5">from last month</span>
+                                        </p> -->
+                                    </div>
+                                    <!-- <div class="card-action purple darken-2">
+                                        <div id="sales-compositebar"></div>
+
+                                    </div> -->
+                                </div>
+                            </div>  
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content brown white-text">
                                         <p class="card-stats-title"><i class="mdi-file-folder"></i> Total Projects</p>
                                         <h4 class="card-stats-number" id="total-projects">N/A</h4>
                                         <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="purple-text text-lighten-5">from last month</span>
@@ -332,10 +346,10 @@
                                     </div> -->
                                 </div>
                             </div>                            
-                            <div class="col s12 m6 l3">
+                            <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content blue-grey white-text">
-                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Today Records</p>
+                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Total Records</p>
                                         <h4 class="card-stats-number" id="total-records">N/A</h4>
                                         <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="blue-grey-text text-lighten-5">from last week</span>
                                         </p> -->
@@ -345,11 +359,24 @@
                                     </div> -->
                                 </div>
                             </div>
-                            <div class="col s12 m6 l3">
+                            <div class="col s12 m6 l2">
                                 <div class="card">
-                                    <div class="card-content deep-purple white-text">
+                                    <div class="card-content red white-text">
                                         <p class="card-stats-title"><i class="mdi-device-storage"></i> Total Storage</p>
                                         <h4 class="card-stats-number" id="total-storage">N/A</h4>
+                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-down"></i> N/A <span class="deep-purple-text text-lighten-5">from yesterday</span>
+                                        </p> -->
+                                    </div>
+                                    <!-- <div class="card-action  deep-purple darken-2">
+                                        <div id="invoice-line"></div>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content orange white-text">
+                                        <p class="card-stats-title"><i class="mdi-av-equalizer"></i> Total Traffic</p>
+                                        <h4 class="card-stats-number" id="total-traffic">N/A</h4>
                                         <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-down"></i> N/A <span class="deep-purple-text text-lighten-5">from yesterday</span>
                                         </p> -->
                                     </div>
@@ -367,63 +394,64 @@
         </div>
     <!-- </footer> -->
 
-    <div id="view-modal" class="modal login-form">
+    <div id="account-modal" class="modal login-form">
         <div class="modal-content">
           <!-- <form class="login-form"> -->
             <div class="row">
               <div class="input-field col s12 center">
-                <img src="images/avatar.jpg" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login">
+                <img src="images/picture.png" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login">
                 <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
               </div>
             </div>
             <div class="divider"></div>
-            <div class="row margin">
+            <!-- <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-social-person-outline prefix"></i>
                 <input disabled id="view-username" type="text">
                 <label id="view-username-value" for="view-username" class="center-align">Username</label>
               </div>
-            </div>
+            </div> -->
             <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-communication-email prefix"></i>
-                <input disabled id="view-email" type="email">
+                <input readonly id="view-email" type="email">
                 <label id="view-email-value" for="view-email">Email</label>
               </div>
             </div>
+
             <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-communication-vpn-key prefix"></i>
-                <input disabled id="view-api" type="text">
+                <input readonly id="view-api" type="text">
                 <label class"truncate" id="view-api-value" for="view-api">Api Key</label>
               </div>
             </div>
 
             <div class="row margin">
               <div class="input-field col s12">
-                <a onclick="user.copy_api()" class="btn waves-effect waves-light col s12">Copy Token</a>
+                <button data-clipboard-action="copy" data-clipboard-target="#view-api" class="btn waves-effect waves-light col s12">Copy Token</button>
               </div>
             </div>
 
-          <!-- </form> -->
-        </div>
-        <div class="modal-footer teal lighten-4">
-            
-            <div class="footer-copyright">
-                <span >Last updated</span>
-                <span class="right">06/23/2015 5:49:23 PM</span>
+            <div class="row margin">
+              <div class="input-field col s12">
+                <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Account</a>
+              </div>
             </div>
         </div>
     </div>
 
-    <div id="edit-modal" class="modal login-form">
+    <div id="account-update-modal" class="modal login-form">
         <div class="modal-content">
           <!-- <form class="login-form"> -->
-            <div class="row">
-              <div class="input-field col s12 center">
-                <img src="images/avatar.jpg" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
+            <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
+                <label for="file-input">
+                    <img src="images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
+                </label>
+
+                <input id="file-input" type="file" style="display: none;"/>
+                
                 <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
-              </div>
             </div>
             <div class="divider"></div>
             <div class="row margin">
@@ -454,22 +482,71 @@
                 <label for="edit-new-password-again">New Password Again</label>
               </div>
             </div>
-            <div class="row margin">
+            <!-- <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-communication-vpn-key prefix"></i>
                 <input id="view-api" type="text">
                 <label for="view-api">Api Key</label>
               </div>
+            </div> -->
+            <div class="row margin">
+              <div class="input-field col s12">
+                <a href="index.html" class="btn waves-effect waves-light col s12">Confirm</a>
+              </div>
+            </div>
+
+          <!-- </form> -->
+        </div>
+    </div>
+
+    <div id="profile-modal" class="modal login-form">
+        <div class="modal-content">
+          <!-- <form class="login-form"> -->
+            <div class="row">
+              <div class="input-field col s12 center">
+                <img src="images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
+                <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
+              </div>
             </div>
             <div class="divider"></div>
             <div class="row margin">
               <div class="input-field col s12">
-                <a onclick="user.renew()" class="btn waves-effect waves-light col s12">Renew Api</a>
+                <i class="mdi-action-perm-identity prefix"></i>
+                <input readonly id="view-fname" type="text">
+                <label id="view-fname-value" for="view-fname">First Name</label>
               </div>
             </div>
             <div class="row margin">
               <div class="input-field col s12">
-                <a href="index.html" class="btn waves-effect waves-light col s12">Update Account</a>
+                <i class="mdi-action-assignment-ind prefix"></i>
+                <input readonly id="view-lname" type="text">
+                <label id="view-lname-value" for="view-lname">Last Name</label>
+              </div>
+            </div>
+            <div class="row margin">
+              <div class="input-field col s12">
+                <i class="mdi-action-home prefix"></i>
+                <input readonly id="view-org" type="text">
+                <label id="view-org-value" for="view-org">Organisation</label>
+              </div>
+            </div>
+            <div class="row margin">
+              <div class="input-field col s12">
+                <i class="mdi-action-assignment prefix"></i>
+                <textarea id="view-about" class="materialize-textarea"></textarea>
+                <label id="view-about-value" for="view-about">About</label>
+              </div>
+            </div>
+            <!-- <div class="row margin">
+              <div class="input-field col s12">
+                <i class="mdi-communication-vpn-key prefix"></i>
+                <input id="view-api" type="text">
+                <label for="view-api">Api Key</label>
+              </div>
+            </div> -->
+            <div class="row margin">
+              <div class="input-field col s12">
+                <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Profile</a>
               </div>
             </div>
 
@@ -522,10 +599,12 @@
     <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="js/init.js"></script>
     <script src="js/cloud.js"></script>
+    <script src="js/clipboard.min.js"></script>
 
      <script type="text/javascript">
         $(document).ready(function(){
             $('.tooltipped').tooltip({delay: 50});
+            new Clipboard('.btn');
         });
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
@@ -543,6 +622,8 @@
                 var projects = response["projects"];
                 var records = response["records"];
                 var storage = response["storage"];
+                var apps = response["apps"];
+                var traffic = response["traffic"];
 
                 // console.log("Total Users:"+document.getElementById("total-users").value);
 
@@ -552,16 +633,24 @@
                 document.getElementById("total-storage").innerHTML = storage["size"];
                 console.log("Version: "+version);
                 document.getElementById("footer-version").innerHTML = version;
+                document.getElementById("total-apps").innerHTML = apps["size"];
+                document.getElementById("total-traffic").innerHTML = traffic["size"];
 
                 console.log("Total Users:"+users["number"]);
                 console.log("Total Projects:"+projects["number"]);
                 console.log("Total Records:"+records["number"]);
                 console.log("Total Storage:"+storage["size"]);
+                console.log("CoRR Version:"+version);
+                console.log("Total Apps:"+apps["size"]);
+                console.log("Total Traffic:"+traffic["size"]);
 
                 console.log("++Total Users:"+document.getElementById("total-users").value);
                 console.log("++Total Projects:"+document.getElementById("total-projects").value);
                 console.log("++Total Records:"+document.getElementById("total-records").value);
                 console.log("++Total Stage:"+document.getElementById("total-storage").value);
+                console.log("++CoRR Version:"+document.getElementById("footer-version").value);
+                console.log("++Total Apps:"+document.getElementById("total-apps").value);
+                console.log("++Total Traffic:"+document.getElementById("total-traffic").value);
             } else {
                 console.log("Cannot reach the cloud!");
                 // Materialize.toast('<span>Cannot reach the cloud!</span>', 3000);
@@ -583,7 +672,7 @@
             // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"account\"
             // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"profile\"
             document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"http://0.0.0.0:5000/dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
-            document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-settings\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"account\"><a href=\"#view-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-communication-vpn-key\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"profile\"><a href=\"#edit-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-action-account-circle\"></i></a></li></ul>";
+            document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-settings\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"account\"><a href=\"#account-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-communication-vpn-key\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"profile\"><a href=\"#profile-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-action-account-circle\"></i></a></li></ul>";
             
             document.getElementById('account-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
             document.getElementById('profile-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
@@ -600,8 +689,6 @@
                 Materialize.toast('<span>Your message has been sent!</span>', 3000);
             }
         }
-
-        http://0.0.0.0:5200/cloud/v0.1/private/5b3470fcf23aecd755bac0237fdaa26593a7d85a27076b72269f533bff0c7dca/user/picture
 
         function loginKeyPress(e)
         {

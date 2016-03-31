@@ -175,8 +175,8 @@ var user = {
                 // document.getElementById("view-api-value").value = this.api;
 
                 $('#view-username-value').text(this.username);
-                $('#view-email-value').text(this.email);
-                $('#view-api-value').text(this.api);
+                document.getElementById('view-email').value = this.email;
+                document.getElementById('view-api').value = this.api;
 
 
                 // if(this.username.length > 18){
