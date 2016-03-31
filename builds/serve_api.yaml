@@ -7,10 +7,6 @@
     force: yes
   become: true
 
-- name:
-  service: name=nginx state=started
-  become: true
-
 - name: copy ini template
   template: src={{ corr_path }}/builds/corrapi.py.j2 dest={{ corr_path }}/builds/corrapi.py
 
@@ -23,10 +19,20 @@
   become: true
 
 - name: run server
-  service: name=corrapi state=started
+  service: name=corrapi state=restarted
   become: true
 
-- pause: prompt="Press enter to exit and kill running servers."
+- name: copy nginx template
+  template: src={{ corr_path }}/builds/nginx-api.j2 dest=/etc/nginx/sites-available/corrapi
+  become: true
+
+- name: link files for nginx
+  file: src=/etc/nginx/sites-available/corrapi dest=/etc/nginx/sites-enabled/corrapi state=link
+  become: true
+
+- name:
+  service: name=nginx state=restarted
+  become: true
 
 - name: kill servers
   service: name=corrapi state=stopped
