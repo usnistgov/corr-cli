@@ -1,10 +1,10 @@
-
+"""Python module, `corrdb`, for CoRR.
+"""
 import os
 import nose
 from nose.tools import nottest
-import common
-import test
-
+import corrdb.common
+import corrdb.tests
 
 @nottest
 def test():
@@ -17,6 +17,11 @@ def test():
 
 
 def get_version():
+    """Get the version of the code from egg_info.
+
+    Returns:
+      the package version number
+    """
     from pkg_resources import get_distribution, DistributionNotFound
 
     try:
@@ -29,10 +34,4 @@ def get_version():
 __version__ = get_version()
 
 __all__ = ['__version__',
-           'test'
-           # 'MKSRegressionModel',
-           # 'MKSKernelPCAModel',
-           # 'DiscreteIndicatorBasis',
-           # 'ContinuousIndicatorBasis',
-           # 'LegendreBasis'
-           ]
+           'test']
