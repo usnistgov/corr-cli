@@ -41,6 +41,16 @@
       when: normal_task_list is not defined
       tags: [serve_develop]
 
-    - include: serve_api.yaml
+    - set_fact:
+        app_path: "{{ corr_path }}/corr-api"
       when: normal_task_list is not defined
       tags: [serve_api]
+
+    - set_fact:
+        app_path: "{{ corr_path }}/corr-cloud"
+      when: normal_task_list is not defined
+      tags: [serve_cloud]
+
+    - include: serve_app.yaml
+      when: normal_task_list is not defined
+      tags: [serve_api, sever_cloud]

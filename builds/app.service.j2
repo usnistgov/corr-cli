@@ -1,0 +1,11 @@
+[Unit]
+Description=corr api uwsgi server
+ConditionPathExists=|{{ app_path }}
+
+[Service]
+WorkingDirectory={{ corr_path }}
+ExecStart={{ env_path }}/gunicorn -c {{ corr_path }}/builds/app_config.py --bind unix:{{ corr_path }}/builds/app.sock run:app
+SyslogIdentifier=app
+
+[Install]
+WantedBy=multi-user.target
