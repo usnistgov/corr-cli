@@ -16,12 +16,27 @@ This will run an Ansible script that will install all the necessary
 prerequisites to run CoRR. `sudo` privileges are required. Edit
 [`builds/install.yaml`](builds/install.yaml) to change custom
 variables such as the version of the code to install and the
-repository URL. To launch the front end web app and the API use,
+repository URL. To start development servers use
 
-    $ ./config.bash -K --tags serve_develop
+    $ ./config_bash -K --tags serve_db
 
-This runs the mongodb, the flask development servers for corr-cloud
-and corr-api as well as jekyll for the frontend.
+to start the database and then
+
+    $ cd corr-api
+    $ python run.py
+
+to start the API and then in another terminal use,
+
+    $ cd ../corr-cloud
+    $ python run.py
+
+to start the cloud service. To run the front end, open another
+terminal and use
+
+    $ cd ../corr-view/frontend
+    $ jekyll serve --watch --port 5000 --host 0.0.0.0
+
+Go to [http://0.0.0.0/](http://0.0.0.0/) to see the front end.
 
 ## Test Installation with Docker
 
