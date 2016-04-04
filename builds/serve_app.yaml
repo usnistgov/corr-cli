@@ -7,11 +7,11 @@
     force: yes
   become: true
 
-- name: copy ini template
-  template: src={{ corr_path }}/builds/app_config.py.j2 dest={{ corr_path }}/builds/app_config.py
+- name: copy gunicorn template
+  template: src={{ corr_path }}/builds/app_config.py.j2 dest={{ gunicorn_config }}
 
 - name: copy service template
-  template: src={{ corr_path }}/builds/app.service.j2 dest=/lib/systemd/system/app.service
+  template: src={{ corr_path }}/builds/app.service.j2 dest=/lib/systemd/system/{{ app_service_name }}.service
   become: true
 
 - name: update systemd
@@ -19,17 +19,20 @@
   become: true
 
 - name: run server
-  service: name=app state=restarted
+  service: name={{ app_service_name }} state=restarted
   become: true
 
 - name: copy nginx template
-  template: src={{ corr_path }}/builds/nginx-app.j2 dest=/etc/nginx/sites-available/app
+  template: src={{ corr_path }}/builds/nginx-app.j2 dest=/etc/nginx/sites-available/{{ app_service_name }}
   become: true
 
 - name: link files for nginx
-  file: src=/etc/nginx/sites-available/app dest=/etc/nginx/sites-enabled/app state=link
+  file: src=/etc/nginx/sites-available/corr dest=/etc/nginx/sites-enabled/corr state=link
   become: true
 
-- name:
+- name: restart nginx
   service: name=nginx state=restarted
   become: true
+
+- name: check that API is up
+  uri: url=http://0.0.0.0/api/v0.1/public/users

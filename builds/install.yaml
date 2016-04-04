@@ -12,6 +12,11 @@
     conda: "{{ anaconda_path }}/bin/conda"
     env_path: "{{ anaconda_path }}/envs/{{ corr_env }}/bin"
     python: "{{ anaconda_path }}/envs/{{ corr_env }}/bin/python"
+    access_log: "/var/log/corr-access.log"
+    error_log: "/var/log/corr-error.log"
+    gunicorn_config: "{{ local_path }}/.config/corr_config.py"
+    socket_file: /tmp/app.sock
+    app_service_name: corr
   tasks:
     - name: define variable so tasks only run when tags specified
       shell: /bin/true
