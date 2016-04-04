@@ -15,6 +15,13 @@ import json
 import time
 import boto3
 import traceback 
+import datetime
+
+import requests
+from datetime import date, timedelta
+from functools import update_wrapper
+from calendar import monthrange
+import time
 
 app = setup_app(__name__)
 
@@ -197,6 +204,12 @@ def delete_project_files(project):
             s3_bundles.delete_key(_environment.bundle["location"])
         del _environment
 
+def cloud_response(code, title, content):
+    import flask as fk
+    response = {'code':code, 'title':title, 'content':content}
+    # print response
+    return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+
 def delete_record_files(record):
     s3_files = s3.Bucket('reproforge-pictures')
 
@@ -233,13 +246,39 @@ def s3_get_file(group='', key=''):
     except:
         return None
 
+def s3_upload_file(file_meta=None, file_obj=None):
+    if file_meta != None and file_obj != None:
+        if file_meta.location == 'local':
+            dest_filename = file_meta.storage
+            try:
+                group = 'corr-resources'
+                if file_meta.group != 'descriptive':
+                    group = 'corr-%ss'%file_meta.group
+                print group
+                s3_files = s3.Bucket(group)
+                s3_files.put_object(Key=dest_filename, Body=file_obj.read())
+                return [True, "File uploaded successfully"]
+            except:
+                return [False, traceback.format_exc()]
+        else:
+            return [False, "Cannot upload a file that is remotely set. It has to be local targeted."]
+    else:
+        return [False, "file meta data does not exist or file content is empty."]
+
 def s3_delete_file(group='', key=''):
+    deleted = False
     if key not in ["default-logo.png", "default-picture.png"]:
         s3_files = s3.Bucket('corr-%ss'%group)
         for _file in s3_files.objects.all():
             if _file.key == key: 
                 _file.delete()
+                print "File deleted!"
+                deleted = True
                 break
+        if not deleted:
+            print "File not deleted"
+    return deleted
+
 
 
 def load_file(file_model):

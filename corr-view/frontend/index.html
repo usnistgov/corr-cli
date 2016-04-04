@@ -130,12 +130,12 @@
                                     <label for="login-password">Password</label>
                                   </div>
                                 </div>
-                                <div class="row">          
+                                <!-- <div class="row">          
                                   <div class="input-field col s12 m12 l12  login-text">
                                       <input type="checkbox" id="remember-me" onkeypress="loginKeyPress(event);"/>
                                       <label for="remember-me">Remember me</label>
                                   </div>
-                                </div>
+                                </div> -->
                                 <div class="row">
                                   <div class="input-field col s12">
                                     <a id="buttonLogin" onclick="return user.login();" class="btn login-button waves-effect waves-light green col s12">Login</a>
@@ -177,6 +177,23 @@
                                 <div class="row">
                                   <div class="input-field col s12">
                                     <a id="buttonRegister" onclick="return user.register();" class="btn waves-effect waves-light blue col s12">Register Now</a>
+                                  </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header teal white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
+                            <div class="collapsible-body recent-activity">
+                                <div class="row margin">
+                                  <div class="input-field col s12">
+                                    <i class="mdi-social-person-outline prefix"></i>
+                                    <input id="recover-email" type="email" onkeypress="recoverKeyPress(event);">
+                                    <label for="recover-email" class="center-align">Email</label>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="input-field col s12">
+                                    <a id="buttonRecover" onclick="return user.recover();" class="btn login-button waves-effect waves-light green col s12">Request</a>
                                   </div>
                                 </div>
                             </div>
@@ -445,28 +462,13 @@
         <div class="modal-content">
           <!-- <form class="login-form"> -->
             <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
-                <label for="file-input">
-                    <img src="images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
+                <label for="picture-input">
+                    <img src="images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
                 </label>
 
-                <input id="file-input" type="file" style="display: none;"/>
+                <input id="picture-input" type="file" style="display: none;"/>
                 
                 <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
-            </div>
-            <div class="divider"></div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-social-person-outline prefix"></i>
-                <input id="username" type="text">
-                <label for="username" class="center-align">Username</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-action-lock-outline prefix"></i>
-                <input id="edit-old-password" type="password">
-                <label for="edit-old-password">Current Password</label>
-              </div>
             </div>
             <div class="row margin">
               <div class="input-field col s12">
@@ -482,16 +484,9 @@
                 <label for="edit-new-password-again">New Password Again</label>
               </div>
             </div>
-            <!-- <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-communication-vpn-key prefix"></i>
-                <input id="view-api" type="text">
-                <label for="view-api">Api Key</label>
-              </div>
-            </div> -->
             <div class="row margin">
               <div class="input-field col s12">
-                <a href="index.html" class="btn waves-effect waves-light col s12">Confirm</a>
+                <a onclick="return user.update();" class="btn waves-effect waves-light col s12">Confirm</a>
               </div>
             </div>
 
@@ -512,21 +507,21 @@
             <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-action-perm-identity prefix"></i>
-                <input readonly id="view-fname" type="text">
+                <input id="view-fname" type="text">
                 <label id="view-fname-value" for="view-fname">First Name</label>
               </div>
             </div>
             <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-action-assignment-ind prefix"></i>
-                <input readonly id="view-lname" type="text">
+                <input id="view-lname" type="text">
                 <label id="view-lname-value" for="view-lname">Last Name</label>
               </div>
             </div>
             <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-action-home prefix"></i>
-                <input readonly id="view-org" type="text">
+                <input id="view-org" type="text">
                 <label id="view-org-value" for="view-org">Organisation</label>
               </div>
             </div>
@@ -546,7 +541,7 @@
             </div> -->
             <div class="row margin">
               <div class="input-field col s12">
-                <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Profile</a>
+                <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12">Update Profile</a>
               </div>
             </div>
 
@@ -675,6 +670,7 @@
             document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-settings\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"account\"><a href=\"#account-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-communication-vpn-key\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"profile\"><a href=\"#profile-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-action-account-circle\"></i></a></li></ul>";
             
             document.getElementById('account-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
+            document.getElementById('update-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
             document.getElementById('profile-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
             // document.getElementById("view-username").value = user.username;
             // document.getElementById("view-email").value = user.email;
@@ -696,6 +692,15 @@
             if (e.keyCode == 13)
             {
                 document.getElementById('buttonLogin').click();
+            }
+        }
+
+         function recoverKeyPress(e)
+        {
+            e = e || window.event;
+            if (e.keyCode == 13)
+            {
+                document.getElementById('buttonRecover').click();
             }
         }
 

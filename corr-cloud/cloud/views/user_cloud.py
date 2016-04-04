@@ -4,6 +4,7 @@ from corrdb.common.models import ApplicationModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
 from corrdb.common.models import RecordModel
+from corrdb.common.models import FileModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import StatModel
@@ -11,7 +12,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, upload_picture, CLOUD_URL, s3_get_file, logStat, logTraffic, logAccess
+from cloud import app, stormpath_manager, crossdomain, cloud_response, upload_picture, CLOUD_URL, s3_get_file, s3_upload_file, s3_delete_file, logStat, logTraffic, logAccess
 import datetime
 import json
 import traceback
@@ -20,6 +21,8 @@ from email.mime.text import MIMEText
 from hurry.filesize import size
 import hashlib
 from stormpath.error import Error
+import os
+import mimetypes
 
 # CLOUD_VERSION = 1
 # CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
@@ -312,8 +315,6 @@ def user_password_change():
 @crossdomain(origin='*')
 def user_login():
     logTraffic(endpoint='/public/user/login')
-
-        
     if fk.request.method == 'POST':
         print "Request: %s"%str(fk.request.data)
         if fk.request.data:
@@ -330,9 +331,21 @@ def user_login():
                             email,
                             password,
                         ).account
-                    except:
+                        print "User is in stormpath!!!"
+                    except Error as re:
                         _user = None
+                        print('Message: %s' %re.message)
+                        print('HTTP Status: %s' %str(re.status))
+                        print('Developer Message: %s' %re.developer_message)
+                        print('More Information: %s' %re.more_info)
+                        print('Error Code: %s' %str(re.code))
+                        return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
+                    
                     account = UserModel.objects(email=email).first()
+                    if _user == None:
+                        print "User not in stormpath!!!"
+                    if account == None:
+                        print "User not in CoRR!!!"
                     if account == None and _user != None:
                         # Sync with stormpath here... :-)
                         # account, created = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'DDSMSession_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
@@ -340,7 +353,7 @@ def user_login():
                         #     (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=account, fname="None", lname="None", organisation="None", about="None")
                         # We do not allow this anymore. Registration handles this. Yet the account type has to be provided
                         # Because we have to make a difference between admin, developer and user later.
-                        return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
+                        return fk.make_response('Login failed. Account inconsistency. Register again with the same password.', status.HTTP_401_UNAUTHORIZED)
                     if account != None and _user == None:
                         try:
                             _account = application.accounts.create({
@@ -351,8 +364,14 @@ def user_login():
                                 "middle_name" : "undefined",
                                 "surname" : "undefined"
                             })
-                        except:
+                        except Error as re:
                             _account = None
+                            print('Message: %s' %re.message)
+                            print('HTTP Status: %s' %str(re.status))
+                            print('Developer Message: %s' %re.developer_message)
+                            print('More Information: %s' %re.more_info)
+                            print('Error Code: %s' %str(re.code))
+                            return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
                         if _account == None:
                             print str(traceback.print_exc())
                             return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
@@ -470,7 +489,7 @@ def user_dashboard(hash_session):
                 dashboard = {}
                 projects = ProjectModel.objects(owner=user_model)
                 if profile_model is not None:
-                    dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'picture':profile_model.picture}
+                    dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about}
                 dashboard["records_total"] = 0
                 dashboard["projects_total"] = len(projects)
                 dashboard["records_total"] = 0
@@ -549,7 +568,7 @@ def user_update(hash_session):
         if fk.request.method == 'POST':
             if fk.request.data:
                 data = json.loads(fk.request.data)
-                application = stormpath_manager.application()
+                application = stormpath_manager.application
                 # user_model = UserModel.objects(session=hash_session).first()
                 print fk.request.path
                 # if user_model is None:
@@ -563,16 +582,20 @@ def user_update(hash_session):
                     #Update stormpath user if password is affected
                     #Update local profile data and picture if other data are affected.
                     # return fk.redirect('http://0.0.0.0:5000/?action=update_success')
-                    profile_model = ProfileModel.object(user=user_model).first_or_404()
+                    profile_model = ProfileModel.objects(user=user_model).first_or_404()
                     fname = data.get("fname", profile_model.fname)
-                    lname = data.get("fname", profile_model.lname)
-                    password = data.get("password", "")
-                    organisation = data.get("organisation", profile_model.organisation)
+                    lname = data.get("lname", profile_model.lname)
+                    password = data.get("pwd", "")
+                    organisation = data.get("org", profile_model.organisation)
                     about = data.get("about", profile_model.about)
+                    # When picture given as a json field and not file path.
                     picture_link = data.get("picture", "")
                     picture = profile_model.picture
                     if picture_link != "":
                         picture['location'] = picture_link
+
+                    print "Fname: %s"%fname
+                    print "Lname: %s"%lname
 
                     profile_model.fname = fname
                     profile_model.lname = lname
@@ -597,23 +620,225 @@ def user_update(hash_session):
                 else:
                     return fk.make_response('Account update failed.', status.HTTP_401_UNAUTHORIZED)
                     # return fk.redirect('http://0.0.0.0:5000/?action=update_failed')
-            if fk.request.files:
-                if fk.request.files['picture']:
-                    picture_obj = fk.request.files['picture']
-                    try: 
-                        picture_link = str(user_model.id)+"."+picture_obj.filename.split('.')[-1]
-                        profile_model = ProfileModel.object(user=user_model).first_or_404()
-                        uploaded = upload_picture(user_model, picture_obj)
-                        if uploaded:
-                            profile_model.picture['scope'] = 'local'
-                            profile_model.picture['location'] = picture_link
-                            profile_model.save()
-                    except Exception, e:
-                        return fk.make_response(str(traceback.print_exc()), status.HTTP_400_BAD_REQUEST)
-            else:
-                return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
         else:
             return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@app.route(CLOUD_URL + '/private/<hash_session>/file/upload/<group>/<item_id>', methods=['POST'])
+@crossdomain(origin='*')
+def user_file_upload(hash_session, group, item_id):
+    logTraffic(endpoint='/private/<hash_session>/file/upload/<group>/<item_id>')
+    user_model = UserModel.objects(session=hash_session).first()
+    if user_model is None:
+        return fk.redirect('http://0.0.0.0:5000/?action=update_denied')
+    else: 
+        logAccess('cloud', '/private/<hash_session>/file/upload/<group>/<item_id>')
+        if fk.request.method == 'POST':
+            if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
+                return cloud_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
+            else:
+                print "item_id: %s"%item_id
+                if fk.request.files:
+                    file_obj = fk.request.files['file']
+                    filename = '%s_%s'%(item_id, file_obj.filename)
+                    _file, created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), name=filename)
+                    if not created:
+                        return cloud_response(200, 'File already exists with same name for this item', _file.info())
+                    else:
+                        print "filename: %s"%filename
+                        encoding = ''
+                        if file_obj != None:
+                            old_file_position = file_obj.tell()
+                            file_obj.seek(0, os.SEEK_END)
+                            size = file_obj.tell()
+                            file_obj.seek(old_file_position, os.SEEK_SET)
+                        else:
+                            size = 0
+                        if item_id == "none":
+                            storage = '%s_%s'%(str(user_model.id), file_obj.filename)
+                        else:
+                            storage = '%s_%s'%(item_id, file_obj.filename)
+                        location = 'local'
+                        mimetype = mimetypes.guess_type(storage)[0]
+                        group_ = group
+                        description = ''
+                        item = None
+                        owner = None
+                        if group == 'input':
+                            item = RecordModel.objects.with_id(item_id)
+                            owner = item.project.owner
+                            if user_model != owner:
+                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                            description = '%s is an input file for the record %s'%(file_obj.filename, str(item.id))
+                        elif group == 'output':
+                            item = RecordModel.objects.with_id(item_id)
+                            owner = item.project.owner
+                            if user_model != owner:
+                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                            description = '%s is an output file for the record %s'%(file_obj.filename, str(item.id))
+                        elif group == 'dependencie':
+                            item = RecordModel.objects.with_id(item_id)
+                            owner = item.project.owner
+                            if user_model != owner:
+                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                            description = '%s is an dependency file for the record %s'%(file_obj.filename, str(item.id))
+                        elif group == 'descriptive':
+                            item = ProjectModel.objects.with_id(item_id)
+                            owner = item.owner
+                            if user_model != owner:
+                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                            description = '%s is a resource file for the project %s'%(file_obj.filename, str(item.id))
+                        elif group == 'diff':
+                            item = DiffModel.objects.with_id(item_id)
+                            owner1 = item.sender
+                            owner2 = item.targeted
+                            if user_model != owner1 and user_model != owner2:
+                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                            description = '%s is a resource file for the collaboration %s'%(file_obj.filename, str(item.id))
+                        elif 'attach' in group:
+                            if 'message' in group:
+                                item = MessageModel.objects.with_id(item_id)
+                                owner1 = item.sender
+                                owner2 = item.receiver
+                                if user_model != owner1 and user_model != owner2:
+                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                description = '%s is an attachement file for the message %s'%(file_obj.filename, str(item.id))
+                            elif 'comment' in group:
+                                item = CommentModel.objects.with_id(item_id)
+                                owner = item.sender
+                                if user_model != owner:
+                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                description = '%s is an attachement file for the comment %s'%(file_obj.filename, str(item.id))
+                            group_ = group.split('-')[0]
+                        elif group == 'bundle':
+                            item = BundleModel.objects.with_id(item_id)
+                            env = EnvironmentModel.objects(bundle=item).first()
+                            rec_temp = RecordModel.objects(environment=env).first()
+                            if rec_temp == None: # No record yet performed.
+                                for project in ProjectModel.objects():
+                                    if str(env.id) in project.history:
+                                        owner = project.owner
+                                        break
+                            else:
+                                owner = rec_temp.project.owner
+                            if user_model != owner:
+                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                        elif group == 'picture':
+                            item = ProfileModel.objects(user=user_model).first()
+                            owner = item.user
+                            if user_model != owner:
+                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                            description = '%s is the picture file of the profile %s'%(file_obj.filename, str(item.id))
+                            if item.picture != None:
+                                old_storage = item.picture.storage
+                                print "Old storage %s"%old_storage
+                                _file.delete()
+                                _file = item.picture
+                            print '%s is the picture file of the profile %s'%(file_obj.filename, str(item.id))
+                        elif 'logo' in group:
+                            if 'app' in group:
+                                item = ApplicationModel.objects.with_id(item_id)
+                                owner = item.developer
+                                if user_model != owner:
+                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                description = '%s is the logo file of the application %s'%(file_obj.filename, str(item.id))
+                            elif 'project' in group:
+                                item = ProjectModel.objects.with_id(item_id)
+                                owner = item.owner
+                                if user_model != owner:
+                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                description = '%s is the logo file of the project %s'%(file_obj.filename, str(item.id))
+                            _file.delete()
+                            _file = item.logo
+                        elif 'resource' in group:
+                            if 'record' in group:
+                                item = RecordModel.objects.with_id(item_id)
+                                owner = item.project.owner
+                                if user_model != owner:
+                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                description = '%s is an resource file for the record %s'%(file_obj.filename, str(item.id))
+                            elif 'env' in group:
+                                item = EnvironmentModel.objects.with_id(item_id)
+                                rec_temp = RecordModel.objects(environment=item).first()
+                                owner = rec_temp.project.owner
+                                if user_model != owner:
+                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                description = '%s is a resource file for the environment %s'%(file_obj.filename, str(item.id))
+                            elif 'app' in group:
+                                item = ApplicationModel.objects.with_id(item_id)
+                                owner = item.developer
+                                if user_model != owner:
+                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                description = '%s is a resource file for the app %s'%(file_obj.filename, str(item.id))
+                            group_ = group.split('-')[0]
+
+                        if item == None:
+                            if group != 'picture' or group != 'logo':
+                                return cloud_response(400, 'Missing mandatory instance', 'A file should reference an existing item.')
+                        else:
+                            _file.description = description
+                            _file.encoding = encoding
+                            _file.size = size
+                            # _file.path = path
+                            _file.owner = user_model
+                            _file.storage = storage
+                            _file.location = location
+                            _file.mimetype = mimetype
+                            _file.group = group_
+                            _file.save()
+                            uploaded = s3_upload_file(_file, file_obj)
+                            if not uploaded[0]:
+                                _file.delete()
+                                return cloud_response(500, 'An error occured', "%s"%uploaded[1])
+                            else:
+                                logStat(file_obj=_file)
+                                if group == 'input':
+                                    item.resources.append(str(_file.id))
+                                elif group == 'output':
+                                    item.resources.append(str(_file.id))
+                                elif group == 'dependencie':
+                                    item.resources.append(str(_file.id))
+                                elif group == 'descriptive':
+                                    item.resources.append(str(_file.id))
+                                elif group == 'diff':
+                                    item.resources.append(str(_file.id))
+                                elif group == 'bundle':
+                                    # _file.delete()
+                                    if item.storage != storage:
+                                        s3_delete_file('bundle',item.storage)
+                                    item.encoding = encoding
+                                    item.size = size
+                                    item.storage = storage
+                                    item.mimetype = mimetype
+                                    item.save()
+                                elif 'attach' in group:
+                                    item.attachments.append(str(_file.id))
+                                elif group == 'picture':
+                                    if item.picture != None:
+                                        if _file.storage != old_storage:
+                                            deleted = s3_delete_file('picture',old_storage)
+                                            if deleted:
+                                                logStat(deleted=True, file_obj=item.picture)
+                                        else:
+                                            print "Old not deleted!"
+                                    else:
+                                        print "No picture"
+                                    if item != None:
+                                        item.picture = _file
+                                elif 'logo' in group:
+                                    if item.logo.location != storage:
+                                        s3_delete_file('logo',item.logo.storage)
+                                    if item != None:
+                                        item.logo = _file
+                                elif 'resource' in group:
+                                    item.resources.append(str(_file.id))
+                                if item != None:
+                                    item.save()
+                                return cloud_response(201, 'New file created', _file.info())
+                else:
+                    return cloud_response(204, 'Nothing created', 'You must provide the file information.')
+        else:
+            return cloud_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
+
 
 # Figure this out when all the updates are done.
 @app.route(CLOUD_URL + '/public/user/contactus', methods=['POST'])
@@ -667,7 +892,7 @@ def user_picture(hash_session):
         
     user_model = UserModel.objects(session=hash_session).first()
     if user_model ==None:
-        return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
+        return cloud_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
         logAccess('cloud', '/private/<hash_session>/user/picture')
         if fk.request.method == 'GET':
@@ -675,7 +900,7 @@ def user_picture(hash_session):
             if profile == None:
                 picture_buffer = s3_get_file('picture', 'default-picture.png')
                 if picture_buffer == None:
-                    return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                    return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                 else:
                     return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
             else:
@@ -683,13 +908,14 @@ def user_picture(hash_session):
                 if picture == None:
                     picture_buffer = s3_get_file('picture', 'default-picture.png')
                     if picture_buffer == None:
-                        return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                        return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                     else:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 elif picture.location == 'local' and 'http://' not in picture.storage:
+                    # print str(picture.to_json())
                     picture_buffer = s3_get_file('picture', picture.storage)
                     if picture_buffer == None:
-                        return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
+                        return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                     else:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                 elif picture.location == 'remote':
@@ -699,7 +925,7 @@ def user_picture(hash_session):
                     else:
                         picture_buffer = s3_get_file('picture', 'default-picture.png')
                         if picture_buffer == None:
-                            return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                            return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                         else:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                 else:
@@ -713,7 +939,7 @@ def user_picture(hash_session):
                         else:
                             picture_buffer = s3_get_file('picture', 'default-picture.png')
                             if picture_buffer == None:
-                                return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                                return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                             else:
                                 return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     else:
@@ -721,11 +947,11 @@ def user_picture(hash_session):
                         picture.save()
                         picture_buffer = s3_get_file('picture', picture.storage)
                         if picture_buffer == None:
-                            return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                            return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                         else:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
         else:
-            return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+            return cloud_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
     #     print fk.request.path
     #     if user_model is None:
@@ -841,10 +1067,12 @@ def user_profile(hash_session):
         
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
-        profile_model, created = ProfileModel.objects.get_or_create(user=user_model, fname="None", lname="None", organisation="None", about="None")
-        if created:
-            profile_model.created_at=str(datetime.datetime.utcnow())
-            profile_model.save()
+        profile_model = ProfileModel.objects(user=user_model).first()
+        if profile_model == None:
+            profile_model, created = ProfileModel.objects.get_or_create(user=user_model, fname="None", lname="None", organisation="None", about="None")
+            if created:
+                profile_model.created_at=str(datetime.datetime.utcnow())
+                profile_model.save()
         print fk.request.path
         if user_model is None:
             return fk.make_response('profile get failed.', status.HTTP_401_UNAUTHORIZED)
@@ -852,8 +1080,9 @@ def user_profile(hash_session):
             logAccess('cloud', '/private/<hash_session>/user/profile')
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+            picture = None
             if allowance == hash_session:
-                return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'picture':profile_model.picture, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.make_response('profile get failed.', status.HTTP_401_UNAUTHORIZED)
     else:
@@ -879,6 +1108,45 @@ def user_renew(hash_session):
                 return fk.Response(json.dumps({'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.make_response('Renew token failed.', status.HTTP_401_UNAUTHORIZED)
+    else:
+        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@app.route(CLOUD_URL + '/public/user/recover', methods=['POST'])
+@crossdomain(origin='*')
+def cloud_public_user_recover():
+    logTraffic(endpoint='/public/user/recover')
+
+    if fk.request.method == 'POST':
+        if fk.request.data:
+            data = json.loads(fk.request.data)
+            try:
+                email = data.get("email", "")
+                if email == "":
+                    return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+                else:
+                    # Allow non existing users in local corr instance db to change their password in stormpath.
+                    # Case can happen when 
+                    # user_model = UserModel.objects(email=email).first()
+                    # if user_model == None:
+                    #     return fk.make_response("Unknown user email.", status.HTTP_400_BAD_REQUEST)
+                    # else:
+                    try:
+                        application = stormpath_manager.application
+                        account = application.send_password_reset_email(email)
+                        return fk.Response('Recovery email sent from stormpath.', status.HTTP_200_OK)
+                    except Error as re:
+                        print('Message: %s' %re.message)
+                        print('HTTP Status: %s' %str(re.status))
+                        print('Developer Message: %s' %re.developer_message)
+                        print('More Information: %s' %re.more_info)
+                        print('Error Code: %s' %str(re.code))
+                        print('Message message: %s' %re.message['message'])
+                        return fk.make_response(re.message['message'], status.HTTP_400_BAD_REQUEST)
+            except:
+                print str(traceback.print_exc())
+                return fk.make_response("Could not send the email.", status.HTTP_503_SERVICE_UNAVAILABLE)
+        else:
+            return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
