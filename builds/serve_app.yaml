@@ -34,5 +34,5 @@
   service: name=nginx state=restarted
   become: true
 
-- name: check that API is up
-  uri: url=http://0.0.0.0/api/v0.1/public/users
+- name: check that app is up and running
+  uri: url={{ test_path }}

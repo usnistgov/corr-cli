@@ -24,7 +24,7 @@
 
     - include: clone.yaml
       when: normal_task_list is not defined
-      tags: [install_api, install_cloud, install_db, install_develop, serve_develop, serve_api]
+      tags: [install_api, install_cloud, install_db, install_develop, serve_develop, serve_api, serve_cloud]
 
     - include: mongo.yaml
       when: normal_task_list is not defined
@@ -48,14 +48,18 @@
 
     - set_fact:
         app_path: "{{ corr_path }}/corr-api"
+        test_path: http://0.0.0.0/api/v0.1/public/users
+        mapped_port: 80
       when: normal_task_list is not defined
       tags: [serve_api]
 
     - set_fact:
         app_path: "{{ corr_path }}/corr-cloud"
+        test_path: http://0.0.0.0:5200/cloud/v1/public/user/home
+        mapped_port: 5200
       when: normal_task_list is not defined
       tags: [serve_cloud]
 
     - include: serve_app.yaml
       when: normal_task_list is not defined
-      tags: [serve_api, sever_cloud]
+      tags: [serve_api, serve_cloud]
