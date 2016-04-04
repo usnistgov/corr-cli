@@ -15,9 +15,9 @@ machine. First clone the CoRR repository and then run
 This will run an Ansible script that will install all the necessary
 prerequisites to run CoRR. `sudo` privileges are required. Edit
 [`builds/install.yaml`](builds/install.yaml) to change custom
-variables such as the version of the code to install and the
-repository URL. To start development servers switch to the `corr`
-environment with,
+variables such as the version of the code to install, the repository
+URL or the conda environment. To start development servers switch to
+the `corr` environment with,
 
     $ source activate corr
 

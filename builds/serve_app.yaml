@@ -27,7 +27,7 @@
   become: true
 
 - name: link files for nginx
-  file: src=/etc/nginx/sites-available/corr dest=/etc/nginx/sites-enabled/corr state=link
+  file: src=/etc/nginx/sites-available/{{ app_service_name }} dest=/etc/nginx/sites-enabled/{{ app_service_name }} state=link
   become: true
 
 - name: restart nginx
