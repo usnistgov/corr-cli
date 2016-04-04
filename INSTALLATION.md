@@ -16,7 +16,12 @@ This will run an Ansible script that will install all the necessary
 prerequisites to run CoRR. `sudo` privileges are required. Edit
 [`builds/install.yaml`](builds/install.yaml) to change custom
 variables such as the version of the code to install and the
-repository URL. To start development servers use
+repository URL. To start development servers switch to the `corr`
+environment with,
+
+    $ source activate corr
+
+and use
 
     $ ./config_bash -K --tags serve_db
 
