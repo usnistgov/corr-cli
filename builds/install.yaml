@@ -1,5 +1,6 @@
 - name: playbook to install CoRR
   hosts: all
+  serial: 1
   vars:
     local_path: "{{ lookup('env', 'HOME') }}"
     anaconda_path: "{{ local_path }}/{{ anacondadir }}"
@@ -34,7 +35,7 @@
 
     - include: view.yaml
       when: >
-        ansible_host == 'localhost' and
+        ansible_ssh_host == 'localhost' and
         inventory_hostname in groups['frontend']
       tags: [install]
 
