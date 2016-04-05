@@ -2,11 +2,8 @@
   hosts: all
   vars:
     local_path: "{{ lookup('env', 'HOME') }}"
-    anaconda_path: "{{ local_path }}/anaconda"
+    anaconda_path: "{{ local_path }}/{{ anacondadir }}"
     default_corr_path: "{{ local_path }}/corr"
-    corr_env: corr
-    corr_version: master
-    corr_repo: usnistgov/corr
     remote_user: "{{ lookup('env', 'USER') }}"
     conda: "{{ anaconda_path }}/bin/conda"
     env_path: "{{ anaconda_path }}/envs/{{ corr_env }}/bin"
@@ -15,7 +12,7 @@
     error_log: "/var/log/corr-error.log"
     gunicorn_config: "{{ local_path }}/.config/corr_config.py"
     socket_file: /tmp/app.sock
-    app_service_name: corr
+
   tasks:
 
     - include: clone.yaml
@@ -28,21 +25,36 @@
     - include: conda.yaml
       when: >
         inventory_hostname in groups['db'] or
-        inventory_hostnane in groups['api'] or
-        inventory_hostnane in groups['cloud']
+        inventory_hostname in groups['api'] or
+        inventory_hostname in groups['cloud']
       tags: [install]
 
     - include: corrdb.yaml
       when: >
         inventory_hostname in groups['db'] or
-        inventory_hostnane in groups['api'] or
-        inventory_hostnane in groups['cloud']
+        inventory_hostname in groups['api'] or
+        inventory_hostname in groups['cloud']
       tags: [install]
 
     - include: view.yaml
       when: >
         ansible_host == 'localhost' and
         inventory_hostname in groups['frontend']
+      tags: [install]
+
+    - name: copy api config file
+      when: inventory_hostname in groups['api']
+      template: src={{ corr_path }}/builds/config-api.py.j2 dest={{ corr_path }}/corr-api/config.py
+      tags: [install]
+
+    - name: copy cloud config file
+      when: inventory_hostname in groups['cloud']
+      template: src={{ corr_path }}/builds/config-cloud.py.j2 dest={{ corr_path }}/corr-cloud/config.py
+      tags: [install]
+
+    - name: copy stormpath config file
+      when: inventory_hostname in groups['cloud']
+      template: src={{ corr_path }}/builds/apiKey.properties.j2 dest={{ corr_path }}/corr-cloud/apiKey.properties
       tags: [install]
 
     - include: serve_db.yaml
@@ -56,6 +68,7 @@
         app_path: "{{ corr_path }}/corr-api"
         test_path: http://0.0.0.0/api/v0.1/public/users
         mapped_port: 80
+        app_service_name: corrapi
 
     - include: serve_app.yaml
       when: inventory_hostname in groups['cloud']
@@ -64,6 +77,7 @@
         app_path: "{{ corr_path }}/corr-cloud"
         test_path: http://0.0.0.0:5200/cloud/v1/public/user/home
         mapped_port: 5200
+        app_service_name: corrcloud
 
     - include: serve_frontend.yaml
       when: inventory_hostname in groups['frontend']

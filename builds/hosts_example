@@ -1,0 +1,27 @@
+[db]
+dbhost ansible_host=localhost ansible_connection=local
+
+[api]
+apihost ansible_host=localhost ansible_connection=local
+
+[cloud]
+cloudhost ansible_host=localhost ansible_connection=local
+
+[frontend]
+frontendhost ansible_host=localhost ansible_connection=local
+
+[all:children]
+db
+api
+cloud
+frontend
+
+[all:vars]
+corr_env=corr
+corr_version=master
+corr_repo=usnistgov/corr
+anacondadir=anaconda
+debug=True
+stormpath_id = XXX
+strompath_secet = XXX
+stormpath_app = XXX
