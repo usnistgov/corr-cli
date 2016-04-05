@@ -10,7 +10,7 @@ develop CoRR, then please use the instructions below.
 To develop with CoRR it is best to be using an Ubuntu linux
 machine. First clone the CoRR repository and then run
 
-    $ ./config.bash -K --tags install_develop
+    $ ./config.bash --ask-sudo-pass --tags install --inventory-file builds/hosts
 
 This will run an Ansible script that will install all the necessary
 prerequisites to run CoRR. `sudo` privileges are required. Edit
@@ -23,7 +23,7 @@ the `corr` environment with,
 
 and use
 
-    $ ./config_bash -K --tags serve_db
+    $  sudo service mongodb start
 
 to start the database and then
 

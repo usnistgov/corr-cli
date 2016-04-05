@@ -1,6 +1,5 @@
 - name: playbook to install CoRR
-  hosts: localhost
-  connection: local
+  hosts: all
   vars:
     local_path: "{{ lookup('env', 'HOME') }}"
     anaconda_path: "{{ local_path }}/anaconda"
@@ -18,52 +17,54 @@
     socket_file: /tmp/app.sock
     app_service_name: corr
   tasks:
-    - name: define variable so tasks only run when tags specified
-      shell: /bin/true
-      register: normal_task_list
 
     - include: clone.yaml
-      when: normal_task_list is not defined
-      tags: [install_api, install_cloud, install_db, install_develop, serve_api, serve_cloud, serve_frontend]
+      tags: [always]
 
     - include: mongo.yaml
-      when: normal_task_list is not defined
-      tags: [install_db, install_develop]
+      when: inventory_hostname in groups['db']
+      tags: [install]
 
     - include: conda.yaml
-      when: normal_task_list is not defined
-      tags: [install_api, install_cloud, install_db, install_develop]
+      when: >
+        inventory_hostname in groups['db'] or
+        inventory_hostnane in groups['api'] or
+        inventory_hostnane in groups['cloud']
+      tags: [install]
 
     - include: corrdb.yaml
-      when: normal_task_list is not defined
-      tags: [install_api, install_cloud, install_db, install_develop]
+      when: >
+        inventory_hostname in groups['db'] or
+        inventory_hostnane in groups['api'] or
+        inventory_hostnane in groups['cloud']
+      tags: [install]
 
     - include: view.yaml
-      when: normal_task_list is not defined
-      tags: [install_develop]
+      when: >
+        ansible_host == 'localhost' and
+        inventory_hostname in groups['frontend']
+      tags: [install]
 
     - include: serve_db.yaml
-      when: normal_task_list is not defined
-      tags: [serve_db]
+      when: inventory_hostname in groups['db']
+      tags: [serve]
 
-    - set_fact:
+    - include: serve_app.yaml
+      when: inventory_hostname in groups['api']
+      tags: [serve]
+      vars:
         app_path: "{{ corr_path }}/corr-api"
         test_path: http://0.0.0.0/api/v0.1/public/users
         mapped_port: 80
-      when: normal_task_list is not defined
-      tags: [serve_api]
 
-    - set_fact:
+    - include: serve_app.yaml
+      when: inventory_hostname in groups['cloud']
+      tags: [serve]
+      vars:
         app_path: "{{ corr_path }}/corr-cloud"
         test_path: http://0.0.0.0:5200/cloud/v1/public/user/home
         mapped_port: 5200
-      when: normal_task_list is not defined
-      tags: [serve_cloud]
-
-    - include: serve_app.yaml
-      when: normal_task_list is not defined
-      tags: [serve_api, serve_cloud]
 
     - include: serve_frontend.yaml
-      when: normal_task_list is not defined
-      tags: [serve_frontend]
+      when: inventory_hostname in groups['frontend']
+      tags: [serve]

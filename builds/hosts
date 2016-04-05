@@ -1,0 +1,11 @@
+[db]
+db_host ansible_host=localhost ansible_connection=local
+
+[api]
+api_host ansible_host=localhost ansible_connection=local
+
+[cloud]
+cloud_host ansible_host=localhost ansible_connection=local
+
+[frontend]
+frontend_host ansible_host=localhost ansible_connection=local
