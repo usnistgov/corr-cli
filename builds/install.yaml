@@ -2,10 +2,9 @@
   hosts: all
   serial: 1
   vars:
-    local_path: "{{ lookup('env', 'HOME') }}"
+    local_path: /home/{{ ansible_ssh_user }}
     anaconda_path: "{{ local_path }}/{{ anacondadir }}"
     default_corr_path: "{{ local_path }}/corr"
-    remote_user: "{{ lookup('env', 'USER') }}"
     conda: "{{ anaconda_path }}/bin/conda"
     env_path: "{{ anaconda_path }}/envs/{{ corr_env }}/bin"
     python: "{{ anaconda_path }}/envs/{{ corr_env }}/bin/python"

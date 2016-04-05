@@ -9,7 +9,7 @@ develop CoRR, then please use the instructions below.
 
 To develop with CoRR it is best to be using an Ubuntu linux
 machine. First clone the CoRR repository and then edit
-`builds/hosts.example` and copy it to `builds/host.local`. Remember
+`builds/hosts_example` and copy it to `builds/host.local`. Remember
 that the `stormpath_id`, `stormpath_secret` and `stormpath_app` values
 are required for the cloud service. To install use,
 
