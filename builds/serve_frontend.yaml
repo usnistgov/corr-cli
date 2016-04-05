@@ -7,8 +7,6 @@
 
 - set_fact:
     frontend_path: "{{ corr_path }}/corr-view/frontend"
-    test_path: http://0.0.0.0/
-    app_service_name: corrfrontend
 
 - name: copy nginx template
   template: src={{ corr_path }}/builds/nginx-frontend.j2 dest=/etc/nginx/sites-available/{{ app_service_name }}

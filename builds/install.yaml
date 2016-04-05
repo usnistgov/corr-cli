@@ -8,11 +8,7 @@
     conda: "{{ anaconda_path }}/bin/conda"
     env_path: "{{ anaconda_path }}/envs/{{ corr_env }}/bin"
     python: "{{ anaconda_path }}/envs/{{ corr_env }}/bin/python"
-    access_log: "/var/log/corr-access.log"
-    error_log: "/var/log/corr-error.log"
-    gunicorn_config: "{{ local_path }}/.config/corr_config.py"
-    socket_file: /tmp/app.sock
-
+    gunicorn_config: "{{ local_path }}/{{ gunicorn_config_rel }}"
   tasks:
 
     - include: clone.yaml
@@ -66,18 +62,12 @@
       tags: [serve]
       vars:
         app_path: "{{ corr_path }}/corr-api"
-        test_path: http://0.0.0.0/api/v0.1/public/users
-        mapped_port: 80
-        app_service_name: corrapi
 
     - include: serve_app.yaml
       when: inventory_hostname in groups['cloud']
       tags: [serve]
       vars:
         app_path: "{{ corr_path }}/corr-cloud"
-        test_path: http://0.0.0.0:5200/cloud/v1/public/user/home
-        mapped_port: 5200
-        app_service_name: corrcloud
 
     - include: serve_frontend.yaml
       when: inventory_hostname in groups['frontend']

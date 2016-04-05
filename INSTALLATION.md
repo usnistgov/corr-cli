@@ -8,16 +8,18 @@ develop CoRR, then please use the instructions below.
 ## Native Development Installation
 
 To develop with CoRR it is best to be using an Ubuntu linux
-machine. First clone the CoRR repository and then run
+machine. First clone the CoRR repository and then edit
+`builds/host_example` and copy it to `builds/host`. Remember that the
+`stormpath_id`, `stormpath_secret` and `stormpath_app` values are
+required for the cloud service. To install use,
 
     $ ./config.bash --ask-sudo-pass --tags install --inventory-file builds/hosts
 
 This will run an Ansible script that will install all the necessary
 prerequisites to run CoRR. `sudo` privileges are required. Edit
-[`builds/install.yaml`](builds/install.yaml) to change custom
-variables such as the version of the code to install, the repository
-URL or the conda environment. To start development servers switch to
-the `corr` environment with,
+`builds/hosts` to change custom variables such as the version of the
+code to install, the repository URL or the conda environment. To start
+development servers switch to the `corr` environment with,
 
     $ source activate corr
 
