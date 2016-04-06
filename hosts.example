@@ -29,7 +29,7 @@ error_log=/var/log/corr-cloud-error.log
 gunicorn_config_rel=.config/corr_config_cloud.py
 
 [frontend]
-frontendhost ansible_host=localhost ansible_connection=local
+frontendhost ansible_ssh_host=localhost ansible_connection=local
 
 [frontend:vars]
 mapped_port=80
