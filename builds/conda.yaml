@@ -16,7 +16,7 @@
   when: anaconda_dir.stat.exists == False
 
 - name: update conda
-  shell: "{{ conda }} update conda"
+  shell: "{{ conda }} update -y conda"
   when: anaconda_dir.stat.exists == False
 
 - name: check if conda environment exists
@@ -24,7 +24,7 @@
   register: corr_env_dir
 
 - name: create corr conda env
-  shell: "{{ conda }} create -n {{ corr_env }} python"
+  shell: "{{ conda }} create -y -n {{ corr_env }} python"
   when: corr_env_dir.stat.exists == False
 
 - name: install required corrdb packages
