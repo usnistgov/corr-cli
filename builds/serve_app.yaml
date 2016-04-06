@@ -1,7 +1,10 @@
 ## Deploy a production environment using Nginx
 
+- name: create ~/.config directory
+  file: path={{ local_path }}/.config state=directory
+
 - name: copy gunicorn template
-  template: src={{ inventory_dir }}/app_config.py.j2 dest={{ gunicorn_config }}
+  template: src={{ inventory_dir }}/app_config.py.j2 dest={{ local_path}}/.config/{{ gunicorn_config_file }}
 
 - name: copy service template
   template: src={{ inventory_dir }}/app.service.j2 dest=/lib/systemd/system/{{ app_service_name }}.service

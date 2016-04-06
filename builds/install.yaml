@@ -8,7 +8,6 @@
     conda: "{{ anaconda_path }}/bin/conda"
     env_path: "{{ anaconda_path }}/envs/{{ corr_env }}/bin"
     python: "{{ anaconda_path }}/envs/{{ corr_env }}/bin/python"
-    gunicorn_config: "{{ local_path }}/{{ gunicorn_config_rel }}"
   tasks:
 
     - include: clone.yaml

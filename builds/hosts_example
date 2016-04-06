@@ -11,7 +11,7 @@ app_service_name=corrapi
 socket_file=/tmp/corrapi.sock
 access_log=/var/log/corr-api-access.log
 error_log=/var/log/corr-api-error.log
-gunicorn_config_rel=.config/corr_config_api.py
+gunicorn_config_file=corr_config_api.py
 
 [cloud]
 cloudhost ansible_ssh_host=localhost
@@ -26,7 +26,7 @@ app_service_name=corrcloud
 socket_file=/tmp/corrcloud.sock
 access_log=/var/log/corr-cloud-access.log
 error_log=/var/log/corr-cloud-error.log
-gunicorn_config_rel=.config/corr_config_cloud.py
+gunicorn_config_file=corr_config_cloud.py
 
 [frontend]
 frontendhost ansible_ssh_host=localhost
