@@ -38,6 +38,18 @@
         inventory_hostname in groups['frontend']
       tags: [install]
 
+    - name: install nginx
+      apt:
+        name: nginx-full
+        state: present
+        force: yes
+      become: true
+      when: >
+        inventory_hostname in groups['frontend'] or
+        inventory_hostname in groups['api'] or
+        inventory_hostname in groups['cloud']
+      tags: [install]
+
     - name: copy api config file
       when: inventory_hostname in groups['api']
       template: src={{ corr_path }}/builds/config-api.py.j2 dest={{ corr_path }}/corr-api/config.py
