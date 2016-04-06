@@ -1,10 +1,10 @@
 ## Deploy a production environment using Nginx
 
 - name: copy gunicorn template
-  template: src={{ corr_path }}/builds/app_config.py.j2 dest={{ gunicorn_config }}
+  template: src={{ inventory_dir }}/app_config.py.j2 dest={{ gunicorn_config }}
 
 - name: copy service template
-  template: src={{ corr_path }}/builds/app.service.j2 dest=/lib/systemd/system/{{ app_service_name }}.service
+  template: src={{ inventory_dir }}/app.service.j2 dest=/lib/systemd/system/{{ app_service_name }}.service
   become: true
 
 - name: update systemd
@@ -16,7 +16,7 @@
   become: true
 
 - name: copy nginx template
-  template: src={{ corr_path }}/builds/nginx-app.j2 dest=/etc/nginx/sites-available/{{ app_service_name }}
+  template: src={{ inventory_dir }}/nginx-app.j2 dest=/etc/nginx/sites-available/{{ app_service_name }}
   become: true
 
 - name: link files for nginx

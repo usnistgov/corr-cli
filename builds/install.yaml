@@ -15,54 +15,59 @@
       tags: [always]
 
     - include: mongo.yaml
-      when: inventory_hostname in groups['db']
       tags: [install]
+      when: inventory_hostname in groups['db']
+
 
     - include: conda.yaml
+      tags: [install]
       when: >
         inventory_hostname in groups['db'] or
         inventory_hostname in groups['api'] or
         inventory_hostname in groups['cloud']
-      tags: [install]
 
     - include: corrdb.yaml
+      tags: [install]
       when: >
         inventory_hostname in groups['db'] or
         inventory_hostname in groups['api'] or
         inventory_hostname in groups['cloud']
-      tags: [install]
+
 
     - include: view.yaml
+      tags: [install]
       when: >
         ansible_ssh_host == 'localhost' and
         inventory_hostname in groups['frontend']
-      tags: [install]
 
-    - name: install nginx
+    - name: install nginx, python-httplib2
+      tags: [install]
       apt:
-        name: nginx-full
+        name: "{{ item }}"
         state: present
         force: yes
       become: true
+      with_items:
+        - nginx
+        - python-httplib2
       when: >
         inventory_hostname in groups['frontend'] or
         inventory_hostname in groups['api'] or
         inventory_hostname in groups['cloud']
-      tags: [install]
 
     - name: copy api config file
-      when: inventory_hostname in groups['api']
-      template: src={{ corr_path }}/builds/config-api.py.j2 dest={{ corr_path }}/corr-api/config.py
       tags: [install]
+      when: inventory_hostname in groups['api']
+      template: src={{ inventory_dir }}/config-api.py.j2 dest={{ corr_path }}/corr-api/config.py
 
     - name: copy cloud config file
       when: inventory_hostname in groups['cloud']
-      template: src={{ corr_path }}/builds/config-cloud.py.j2 dest={{ corr_path }}/corr-cloud/config.py
+      template: src={{ inventory_dir }}/config-cloud.py.j2 dest={{ corr_path }}/corr-cloud/config.py
       tags: [install]
 
     - name: copy stormpath config file
       when: inventory_hostname in groups['cloud']
-      template: src={{ corr_path }}/builds/apiKey.properties.j2 dest={{ corr_path }}/corr-cloud/apiKey.properties
+      template: src={{ inventory_dir }}/apiKey.properties.j2 dest={{ corr_path }}/corr-cloud/apiKey.properties
       tags: [install]
 
     - include: serve_db.yaml
