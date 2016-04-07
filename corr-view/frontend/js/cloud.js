@@ -362,11 +362,13 @@ var Space = function (session){
                 // console.log(xmlhttp.responseText);
 
                 document.getElementById("projects-list").innerHTML = "";
-
+                var version = response["version"];
+                console.log("Version: "+version);
                 for(var i = 0; i < response["projects"].length; i++){
                     project = response["projects"][i];
+                    console.log(project);
                     var disable_view = "";
-                    if(project["project"]["total_records"] == 0){
+                    if(project["project"]["records"] == 0){
                         disable_view = "disabled";
                     }
                     // console.log(project);
@@ -374,15 +376,15 @@ var Space = function (session){
                     content += "<div id=\"profile-card\" class=\"card\">";
                     content += "<div class=\"card-image waves-effect waves-block waves-light\"><img class=\"activator\" src=\"../images/user-bg.jpg\" alt=\"user background\"></div>";
                     content += "<div class=\"card-content\">";
-                    content += "<img src=\"../images/project.png\" alt=\"\" class=\"circle responsive-img activator card-profile-image\"><a onclick=\"space.records('"+project["project"]["name"]+"')\" class=\"btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"\"><i class=\"mdi-action-visibility\"></i></a><span class=\"card-title activator grey-text text-darken-4\"> "+project["project"]["name"]+"</span>";
+                    content += "<img src=\"../images/project.png\" alt=\"\" class=\"circle responsive-img activator card-profile-image\"><a onclick=\"space.records('"+project["project"]["name"]+"','"+project["project"]["id"]+"')\" class=\"btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"\"><i class=\"mdi-action-visibility\"></i></a><span class=\"card-title activator grey-text text-darken-4\"> "+project["project"]["name"]+"</span>";
                     content += "<p class=\"grey-text ultra-small\"><i class=\"mdi-device-access-time cyan-text text-darken-2\"></i> "+project["project"]["created"]+"</p>";
                     content += "<p><i class=\"mdi-device-access-alarm cyan-text text-darken-2\"></i> "+project["project"]["duration"]+"</p>";
                     content += "<p><i class=\"mdi-action-description cyan-text text-darken-2\"></i> "+project["project"]["description"]+"</p>";
                     content += "<p><i class=\"mdi-action-subject cyan-text text-darken-2\"></i> "+project["project"]["goals"]+"</p>";
                     content += "<div class=\"card-action center-align\">";
-                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-file-cloud-done cyan-text text-darken-2\"></i> <span class=\"records badge\">"+project["project"]["total_records"]+"</span></a>";
-                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-image-compare cyan-text text-darken-2\"></i> <span class=\"diffs badge\">"+project["project"]["total_diffs"]+"</span></a>";
-                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-editor-insert-chart cyan-text text-darken-2\"></i> <span class=\"containers badge\">"+project["project"]["history"]+"</span></a>";
+                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-file-cloud-done cyan-text text-darken-2\"></i> <span class=\"records badge\">"+project["project"]["records"]+"</span></a>";
+                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-image-compare cyan-text text-darken-2\"></i> <span class=\"diffs badge\">"+project["project"]["diffs"]+"</span></a>";
+                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-editor-insert-chart cyan-text text-darken-2\"></i> <span class=\"containers badge\">"+project["project"]["environments"]+"</span></a>";
                     content += "</div>";
                     content += "</div>";
                     content += "</div>";
@@ -408,6 +410,7 @@ var Space = function (session){
 
                 $(".slider-date").Link('lower').to($("#event-start"), setDate);
                 $(".slider-date").Link('upper').to($("#event-end"), setDate);
+                document.getElementById("footer-version").innerHTML = version;
             } else {
                 console.log("Dashboard failed");
                 // Materialize.toast('<span>Dashboard failed</span>', 3000);
@@ -417,12 +420,13 @@ var Space = function (session){
         
     }
 
-    this.records = function(project_name) {
+    this.records = function(project_name, project_id) {
         document.getElementById("projects-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log("Project name: "+project_name);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/project/record/"+project_name);
+        console.log("Project id: "+project_id);
+        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/"+project_id);
         console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
@@ -448,8 +452,8 @@ var Space = function (session){
 
                 for(var i = 0; i < response["records"].length; i++){
                     record = response["records"][i];
-                    // console.log(record);
-                    var content = "<div class=\"col s12 m6 l4\" id=\"record-"+record["id"]+"\"> ";
+                    console.log(record);
+                    var content = "<div class=\"col s12 m6 l4\" id=\"record-"+record["head"]["id"]+"\"> ";
                     content += "<div id=\"profile-card\" class=\"card\">";
                     content += "<div class=\"card-image waves-effect waves-block waves-light\"><img class=\"activator\" src=\"../images/user-bg.jpg\" alt=\"user background\"></div>";
                     content += "<div class=\"card-content\">";
@@ -459,15 +463,15 @@ var Space = function (session){
                         disable_download = "disabled";
                     }
                     // console.log(record);
-                    content += "<img src=\"../images/record.png\" alt=\"\" class=\"circle responsive-img activator card-profile-image\"><a onclick=\"space.pull('"+record["project"]+"','"+record["id"]+"')\" class=\"btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"\"><i class=\"mdi-file-cloud-download\"></i></a><span class=\"card-title activator grey-text text-darken-4\"> "+record["label"]+"</span>";
-                    content += "<p class=\"grey-text ultra-small\"><i class=\"mdi-device-access-time cyan-text text-darken-2\"></i> "+record["created"]+"</p>";
-                    content += "<p><i class=\"mdi-device-access-alarm cyan-text text-darken-2\"></i> "+record["updated"]+"</p>";
-                    content += "<p><i class=\"mdi-notification-event-note cyan-text text-darken-2\"></i> "+record["id"]+"</p>";
-                    content += "<p><i class=\"mdi-notification-sync cyan-text text-darken-2\"></i> "+record["status"]+"</p>";
+                    content += "<img src=\"../images/record.png\" alt=\"\" class=\"circle responsive-img activator card-profile-image\"><a onclick=\"space.pull('"+record["head"]["project"]+"','"+record["head"]["id"]+"')\" class=\"btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"\"><i class=\"mdi-file-cloud-download\"></i></a><span class=\"card-title activator grey-text text-darken-4\"> "+record["head"]["label"]+"</span>";
+                    content += "<p class=\"grey-text ultra-small\"><i class=\"mdi-device-access-time cyan-text text-darken-2\"></i> "+record["head"]["created"]+"</p>";
+                    content += "<p><i class=\"mdi-device-access-alarm cyan-text text-darken-2\"></i> "+record["head"]["updated"]+"</p>";
+                    content += "<p><i class=\"mdi-notification-event-note cyan-text text-darken-2\"></i> "+record["head"]["id"]+"</p>";
+                    content += "<p><i class=\"mdi-notification-sync cyan-text text-darken-2\"></i> "+record["head"]["status"]+"</p>";
                     content += "<div class=\"card-action center-align\">";
-                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-action-input cyan-text text-darken-2\"></i> <span class=\"inputs badge\">"+record["inputs"]+"</span></a>";
-                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-action-launch cyan-text text-darken-2\"></i> <span class=\"outputs badge\">"+record["outputs"]+"</span></a>";
-                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-editor-insert-link cyan-text text-darken-2\"></i> <span class=\"dependencies badge\">"+record["dependencies"]+"</span></a>";
+                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-action-input cyan-text text-darken-2\"></i> <span class=\"inputs badge\">"+record["head"]["inputs"]+"</span></a>";
+                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-action-launch cyan-text text-darken-2\"></i> <span class=\"outputs badge\">"+record["head"]["outputs"]+"</span></a>";
+                    content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-editor-insert-link cyan-text text-darken-2\"></i> <span class=\"dependencies badge\">"+record["head"]["dependencies"]+"</span></a>";
                     content += "</div>";
                     content += "</div>";                
                     content += "</div>";

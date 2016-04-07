@@ -356,6 +356,213 @@ def logTraffic(endpoint=''):
 def logAccess(scope='root', endpoint=''):
     (traffic, created) = AccessModel.objects.get_or_create(scope=scope, endpoint="%s%s"%(CLOUD_URL, endpoint))
 
+def prepare_record(record=None):
+    if record == None:
+        return [None, '']
+    else:
+        env = record.environment
+        memory_file = BytesIO()
+        with zipfile.ZipFile(memory_file, 'w') as zf:
+            record_dict = record.extended()
+            environment = record_dict['head']['environment']
+            del record_dict['head']['environment']
+            comments = record_dict['head']['comments']
+            del record_dict['head']['comments']
+            resources = record_dict['head']['resources']
+            del record_dict['head']['resources']
+            inputs = record_dict['head']['inputs']
+            del record_dict['head']['inputs']
+            outputs = record_dict['head']['outputs']
+            del record_dict['head']['outputs']
+            dependencies = record_dict['head']['dependencies']
+            del record_dict['head']['dependencies']
+            application = record_dict['head']['application']
+            del record_dict['head']['application']
+            parent = record_dict['head']['parent']
+            del record_dict['head']['parent']
+            body = record_dict['body']
+            del record_dict['body']
+            execution = record_dict['head']['execution']
+            del record_dict['head']['execution']
+            project = record.project.info()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("project.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(comments, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("comments.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(resources, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("resources.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(inputs, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("inputs.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(outputs, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("outputs.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(dependencies, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("dependencies.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(application, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("application.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(parent, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("parent.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(body, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("body.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(execution, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("execution.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(environment, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+
+                data = zipfile.ZipInfo("environment.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            try:
+                json_buffer = StringIO()
+                json_buffer.write(json.dumps(record_dict, sort_keys=True, indent=4, separators=(',', ': ')))
+                json_buffer.seek(0)
+                data = zipfile.ZipInfo("record.json")
+                data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                zf.writestr(data, json_buffer.read())
+            except:
+                print traceback.print_exc()
+            if env != None and env.bundle.location != '':
+                try:
+                    bundle_buffer = StringIO()
+                    if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
+                        bundle_buffer = web_get_file(env.bundle.location)
+                    else:
+                        bundle_buffer = s3_get_file('bundle', env.bundle.location)
+
+                    data = zipfile.ZipInfo("bundle.%s"%(env.bundle.location.split("/")[-1].split(".")[-1]))
+                    data.date_time = time.localtime(time.time())[:6]
+                    data.compress_type = zipfile.ZIP_DEFLATED
+                    data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                    zf.writestr(data, bundle_buffer.read())
+                except:
+                    print traceback.print_exc()
+            for resource in resources:
+                try:
+                    bundle_buffer = StringIO()
+                    data = None
+                    if 'http://' in resource['storage'] or 'https://' in resource['storage']:
+                        bundle_buffer = web_get_file(resource['storage'])
+                        data = zipfile.ZipInfo("%s-%s"%(resource['group'], resource['storage'].split('/')[-1]))
+                    else:
+                        bundle_buffer = s3_get_file(resource['group'], resource['storage'])
+                        data = zipfile.ZipInfo("%s-%s"%(resource['group'], resource['storage']))
+                    data.date_time = time.localtime(time.time())[:6]
+                    data.compress_type = zipfile.ZIP_DEFLATED
+                    data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+                    zf.writestr(data, bundle_buffer.read())
+                except:
+                    print traceback.print_exc()
+            
+        memory_file.seek(0)
+
+    return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
 
 def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
     category = ''

@@ -30,6 +30,16 @@ import string
 import os
 import thread
 
+@app.route(API_URL + '/public/api/status', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def public_api_status():
+    logTraffic(endpoint='/public/api/status')
+    if fk.request.method == 'GET':
+        # Maybe perform some sanity checks
+        return api_response(200, 'API reached', 'This CoRR API instance is up and running')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 @app.route(API_URL + '/public/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_app_show(app_id):
