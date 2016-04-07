@@ -1,14 +1,12 @@
-import os
 import sys, traceback
-import psutil
-import json
 import datetime
 from time import sleep
 import platform
+import psutil
 import daemon
-import core
-import api
 import click
+from corr import core
+from corr import api
 
 class CoRRTask:
     def __init__(self, pid=None, name=None, refresh=10, aid=None, origin=None, marker=None):
@@ -21,41 +19,38 @@ class CoRRTask:
         self.history = []
         self.marker = marker
         self.record = ''
-        # self.context = None
-    
-    def run(self):#, context=None):
-        # self.context = context
+
+    def run(self):
         found = False
         duration = 0
         while True:
 
             pids = psutil.pids()
-            # print pids
             print "running...."
             stamp = str(datetime.datetime.now())
             running = False
             for i in xrange(len(pids)):
                 try:
                     p = psutil.Process(pids[i])
-                    # print "Name: %s"%p.name()
-                    # print "CmdLine: %s"%p.cmdline()
-                    #TODO: Fix in case of many occurences found.
-                    #For now we pick only one. How about concurent instance of the same code?
-                    #I will have to think about a list. Yet i think they should be seen as threads.
-                    # print "MARKER: %s"%self.marker
-                    # print "CMD: %s"%p.cmdline()
-                    if self.marker in ' '.join(p.cmdline()) and 'CoRRTask' not in ' '.join(p.cmdline()):
-                    #if self.name in ' '.join(p.cmdline()) and ((self.marker != None and self.marker in ' '.join(p.cmdline())) or self.marker == None):
+                    if self.marker in ' '.join(
+                            p.cmdline()) and 'CoRRTask' not in ' '.join(
+                                p.cmdline()):
                         found = True
                         running = True
                         name = p.name().replace('/', '-')
-                        
                         info = {'stamp':stamp}
                         info['aid'] = self.aid
                         info['origin'] = self.origin
                         info['marker'] = self.marker
                         try:
-                            info['computer'] = {'machine':platform.machine(), 'node':platform.node(), 'platform':platform.platform(aliased=True), 'processor':platform.processor(), 'release':platform.release(), 'system':platform.system(), 'version':platform.version()}
+                            info['computer'] = {
+                                'machine':platform.machine(),
+                                'node':platform.node(),
+                                'platform':platform.platform(aliased=True),
+                                'processor':platform.processor(),
+                                'release':platform.release(),
+                                'system':platform.system(),
+                                'version':platform.version()}
                         except:
                             info['computer'] = 'unknown'
                         try:
@@ -83,7 +78,8 @@ class CoRRTask:
                         except:
                             info['owner'] = 'unknown'
                         try:
-                            info['created'] = datetime.datetime.fromtimestamp(p.create_time()).strftime("%Y-%m-%d %H:%M:%S.%f")
+                            info['created'] = datetime.datetime.fromtimestamp(
+                                p.create_time()).strftime("%Y-%m-%d %H:%M:%S.%f")
                         except:
                             info['created'] = 'unknown'
                         try:
@@ -100,7 +96,6 @@ class CoRRTask:
                             info['children'] = {'number':len(children), 'list':[]}
                             for c in children:
                                 info['children']['list'].append(self.wrap_child(int(c.pid)))
-                                # info['children']['list'].append({'child':c.pid, 'name':c.name()})
                         except:
                             info['children'] = 'unknown'
                         try:
@@ -129,37 +124,27 @@ class CoRRTask:
                         except:
                             info['io_files'] = 'unknown'
 
-                        # if self.root != None:
-                        #     print json.dumps(self.root, sort_keys=True, indent=4, separators=(',', ': '))
-
                         if self.root != None:
                             if info != self.root['info']:
                                 info['stamp'] = stamp
                                 diff_res = self.diff(self.root['info'], info)
                                 if len(diff_res) != 0:
-                                   self.history.append(diff_res)
-                                # print json.dumps(info, sort_keys=True, indent=4, separators=(',', ': '))
-                                # os.path.expanduser('~')
-                                core.write_repo(self.name, {'info':self.root['info'], 'history':self.history})
-                                # filename = "{0}/{1}.corr".format(core.repos_path, self.name)
-                                # with open(filename, 'w') as info_json:
-                                #     info_json.write(json.dumps({'info':self.root['info'], 'history':self.history}, sort_keys=True, indent=4, separators=(',', ': ')))
+                                    self.history.append(diff_res)
+                                core.write_repo(self.name, {
+                                    'info':self.root['info'],
+                                    'history':self.history})
                             else:
-                                # Nothing to do. No changes.
-                                pass       
+                                pass
                         else:
                             self.root = {'info':info, 'history':[]}
-                            # print json.dumps(info, sort_keys=True, indent=4, separators=(',', ': '))
-                            # filename = '%s/.corr/repository/%s-%s.json'%(os.path.expanduser('~'), self.name, self.marker.split("marker_")[1])
-                            # filename = filename.replace(' ','_').replace(':','-')
-                            # with open(filename, 'w') as info_json:
-                            #     info_json.write(json.dumps(self.root, sort_keys=True, indent=4, separators=(',', ': ')))
                             core.write_repo(self.name, self.root)
                             request = {}
-                            # print core.pretty_json(request)
                             config = core.read_config()
                             registrations = core.read_reg()
-                            regs = core.find_by(registrations, name=self.name, marker=self.marker)
+                            regs = core.find_by(
+                                registrations,
+                                name=self.name,
+                                marker=self.marker)
                             print "Record: {0}".format(self.record)
                             if len(regs) > 0:
                                 project = registrations[regs[0]]['project']
@@ -167,29 +152,53 @@ class CoRRTask:
                                     request['label'] = self.marker
                                     request['tags'] = [self.marker]
                                     request['system'] = info['computer']
-                                    request['inputs'] = [{'library':data[0]} for data in info['io_files']]
-                                    request['outputs'] = [{'library':data[0]} for data in info['io_files']]
-                                    request['dependencies'] = [{'library':data[0]} for data in info['libraries']]
+                                    request['inputs'] = [
+                                        {
+                                            'library':data[0]
+                                        } for data in info['io_files']]
+                                    request['outputs'] = [
+                                        {
+                                            'library':data[0]
+                                        } for data in info['io_files']]
+                                    request['dependencies'] = [
+                                        {
+                                            'library':data[0]
+                                        } for data in info['libraries']]
                                     request['status'] = info['status']
                                     request['access'] = 'private'
-                                    request['execution'] = {'cmdline':info['cmdline'], 'executable':info['executable'], 'path':info['path'], 'name':info['name']}
+                                    request['execution'] = {
+                                        'cmdline':info['cmdline'],
+                                        'executable':info['executable'],
+                                        'path':info['path'],
+                                        'name':info['name']}
                                     request['extend'] = {}
                                     request['extend']['children'] = info['children']
                                     request['extend']['network'] = info['network']
                                     request['extend']['cp_purcentage'] = info['cp_purcentage']
                                     request['extend']['mem_purcentage'] = info['mem_purcentage']
                                     request['extend']['threads'] = info['threads']
-                                    # print core.pretty_json(request)
-                                    api_response = api.record_create(config=config, project=project, request=request)
+                                    api_response = api.record_create(
+                                        config=config,
+                                        project=project,
+                                        request=request)
                                     if api_response[0]:
                                         self.record = api_response[1]['head']['id']
                                     else:
                                         print "Error: Watcher recording create process failed."
                                         print api_response[1]
                                 else:
-                                    request['inputs'] = [{'library':data[0]} for data in info['io_files']]
-                                    request['outputs'] = [{'library':data[0]} for data in info['io_files']]
-                                    request['dependencies'] = [{'library':data[0]} for data in info['libraries']]
+                                    request['inputs'] = [
+                                        {
+                                            'library':data[0]
+                                        } for data in info['io_files']]
+                                    request['outputs'] = [
+                                        {
+                                            'library':data[0]
+                                        } for data in info['io_files']]
+                                    request['dependencies'] = [
+                                        {
+                                            'library':data[0]
+                                        } for data in info['libraries']]
                                     request['status'] = info['status']
                                     request['extend'] = {}
                                     request['extend']['children'] = info['children']
@@ -197,25 +206,23 @@ class CoRRTask:
                                     request['extend']['cp_purcentage'] = info['cp_purcentage']
                                     request['extend']['mem_purcentage'] = info['mem_purcentage']
                                     request['extend']['threads'] = info['threads']
-                                    api_response = api.record_update(config=config, record=self.record, request=request)
+                                    api_response = api.record_update(
+                                        config=config,
+                                        record=self.record,
+                                        request=request)
                                     if not api_response[0]:
                                         print "Error: Watcher recording create process failed."
                                         print api_response[1]
-                                    # update
-                            # This allows us to always be recording and not updating.
-                            # Figure out a process to upate.
                             self.root = None
 
                         break
                 except:
                     print traceback.print_exc(file=sys.stdout)
-                    # pass
             if found and not running:
-                # Stop the deamon because the execution finished.
                 break
             sleep(self.refresh)
             duration += self.refresh
-            if not found and duration >= 60*60: # 1h of wait. terminate the deamon.
+            if not found and duration >= 60*60:
                 break
 
     def wrap_child(self, pid):
@@ -246,7 +253,8 @@ class CoRRTask:
         except:
             info['owner'] = 'unknown'
         try:
-            info['created'] = datetime.datetime.fromtimestamp(p.create_time()).strftime("%Y-%m-%d %H:%M:%S.%f")
+            info['created'] = datetime.datetime.fromtimestamp(
+                p.create_time()).strftime("%Y-%m-%d %H:%M:%S.%f")
         except:
             info['created'] = 'unknown'
         try:
@@ -273,7 +281,6 @@ class CoRRTask:
         try:
             info['network'] = p.get_connections()
         except:
-            # traceback.print_exc(file=sys.stdout)
             info['network'] = 'unknown'
         try:
             info['io_files'] = p.open_files()
@@ -295,16 +302,9 @@ class CoRRTask:
         if info1['status'] != info2['status']:
             result['status'] = info2['status']
 
-        #Not necessary tracks.
-        # if info1['cp_purcentage'] != info2['cp_purcentage']:
-        #     result['cp_purcentage'] = info2['cp_purcentage']
-        
-     #    if info1['mem_purcentage'] != info2['mem_purcentage']:
-        #     result['mem_purcentage'] = info2['mem_purcentage']
-
         if info1['libraries'] != info2['libraries']:
             result['libraries'] = info2['libraries']
-        
+
         if info1['network'] != info2['network']:
             result['network'] = info2['network']
 
@@ -335,7 +335,6 @@ def handle(name, marker, delay, aid, origin):
         delay_value = int(delay)
 
     if name and marker:
-        # task = CoRRTask(pid='{0}/{1}-single-{2}.pid'.format(core.tasks_path, name, stamp), name=name, marker=marker)
         task = CoRRTask(name=name, marker=marker)
         # task.run()
         try:

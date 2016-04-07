@@ -1,19 +1,22 @@
-import daemon
-# from corrTask import CoRRTask
-import traceback
 import sys
 import os
 import datetime
-import lockfile
-import json
-import api
+import traceback
 import getpass
+import json
+from corr import api
+
 
 corr_path = "%s/.corr"%os.path.expanduser('~')
 config_path = "{0}/config.json".format(corr_path)
 reg_path = "{0}/registrations.json".format(corr_path)
 repos_path = "{0}/repositories".format(corr_path)
 tasks_path = "{0}/tasks".format(corr_path)
+
+def formated_stamp():
+    stamp = str(datetime.datetime.now())
+    stamp = stamp.replace(" ", "_").replace(":", "-")
+    return stamp
 
 def pretty_json(json_data=None):
     if json_data != None:
@@ -88,7 +91,7 @@ def write_config(config_json=None):
 
 def configure(host=None, port=None, key=None):
     config = read_config()
-    if host == None and port == None and key == None:
+    if host is None and port is None and key is None:
         print pretty_json(config)
     else:
         if host:
@@ -111,7 +114,7 @@ def read_reg():
         registrations = json.loads(reg_json.read())
     return registrations
 
-def find_by(regs=[], name=None,marker=None):
+def find_by(regs=[], name=None, marker=None):
     # Todo: Allow research based on records.
     reg_fs = []
     index = 0
@@ -128,7 +131,9 @@ def list():
     print "#"
     registrations = read_reg()
     for reg in registrations:
-        print "{0}\t{1}\t{2}\t{3}".format(reg['name'], reg['marker'], reg['status']['stamp'], reg['status']['value'])
+        print "{0}\t{1}\t{2}\t{3}".format(
+            reg['name'], reg['marker'], reg['status']['stamp'],
+            reg['status']['value'])
 
 def show(name=None, marker=None):
     registrations = read_reg()
@@ -155,7 +160,8 @@ def align():
     api_response = api.project_all(config=config)
     if api_response[0] == True:
         projects_json = api_response[1]
-        print "--> Backend has {0} projects".format(projects_json['total_projects'])
+        print "--> Backend has {0} projects".format(
+            projects_json['total_projects'])
         projects = projects_json['projects']
         for project in projects:
             name = project['name']
@@ -164,8 +170,7 @@ def align():
             if len(softwares) == 0:
                 print "--> Aligning with remote project [{0}]...".format(name)
                 software = {}
-                stamp = str(datetime.datetime.now())
-                stamp = stamp.replace(" ","_").replace(":","-")
+                stamp = formated_stamp()
                 software['name'] = name
                 software['marker'] = marker
                 software['status'] = {'value':'registered', 'stamp':stamp}
@@ -191,16 +196,20 @@ def register(name=None):
         print "Its name and marker are: [{0}|{1}]".format(software['name'], software['marker'])
     else:
         if len(softwares) > 0 and registrations[softwares[0]]['status']['value'] == 'unregistered':
-            stamp = str(datetime.datetime.now())
-            stamp = stamp.replace(" ","_").replace(":","-")
+            stamp = formated_stamp()
             registrations[softwares[0]]['history'].append(registrations[softwares[0]]['status'])
             registrations[softwares[0]]['status'] = {'value':'registered', 'stamp':stamp}
             registrations[softwares[0]]['consistency'] = False
             ensure_repo(registrations[softwares[0]]['name'])
             write_reg(registrations)
-            print "A software with this name/marker was unregistered and is now registered back again."
-            if registrations[softwares[0]]['consistency'] == False:
-                api_response = api.project_create(config=config, name=registrations[softwares[0]]['name'], description='no description provided.', goals='no goals set.', tags=[registrations[softwares[0]]['marker']])
+            print "A software with this name/marker was\
+             unregistered and is now registered back again."
+            if not registrations[softwares[0]]['consistency']:
+                api_response = api.project_create(config=config,
+                                                  name=registrations[softwares[0]]['name'],
+                                                  description='no description provided.',
+                                                  goals='no goals set.',
+                                                  tags=[registrations[softwares[0]]['marker']])
                 if api_response[0] == True:
                     registrations[softwares[0]]['consistency'] = True
                     registrations[softwares[0]]['project'] = api_response[1]['id']
@@ -208,12 +217,12 @@ def register(name=None):
                     write_reg(registrations)
                     print "The associated project metadata is now consistent."
                 else:
-                    print "Consistency alignment between registration and project metadat failed. Please check connectivity and try to sync the software again later."
+                    print "Consistency alignment between registration and project metadat failed. \
+                    Please check connectivity and try to sync the software again later."
                     print api_response[1]
         else:
             software = {}
-            stamp = str(datetime.datetime.now())
-            stamp = stamp.replace(" ","_").replace(":","-")
+            stamp = formated_stamp()
             software['marker'] = "marker_%s"%stamp
             if name != None:
                 software['name'] = name
@@ -236,28 +245,42 @@ def register(name=None):
                     ensure_repo(software['name'])
                     write_reg(registrations)
                     print "Registration produced marker: {0}".format(software['marker'])
-                    api_response = api.project_create(config=config, name=software['name'], description='no description provided.', goals='no goals set.', tags=[software['marker']])
+                    api_response = api.project_create(
+                        config=config,
+                        name=software['name'],
+                        description='no description provided.',
+                        goals='no goals set.',
+                        tags=[software['marker']])
                     if api_response[0] == True:
                         software['consistency'] = True
                         software['project'] = api_response[1]['id']
                         ensure_repo(software['name'])
                         write_reg(registrations)
-                        print "The associated project metadata is now consistent with the registration."
+                        print "The associated project metadata is now\
+                        consistent with the registration."
                     else:
-                        print "Consistency alignment between registration and project metadat failed. Please check connectivity and try to sync the software later."
+                        print "Consistency alignment between registration\
+                        and project metadat failed. Please check connectivity\
+                        and try to sync the software later."
                         print api_response[1]
                 else:
-                    print "Registration failed. A registration already exists with the name: {0}".format(software['name'])
+                    print "Registration failed. A registration already exists\
+                    with the name: {0}".format(software['name'])
 
 def sync(name=None, marker=None):
     config = read_config()
     registrations = read_reg()
-    if name == None and marker == None:
+    if name is None and marker is None:
         print "Syncing all inconsistent registrations..."
         for idx, reg in enumarate(registrations):
-            if reg['consistency'] == False:
+            if not reg['consistency']:
                 print "Syncing the registration [{0}]...".format(reg['name'])
-                api_response = api.project_create(config=config, name=reg['name'], description='no description provided.', goals='no goals set.', tags=[reg['marker']])
+                api_response = api.project_create(
+                    config=config,
+                    name=reg['name'],
+                    description='no description provided.',
+                    goals='no goals set.',
+                    tags=[reg['marker']])
                 if api_response[0] == True:
                     reg['consistency'] = True
                     reg['project'] = api_response[1]['id']
@@ -266,15 +289,22 @@ def sync(name=None, marker=None):
                     write_reg(registrations)
                     print "--> This associated project metadata is now consistent."
                 else:
-                    print "--> Consistency alignment between registration and project metadat failed. Please check connectivity and try to sync the software again later."
+                    print "--> Consistency alignment between registration\
+                    and project metada failed. Please check connectivity\
+                    and try to sync the software again later."
                     print api_response[1]
             else:
                 print "Registration [{0}] is already consistent.".format(reg['name'])
     else:
         print "Syncing the registration..."
         softwares = find_by(regs=registrations, name=name, marker=marker)
-        if len(softwares) > 0 and registrations[softwares[0]]['consistency'] == False:
-            api_response = api.project_create(config=config, name=registrations[softwares[0]]['name'], description='no description provided.', goals='no goals set.', tags=[registrations[softwares[0]]['marker']])
+        if len(softwares) > 0 and not registrations[softwares[0]]['consistency']:
+            api_response = api.project_create(
+                config=config,
+                name=registrations[softwares[0]]['name'],
+                description='no description provided.',
+                goals='no goals set.',
+                tags=[registrations[softwares[0]]['marker']])
             if api_response[0] == True:
                 registrations[softwares[0]]['consistency'] = True
                 registrations[softwares[0]]['project'] = api_response[1]['id']
@@ -282,7 +312,9 @@ def sync(name=None, marker=None):
                 write_reg(registrations)
                 print "The associated project metadata is now consistent."
             else:
-                print "Consistency alignment between registration and project metadat failed. Please check connectivity and try to sync the software again later."
+                print "--> Consistency alignment between registration\
+                    and project metada failed. Please check connectivity\
+                    and try to sync the software again later."
                 print api_response[1]
         else:
             if len(softwares) > 0:
@@ -290,7 +322,6 @@ def sync(name=None, marker=None):
 
             else:
                 print "Error: No registration with this name."
-           
 
 def unregister(name=None, marker=None):
     print "Unregistering the software..."
@@ -298,8 +329,7 @@ def unregister(name=None, marker=None):
     softwares = find_by(regs=registrations, name=name, marker=marker)
     if len(softwares) > 0 and registrations[softwares[0]]['status']['value'] != 'unregistered':
         registrations[softwares[0]]['history'].append(registrations[softwares[0]]['status'])
-        stamp = str(datetime.datetime.now())
-        stamp = stamp.replace(" ","_").replace(":","-")
+        stamp = formated_stamp()
         registrations[softwares[0]]['history'].append(registrations[softwares[0]]['status'])
         registrations[softwares[0]]['status'] = {'value':'unregistered', 'stamp':stamp}
         write_reg(registrations)
@@ -307,7 +337,8 @@ def unregister(name=None, marker=None):
         # Delete software repo and section from registrations.
         print "Software unregistered."
     else:
-        print "Could not found a software with this name/marker to unregister."
+        print "Could not found a software with\
+        this name/marker to unregister."
 
 def watcher_launch(name=None, marker=None):
     # from subprocess import call
@@ -343,7 +374,7 @@ def watcher_stop(reg=None):
         import subprocess
         sudo_password = getpass.getpass('Password:')
         process = subprocess.Popen(task_cmd, universal_newlines=True)
-        sudo_prompt = process.communicate(sudo_password + '\n')[1]
+        process.communicate(sudo_password + '\n')
         return process
     except:
         print traceback.print_exc(file=sys.stdout)
@@ -358,11 +389,12 @@ def watch(name=None, marker=None):
             print "Already watching this entry."
         else:
             registrations[softwares[0]]['history'].append(registrations[softwares[0]]['status'])
-            stamp = str(datetime.datetime.now())
-            stamp = stamp.replace(" ","_").replace(":","-")
+            stamp = formated_stamp()
             registrations[softwares[0]]['history'].append(registrations[softwares[0]]['status'])
             registrations[softwares[0]]['status'] = {'value':'watching', 'stamp':stamp}
-            task_process = watcher_launch(name=registrations[softwares[0]]['name'], marker=registrations[softwares[0]]['marker'])
+            task_process = watcher_launch(
+                name=registrations[softwares[0]]['name'],
+                marker=registrations[softwares[0]]['marker'])
             if task_process:
                 print "Watching on task-[{0}]...".format(int(task_process.pid))
                 registrations[softwares[0]]['watcher'] = int(task_process.pid) + 4
@@ -379,8 +411,7 @@ def unwatch(name=None, marker=None):
     if len(softwares) > 0 and registrations[softwares[0]]['status']['value'] != 'unregistered':
         if registrations[softwares[0]]['status']['value'] == 'watching':
             registrations[softwares[0]]['history'].append(registrations[softwares[0]]['status'])
-            stamp = str(datetime.datetime.now())
-            stamp = stamp.replace(" ","_").replace(":","-")
+            stamp = formated_stamp()
             registrations[softwares[0]]['history'].append(registrations[softwares[0]]['status'])
             registrations[softwares[0]]['status'] = {'value':'unwatched', 'stamp':stamp}
             stop_process = watcher_stop(reg=registrations[softwares[0]])
@@ -412,89 +443,12 @@ def push_env(name=None, marker=None, path=None):
         if registrations[softwares[0]]['status']['value'] == 'watching':
             print "Error: Uploading new environment while watching is not possible. Unwatch first."
         else:
-            api_response = api.project_env_next(config=config, project=registrations[softwares[0]]['project'], path=path)
+            api_response = api.project_env_next(
+                config=config,
+                project=registrations[softwares[0]]['project'],
+                path=path)
             if api_response[0]:
                 print "Environment successfully pushed."
             else:
                 print "Error: Environment push failed."
                 print api_response[1]
-
-
-# def configure():
-#     if not os.path.exists("%s/.corr"%os.path.expanduser('~')):
-#             os.makedirs("%s/.corr"%os.path.expanduser('~'))
-#             with open("%s/.corr/config.yaml"%os.path.expanduser('~'),"a+") as f_config:
-#                 f_config.write("-backend: None\n")
-#                 f_config.write("-token: None\n")
-#             if not os.path.exists("%s/.corr/repository"%os.path.expanduser('~')):
-#                 os.makedirs("%s/.corr/repository"%os.path.expanduser('~'))
-#             if not os.path.exists("%s/.corr/task"%os.path.expanduser('~')):
-#                 os.makedirs("%s/.corr/task"%os.path.expanduser('~'))
-
-# def cmd(name=None, exe=None, corrRt=None, corrPt=None):
-#     if name!=None and exe != None:
-#         from subprocess import call
-#         cmd_lst = exe.split(" ")
-#         if corrRt != None:
-#             stamp = str(datetime.datetime.now())
-#             stamp = stamp.replace(" ","_").replace(":","-")
-#             # Name here need to be a word that is part of the command words.
-#             task = CoRRTask(pid='%s/.corr/tasks/%s-master-%s.pid'%(os.path.expanduser('~'), name, stamp), name=name, aid=corrRt, marker="marker_%s"%stamp)
-#             try:
-#                 cmd_lst.append("marker_%s"%stamp)
-#                 call(cmd_lst)
-#                 with daemon.DaemonContext():#(pidfile=lockfile.FileLock(task.pid)):
-#                     task.run()
-#             except:
-#                 traceback.print_exc(file=sys.stdout)
-#         elif corrPt != None:
-#             stamp = str(datetime.datetime.now())
-#             stamp = stamp.replace(" ","_").replace(":","-")
-#             # Name here need to be a word that is part of the command words.
-#             task = CoRRTask(pid='%s/.corr/tasks/%s-worker-%s.pid'%(os.path.expanduser('~'), name, stamp), name=name, origin=corrPt, marker="marker_%s"%stamp)
-#             try:
-#                 cmd_lst.append("marker_%s"%stamp)
-#                 call(cmd_lst)
-#                 with daemon.DaemonContext():#(pidfile=lockfile.FileLock(task.pid)):
-#                     task.run()
-#             except:
-#                 traceback.print_exc(file=sys.stdout)
-#         else:
-#             stamp = str(datetime.datetime.now())
-#             stamp = stamp.replace(" ","_").replace(":","-")
-#             # Name here need to be a word that is part of the command words.
-#             # task = CoRRTask(pid='%s/.corr/tasks/%s-single-%s.pid'%(os.path.expanduser('~'), name, stamp), name=name, marker="marker_%s"%stamp)
-#             # try:
-#             # 	context = daemon.DaemonContext()#(pidfile=lockfile.FileLock(task.pid)):
-#             #     with context:    
-#             #         task.run()
-
-#             #     cmd_lst.append("marker_%s"%stamp)
-#             #     print "Cmd: %s"%cmd_lst
-#             #     call(cmd_lst)
-                
-#             # except:
-#             #     traceback.print_exc(file=sys.stdout)
-#             task_cmd = []
-#             try:
-#                 task_cmd.append("python")
-#                 task_cmd.append("-m")
-#                 task_cmd.append("corr.corrTask")
-#                 task_cmd.append(stamp)
-#                 task_cmd.append(name)
-#                 task_cmd.append("10")
-#                 task_cmd.append("")
-#                 task_cmd.append("")
-#                 call(task_cmd)
-#                 cmd_lst.append("marker_%s"%stamp)
-#                 #print "Cmd: %s"%cmd_lst
-#                 call(cmd_lst)
-#                 # print "%s marker_%s"%(exe, stamp)
-#                 # if "./" in exe:
-#                 #    os.system("%s marker_%s"%(exe, stamp))
-#                     #call("%s marker_%s"%(exe, stamp))
-                
-#             except:
-#                 traceback.print_exc(file=sys.stdout)
-#     else:
-#         print "Nothing to execute."
