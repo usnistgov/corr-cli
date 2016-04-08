@@ -6,12 +6,26 @@
 - name: copy gunicorn template
   template: src={{ inventory_dir }}/app_config.py.j2 dest={{ local_path}}/.config/{{ gunicorn_config_file }}
 
-- name: copy service template
+- name: determine if systemd or upstart
+  command: dpkg -S /sbin/init
+  register: dpkg_stdout
+
+- set_fact:
+    init_system: "{{ dpkg_stdout.stdout[0:7] }}"
+
+- name: copy service template for systemd
   template: src={{ inventory_dir }}/app.service.j2 dest=/lib/systemd/system/{{ app_service_name }}.service
+  when: init_system == "systemd"
   become: true
 
 - name: update systemd
   command: systemctl daemon-reload
+  when: init_system == "systemd"
+  become: true
+
+- name: copy service template for upstart
+  template: src={{ inventory_dir }}/app.conf.j2 dest=/etc/init/{{ app_service_name }}.conf
+  when: init_system == "upstart"
   become: true
 
 - name: run server
@@ -28,6 +42,13 @@
 
 - name: restart nginx
   service: name=nginx state=restarted
+  become: true
+
+- name: enable port in ufw
+  ufw:
+    rule: allow
+    port: "{{ mapped_port }}"
+    proto: tcp
   become: true
 
 - name: check that app is up and running
