@@ -1,5 +1,4 @@
 *.pyc
-*.log
 corr-db/data
 corr-db/dist
 corr-db/build
