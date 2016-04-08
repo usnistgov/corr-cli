@@ -8,7 +8,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, load_bundle, crossdomain, delete_record_files, delete_record_file, CLOUD_URL, s3_get_file, logStat, logTraffic, logAccess
+from cloud import app, stormpath_manager, load_bundle, prepare_record, crossdomain, delete_record_files, delete_record_file, CLOUD_URL, s3_get_file, logStat, logTraffic, logAccess
 import datetime
 import json
 import traceback
@@ -204,31 +204,39 @@ def pull_record(hash_session, record_id):
                 try:
                     record = RecordModel.objects.with_id(record_id)
                 except:
+                    record = None
                     print str(traceback.print_exc())
                 if record is None:
                     return fk.redirect('http://0.0.0.0:5000/error-204/')
                 else:
-                    if record.project.owner == current_user:
-                        record_user = record.project.owner
-                        if record.environment:
-                            environment = record.environment
-                            if environment.bundle['location']:
-                                bundle = load_bundle(record)
-                                # print image[1]
-                                return fk.send_file(
-                                    bundle[0],
-                                    mimetypes.guess_type(bundle[1])[0],
-                                    as_attachment=True,
-                                    attachment_filename=str(record_user.id)+"-"+str(record.project.id)+"-"+str(record_id)+"-record.zip",
-                                )
-                            else:
-                                print "Failed because of environment bundle location not found."
-                                return fk.redirect('http://0.0.0.0:5000/error-204/')
-                        else:
-                            print "No environment bundle."
-                            return fk.redirect('http://0.0.0.0:5000/error-204/')
+                    # if record.project.owner == current_user:
+                    #     record_user = record.project.owner
+                    #     if record.environment:
+                    #         environment = record.environment
+                    #         if environment.bundle['location']:
+                    #             bundle = load_bundle(record)
+                    #             # print image[1]
+                    #             return fk.send_file(
+                    #                 bundle[0],
+                    #                 mimetypes.guess_type(bundle[1])[0],
+                    #                 as_attachment=True,
+                    #                 attachment_filename=str(record_user.id)+"-"+str(record.project.id)+"-"+str(record_id)+"-record.zip",
+                    #             )
+                    #         else:
+                    #             print "Failed because of environment bundle location not found."
+                    #             return fk.redirect('http://0.0.0.0:5000/error-204/')
+                    #     else:
+                    #         print "No environment bundle."
+                    #         return fk.redirect('http://0.0.0.0:5000/error-204/')
+                    # else:
+                    #     return fk.redirect('http://0.0.0.0:5000/error-401/?action=pull_failed')
+
+                    prepared = prepare_record(record)
+                    if prepared[0] == None:
+                        print "Unable to retrieve a record to download."
+                        return fk.redirect('http://0.0.0.0:5000/error-204/')
                     else:
-                        return fk.redirect('http://0.0.0.0:5000/error-401/?action=pull_failed')
+                        return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
                 
             else:
                 return fk.redirect('http://0.0.0.0:5000/error-401/?action=pull_denied')

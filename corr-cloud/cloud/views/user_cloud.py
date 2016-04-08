@@ -487,9 +487,17 @@ def user_dashboard(hash_session):
             # print "Connected_at: %s"%str(user_model.connected_at)
             if allowance == hash_session:
                 dashboard = {}
+                version = 'N/A'
+                try:
+                    from corrdb import __version__
+                    version = __version__
+                except:
+                    pass
                 projects = ProjectModel.objects(owner=user_model)
                 if profile_model is not None:
                     dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about}
+                dashboard["version"] = version
+                print "Version {0}".format( dashboard["version"])
                 dashboard["records_total"] = 0
                 dashboard["projects_total"] = len(projects)
                 dashboard["records_total"] = 0
@@ -1171,7 +1179,7 @@ def cloud_public_user_picture(user_id):
                     return fk.send_file(
                         picture[0],
                         mimetypes.guess_type(picture[1])[0],
-                        as_attachment=True,
+                        # as_attachment=True,
                         attachment_filename=profile_model.picture['location'],
                     )
                 else:
