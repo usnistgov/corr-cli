@@ -36,9 +36,12 @@ def check_api(token):
     return UserModel.objects(api_token=token).first()
 
 def check_app(token):
-    for application in ApplicationModel.objects():
-        print "%s -- %s." %(str(application.developer.id), application.name)
-    return ApplicationModel.objects(app_token=token).first()
+    if token == "no-app":
+        return None
+    else:
+        for application in ApplicationModel.objects():
+            print "%s -- %s." %(str(application.developer.id), application.name)
+        return ApplicationModel.objects(app_token=token).first()
 
 def check_admin(token):
     user_model = UserModel.objects(api_token=token).first()

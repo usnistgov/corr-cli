@@ -389,7 +389,7 @@ def user_status(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
         	return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token><app_token>/user/status')
@@ -406,7 +406,7 @@ def user_app_connectivity(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<app_token>/connectivity')
@@ -425,7 +425,7 @@ def user_picture(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             if fk.request.method == 'GET':
@@ -494,7 +494,7 @@ def user_home(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token><app_token>/user/home')
@@ -513,7 +513,7 @@ def user_user_profile_show(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token><app_token>/profile/show')
@@ -539,7 +539,7 @@ def user_messages(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/messages')
@@ -563,7 +563,7 @@ def user_message_create(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/message/create')
@@ -604,7 +604,7 @@ def user_message_show(api_token, app_token, message_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/message/create')
@@ -629,7 +629,7 @@ def user_message_delete(api_token, app_token, message_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/message/create')
@@ -657,7 +657,7 @@ def user_message_update(api_token, app_token, message_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/message/create')
@@ -712,7 +712,7 @@ def user_files(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/files')
@@ -739,12 +739,12 @@ def user_file_upload(api_token, app_token, group, item_id):
     if current_user == None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
             if fk.request.method == 'POST':
-                if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
+                if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "resource-project", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                     return api_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
                 else:
                     if fk.request.files:
@@ -871,6 +871,12 @@ def user_file_upload(api_token, app_token, group, item_id):
                                     if current_user != owner:
                                         return api_response(401, 'Unauthorized access', 'You are not an owner of this item.')
                                     description = '%s is a resource file for the app %s'%(file_obj.filename, str(item.id))
+                                elif 'project' in group:
+                                    item = ProjectModel.objects.with_id(item_id)
+                                    owner = item.owner
+                                    if current_user != owner:
+                                        return api_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    description = '%s is a resource file for the project %s'%(file_obj.filename, str(item.id))
                                 group_ = group.split('-')[0]
 
                             if item == None:
@@ -944,7 +950,7 @@ def user_file_download(api_token, app_token, file_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/download/<file_id>')
@@ -1010,7 +1016,7 @@ def user_file_create(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/create')
@@ -1067,7 +1073,7 @@ def user_file_show(api_token, app_token, file_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/show/<file_id>')
@@ -1094,7 +1100,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>')
@@ -1335,7 +1341,7 @@ def user_file_update(api_token, app_token, file_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/update/<file_id>')
@@ -1392,7 +1398,7 @@ def user_projects(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/projects')
@@ -1414,7 +1420,7 @@ def user_projects_clear(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/projects/clear')
@@ -1434,7 +1440,7 @@ def user_envs_clear(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/envs/clear')
@@ -1459,7 +1465,7 @@ def user_project_comments(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/comments/<project_id>')
@@ -1491,7 +1497,7 @@ def user_project_create(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/create')
@@ -1563,7 +1569,7 @@ def user_project_records(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/records/<project_id>')
@@ -1593,7 +1599,7 @@ def user_project_show(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/show/<project_id>')
@@ -1618,7 +1624,7 @@ def user_project_logo(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/logo/<project_id>')
@@ -1681,7 +1687,7 @@ def user_project_delete(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/delete/<project_id>')
@@ -1709,7 +1715,7 @@ def user_project_update(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/update/<project_id>')
@@ -1786,7 +1792,7 @@ def user_project_download(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/download/<project_id>')
@@ -1816,7 +1822,7 @@ def user_project_envs(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/envs/<project_id>')
@@ -1847,7 +1853,7 @@ def user_project_envs_head(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/envs/head/<project_id>')
@@ -1875,7 +1881,7 @@ def user_project_env_show(api_token, app_token, project_id, env_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>')
@@ -1907,7 +1913,7 @@ def user_project_env_push(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/env/next/<project_id>')
@@ -1928,7 +1934,10 @@ def user_project_env_push(api_token, app_token, project_id):
                         if project.owner != current_user:
                             return api_response(401, 'Unauthorized access', 'You are not this project owner.')
                         else:
-                            env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics, application = current_app)
+                            if app_token == "no-app":
+                                env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
+                            else:
+                                env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics, application = current_app)
                             if not created:
                                 return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                             else:
@@ -1945,7 +1954,6 @@ def user_project_env_push(api_token, app_token, project_id):
                                     location = bundle_dict.get('location', '')
                                     if 'http://' in location or 'https://' in location: #only allow web hosted third party content links to be updated here.
                                         bundle.location = location
-                                        bundle.save()
                                         def handle_file_resolution(_bundle):
                                             # print _bundle
                                             bundle = BundleModel.objects.with_id(_bundle)
@@ -1957,6 +1965,7 @@ def user_project_env_push(api_token, app_token, project_id):
                                             bundle_buffer.seek(old_file_position, os.SEEK_SET)
                                             bundle.save()
                                         thread.start_new_thread(handle_file_resolution, (str(bundle.id),))
+                                    bundle.save()
                                     env.bundle = bundle
                                 env.save()
                                 project.history.append(str(env.id))
@@ -1976,7 +1985,7 @@ def user_project_env_update(api_token, app_token, project_id, env_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
@@ -2045,7 +2054,7 @@ def user_project_env_download(api_token, app_token, project_id, env_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>')
@@ -2081,7 +2090,7 @@ def user_records_list(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/records/list/<project_id>')
@@ -2107,7 +2116,7 @@ def user_records_clear(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/records/clear/<project_id>')
@@ -2131,7 +2140,7 @@ def user_record_create(api_token, app_token, project_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/record/create/<project_id>')
@@ -2216,7 +2225,7 @@ def user_record_show(api_token, app_token, record_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/record/show/<record_id>')
@@ -2241,7 +2250,7 @@ def user_record_delete(api_token, app_token, record_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/record/delete/<record_id>')
@@ -2269,7 +2278,7 @@ def user_record_update(api_token, app_token, record_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/record/update/<record_id>')
@@ -2393,7 +2402,7 @@ def user_record_download(api_token, app_token, record_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/record/download/<record_id>')
@@ -2422,7 +2431,7 @@ def user_diffs(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/diffs')
@@ -2449,7 +2458,7 @@ def user_diff_create(api_token, app_token):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/diff/create')
@@ -2497,7 +2506,7 @@ def user_diff_show(api_token, app_token, diff_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/diff/show/<diff_id>')
@@ -2522,7 +2531,7 @@ def user_diff_delete(api_token, app_token, diff_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/diff/delete/<diff_id>')
@@ -2552,7 +2561,7 @@ def user_diff_update(api_token, app_token, diff_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/diff/update/<diff_id>')
@@ -2624,7 +2633,7 @@ def user_resolve_item(api_token, app_token, item_id):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token>/<app_token>/resolve/<item_id>')

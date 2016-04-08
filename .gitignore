@@ -9,3 +9,4 @@ corr-api/test/requests/*_freeze.log
 corr-api/config.py
 corr-cloud/config.py
 builds/hosts
+corr-cmd/corr.egg-info

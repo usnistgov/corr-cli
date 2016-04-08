@@ -28,6 +28,10 @@ class ProjectModel(db.Document):
     # TOREPLACE BY comments = db.ListField(db.StringField()) #comments ids
     extend = db.DictField()
 
+    def save(self, *args, **kwargs):
+        self.created_at = str(datetime.datetime.utcnow())
+        return super(ProjectModel, self).save(*args, **kwargs)
+
     def _history(self):
         history = []
         for env_id in self.history:
