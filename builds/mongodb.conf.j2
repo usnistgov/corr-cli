@@ -8,7 +8,7 @@ logpath=/var/log/mongodb/mongodb.log
 
 logappend=true
 
-bind_ip = 127.0.0.1,{{ ansible_ssh_host }}
+bind_ip = 127.0.0.1,{{ mongo_ssh_host }}
 #port = 27017
 
 # Enable journaling, http://www.mongodb.org/display/DOCS/Journaling
