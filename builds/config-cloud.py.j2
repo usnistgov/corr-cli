@@ -4,7 +4,7 @@ DEBUG = True
 
 MONGODB_SETTINGS = {
     'db': 'corr-production',
-    'host': '{{ hostvars['dbhost']['ansible_host'] }}',
+    'host': '{{ hostvars['dbhost']['ansible_ssh_host'] }}',
     'port': 27017
 }
 

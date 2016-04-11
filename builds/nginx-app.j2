@@ -1,6 +1,6 @@
 server {
     listen {{ mapped_port }};
-    server_name 0.0.0.0;
+    server_name 0.0.0.0 localhost {{ ansible_ssh_host }};
 
     location / {
         include proxy_params;

@@ -1,21 +1,31 @@
 ## Deploy a production environment using Nginx
 
-- name: install nginx
-  apt:
-    name: nginx-full
-    state: present
-    force: yes
-  become: true
+- name: create ~/.config directory
+  file: path={{ local_path }}/.config state=directory
 
 - name: copy gunicorn template
-  template: src={{ corr_path }}/builds/app_config.py.j2 dest={{ gunicorn_config }}
+  template: src={{ inventory_dir }}/app_config.py.j2 dest={{ local_path}}/.config/{{ gunicorn_config_file }}
 
-- name: copy service template
-  template: src={{ corr_path }}/builds/app.service.j2 dest=/lib/systemd/system/{{ app_service_name }}.service
+- name: determine if systemd or upstart
+  command: dpkg -S /sbin/init
+  register: dpkg_stdout
+
+- set_fact:
+    init_system: "{{ dpkg_stdout.stdout[0:7] }}"
+
+- name: copy service template for systemd
+  template: src={{ inventory_dir }}/app.service.j2 dest=/lib/systemd/system/{{ app_service_name }}.service
+  when: init_system == "systemd"
   become: true
 
 - name: update systemd
   command: systemctl daemon-reload
+  when: init_system == "systemd"
+  become: true
+
+- name: copy service template for upstart
+  template: src={{ inventory_dir }}/app.conf.j2 dest=/etc/init/{{ app_service_name }}.conf
+  when: init_system == "upstart"
   become: true
 
 - name: run server
@@ -23,7 +33,7 @@
   become: true
 
 - name: copy nginx template
-  template: src={{ corr_path }}/builds/nginx-app.j2 dest=/etc/nginx/sites-available/{{ app_service_name }}
+  template: src={{ inventory_dir }}/nginx-app.j2 dest=/etc/nginx/sites-available/{{ app_service_name }}
   become: true
 
 - name: link files for nginx
@@ -32,6 +42,13 @@
 
 - name: restart nginx
   service: name=nginx state=restarted
+  become: true
+
+- name: enable port in ufw
+  ufw:
+    rule: allow
+    port: "{{ mapped_port }}"
+    proto: tcp
   become: true
 
 - name: check that app is up and running

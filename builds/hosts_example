@@ -1,8 +1,8 @@
 [db]
-dbhost ansible_host=localhost ansible_connection=local
+dbhost ansible_ssh_host=localhost
 
 [api]
-apihost ansible_host=localhost ansible_connection=local
+apihost ansible_ssh_host=localhost
 
 [api:vars]
 mapped_port=5100
@@ -11,14 +11,14 @@ app_service_name=corrapi
 socket_file=/tmp/corrapi.sock
 access_log=/var/log/corr-api-access.log
 error_log=/var/log/corr-api-error.log
-gunicorn_config_rel=.config/corr_config_api.py
+gunicorn_config_file=corr_config_api.py
 
 [cloud]
-cloudhost ansible_host=localhost ansible_connection=local
+cloudhost ansible_ssh_host=localhost
 
 [cloud:vars]
-stormpath_id=XXX
-stormpath_secret=XXX
+stormpath_id=
+stormpath_secret=
 stormpath_app=sumatra-cloud
 mapped_port=5200
 test_path=http://0.0.0.0:5200/cloud/v1/public/user/home
@@ -26,10 +26,10 @@ app_service_name=corrcloud
 socket_file=/tmp/corrcloud.sock
 access_log=/var/log/corr-cloud-access.log
 error_log=/var/log/corr-cloud-error.log
-gunicorn_config_rel=.config/corr_config_cloud.py
+gunicorn_config_file=corr_config_cloud.py
 
 [frontend]
-frontendhost ansible_host=localhost ansible_connection=local
+frontendhost ansible_ssh_host=localhost
 
 [frontend:vars]
 mapped_port=80
@@ -48,3 +48,6 @@ corr_version=master
 corr_repo=usnistgov/corr
 anacondadir=anaconda
 debug=True
+ansible_ssh_private_key_file=
+ansible_connection=local
+ansible_ssh_user=
