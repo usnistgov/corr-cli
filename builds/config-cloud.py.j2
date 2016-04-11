@@ -1,0 +1,13 @@
+WTF_CSRF_ENABLED = True
+
+DEBUG = True
+
+MONGODB_SETTINGS = {
+    'db': 'corr-production',
+    'host': '{{ hostvars['dbhost']['ansible_host'] }}',
+    'port': 27017
+}
+
+STORMPATH_API_KEY_FILE = 'apiKey.properties'
+STORMPATH_APPLICATION = '{{ stormpath_app }}'
+STORMPATH_REDIRECT_URL = '/cloud'

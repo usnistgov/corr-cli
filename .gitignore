@@ -6,4 +6,7 @@ corr-db/corrdb.egg-info
 corr-cloud/apiKey.properties
 corr-view/frontend/_site
 corr-api/test/requests/*_freeze.log
+corr-api/config.py
+corr-cloud/config.py
+builds/hosts
 corr-cmd/corr.egg-info
