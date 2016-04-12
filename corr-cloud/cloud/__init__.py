@@ -1,4 +1,3 @@
-# import jinja2
 import flask as fk
 from corrdb.common.core import setup_app
 from corrdb.common.models import UserModel
@@ -26,15 +25,6 @@ import time
 app = setup_app(__name__)
 
 s3 =  boto3.resource('s3')
-
-# Templates
-# loader = jinja2.PackageLoader('cloud', 'templates')
-# template_env = jinja2.Environment(autoescape=True, loader=loader)
-# template_env.globals.update(url_for=fk.url_for)
-# template_env.globals.update(get_flashed_messages=fk.get_flashed_messages)
-
-#Remove templates
-#include admin power everywhere here.
 
 # Stormpath
 
@@ -638,6 +628,9 @@ def logStat(deleted=False, user=None, message=None, application=None, project=No
 
 CLOUD_VERSION = 0.1
 CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
+
+VIEW_HOST = app.config['VIEW_SETTINGS']['host']
+VIEW_PORT = app.config['VIEW_SETTINGS']['port']
 
 from . import views
 from corrdb.common import models

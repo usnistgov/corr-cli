@@ -193,7 +193,7 @@ def register(name=None):
     softwares = find_by(regs=registrations, name=name)
     if len(softwares) > 0 and registrations[softwares[0]]['status']['value'] != 'unregistered':
         print "A software with this name/marker has already been registered."
-        print "Its name and marker are: [{0}|{1}]".format(software['name'], software['marker'])
+        print "Its name and marker are: [{0}|{1}]".format(registrations[softwares[0]]['name'], registrations[softwares[0]]['marker'])
     else:
         if len(softwares) > 0 and registrations[softwares[0]]['status']['value'] == 'unregistered':
             stamp = formated_stamp()
@@ -267,13 +267,13 @@ def register(name=None):
                     print "Registration failed. A registration already exists\
                     with the name: {0}".format(software['name'])
 
-def sync(name=None, marker=None):
+def sync(name=None, marker=None, force=False):
     config = read_config()
     registrations = read_reg()
     if name is None and marker is None:
         print "Syncing all inconsistent registrations..."
         for idx, reg in enumarate(registrations):
-            if not reg['consistency']:
+            if not reg['consistency'] or force:
                 print "Syncing the registration [{0}]...".format(reg['name'])
                 api_response = api.project_create(
                     config=config,
@@ -298,7 +298,7 @@ def sync(name=None, marker=None):
     else:
         print "Syncing the registration..."
         softwares = find_by(regs=registrations, name=name, marker=marker)
-        if len(softwares) > 0 and not registrations[softwares[0]]['consistency']:
+        if len(softwares) > 0 and (not registrations[softwares[0]]['consistency'] or force):
             api_response = api.project_create(
                 config=config,
                 name=registrations[softwares[0]]['name'],

@@ -58,23 +58,33 @@
             <nav class="cyan">
                 <div class="nav-wrapper">
                     <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
-                    <ul class="right hide-on-med-and-down">
+                    <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
                         <li class="search-out">
                             <input type="text" class="search-out-text">
                         </li>
-                        <li>    
-                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search"><i class="mdi-action-search nav-action"></i></a>                              
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
+                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
+                                <i class=" nav-action mdi-action-search"></i>
+                            </a>
                         </li>
-                        <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen"><i class="mdi-action-settings-overscan nav-action"></i></a>
-                        <li><a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light"><i class="nav-action nav-action mdi-action-home"></i></a>
-                        </li>
-                        <li><a href="" id="nav-api" class="waves-effect waves-block waves-light"><i class="nav-action nav-action mdi-action-description"></i></a>
-                        </li>
-                        <li><a href="" id="nav-dashboard" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-dashboard"></i></a></li>
-                        <!-- Dropdown Trigger -->                        
-                        <!-- <li><a href="../page-user-update.html" class="waves-effect waves-block waves-light"><i class="nav-action mdi-social-person"></i></a>
+                        <!-- <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="fullscreen">
+                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen">
+                                <i class="nav-action mdi-action-settings-overscan"></i>
+                            </a>
                         </li> -->
-                        <li><a onclick="user.logout()" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-exit-to-app"></i></a>
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
+                            <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
+                                <i class="nav-action nav-action mdi-action-home"></i>
+                            </a>
+                        </li>
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
+                            <a href="./" id= "nav-api" class="waves-effect waves-block waves-light">
+                                <i class="nav-action mdi-communication-live-help"></i>
+                            </a>
+                        </li>
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="dashboard"><a href="" id="nav-dashboard" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-dashboard"></i></a></li>
+
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help"><a onclick="user.logout()" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-exit-to-app"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -92,177 +102,6 @@
         <!-- START WRAPPER -->
         <div class="wrapper">
 
-            <!-- START LEFT SIDEBAR NAV
-            <aside id="left-sidebar-nav">
-                <ul id="slide-out" class="side-nav fixed leftside-navigation">
-                    <li class="user-details cyan darken-2">
-                        <div class="row">
-                            <div class="col col s4 m4 l4">
-                                <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image">
-                            </div>
-                            <div class="col col s8 m8 l8">
-                                <ul id="profile-dropdown" class="dropdown-content">
-                                    <li><a href="#"><i class="mdi-action-face-unlock"></i> Profile</a>
-                                    </li>
-                                    <li><a href="#"><i class="mdi-action-settings"></i> Settings</a>
-                                    </li>
-                                    <li><a href="#"><i class="mdi-communication-live-help"></i> Help</a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li><a href="#"><i class="mdi-action-lock-outline"></i> Lock</a>
-                                    </li>
-                                    <li><a href="#"><i class="mdi-hardware-keyboard-tab"></i> Logout</a>
-                                    </li>
-                                </ul>
-                                <a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn" href="#" data-activates="profile-dropdown">John Doe<i class="mdi-navigation-arrow-drop-down right"></i></a>
-                                <p class="user-roal">Administrator</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="bold"><a href="index.html" class="waves-effect waves-cyan"><i class="mdi-action-dashboard"></i> Dashboard</a>
-                    </li>
-                    <li class="bold"><a href="app-email.html" class="waves-effect waves-cyan"><i class="mdi-communication-email"></i> Mailbox <span class="new badge">4</span></a>
-                    </li>
-                    <li class="bold"><a href="app-calendar.html" class="waves-effect waves-cyan"><i class="mdi-editor-insert-invitation"></i> Calender</a>
-                    </li>
-                    <li class="no-padding">
-                        <ul class="collapsible collapsible-accordion">
-                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-action-invert-colors"></i> CSS</a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        <li><a href="css-typography.html">Typography</a>
-                                        </li>                                        
-                                        <li><a href="css-icons.html">Icons</a>
-                                        </li>
-                                        <li><a href="css-shadow.html">Shadow</a>
-                                        </li>
-                                        <li><a href="css-media.html">Media</a>
-                                        </li>
-                                        <li><a href="css-sass.html">Sass</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="bold"><a class="collapsible-header  waves-effect waves-cyan"><i class="mdi-image-palette"></i> UI Elements</a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        <li><a href="ui-buttons.html">Buttons</a>
-                                        </li>
-                                        <li><a href="ui-badges.html">Badges</a>
-                                        </li>
-                                        <li><a href="ui-cards.html">Cards</a>
-                                        </li>
-                                        <li><a href="ui-collections.html">Collections</a>
-                                        </li>
-                                        <li><a href="ui-accordions.html">Accordian</a>
-                                        </li>                                        
-                                        <li><a href="ui-navbar.html">Navbar</a>
-                                        </li>
-                                        <li><a href="ui-pagination.html">Pagination</a>
-                                        </li>
-                                        <li><a href="ui-preloader.html">Preloader</a>
-                                        </li>
-                                        <li><a href="ui-modals.html">Modals</a>
-                                        </li>
-                                        <li><a href="ui-media.html">Media</a>
-                                        </li>
-                                        <li><a href="ui-toasts.html">Toasts</a>
-                                        </li>
-                                        <li><a href="ui-tooltip.html">Tooltip</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="bold"><a href="app-widget.html" class="waves-effect waves-cyan"><i class="mdi-device-now-widgets"></i> Widgets <span class="new badge"></span></a>
-                            </li>
-                            <li class="bold"><a class="collapsible-header  waves-effect waves-cyan"><i class="mdi-editor-border-all"></i> Tables</a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        <li><a href="table-basic.html">Basic Tables</a>
-                                        </li>
-                                        <li><a href="table-data.html">Data Tables</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="bold"><a class="collapsible-header  waves-effect waves-cyan"><i class="mdi-editor-insert-comment"></i> Forms</a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        <li><a href="form-elements.html">Form Elements</a>
-                                        </li>
-                                        <li><a href="form-layouts.html">Form Layouts</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="bold"><a class="collapsible-header  waves-effect waves-cyan"><i class="mdi-social-pages"></i> Pages</a>
-                                <div class="collapsible-body">
-                                    <ul>                                        
-                                        <li><a href="page-login.html">Login</a>
-                                        </li>
-                                        <li><a href="page-register.html">Register</a>
-                                        </li>
-                                        <li><a href="page-lock-screen.html">Lock Screen</a>
-                                        </li>
-                                        <li><a href="page-invoice.html">Invoice</a>
-                                        </li>
-                                        <li><a href="page-404.html">404</a>
-                                        </li>
-                                        <li><a href="page-500.html">500</a>
-                                        </li>
-                                        <li><a href="page-blank.html">Blank</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-editor-insert-chart"></i> Charts</a>
-                                <div class="collapsible-body">
-                                    <ul>
-                                        <li><a href="charts-chartjs.html">Chart JS</a>
-                                        </li>
-                                        <li><a href="charts-chartist.html">Chartist</a>
-                                        </li>
-                                        <li><a href="charts-morris.html">Morris Charts</a>
-                                        </li>
-                                        <li><a href="charts-xcharts.html">xCharts</a>
-                                        </li>
-                                        <li><a href="charts-flotcharts.html">Flot Charts</a>
-                                        </li>
-                                        <li><a href="charts-sparklines.html">Sparkline Charts</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="li-hover"><div class="divider"></div></li>
-                    <li class="li-hover"><p class="ultra-small margin more-text">MORE</p></li>
-                    <li><a href="css-grid.html"><i class="mdi-image-grid-on"></i> Grid</a>
-                    </li>
-                    <li><a href="css-color.html"><i class="mdi-editor-format-color-fill"></i> Color</a>
-                    </li>
-                    <li><a href="css-helpers.html"><i class="mdi-communication-live-help"></i> Helpers</a>
-                    </li>
-                    <li><a href="changelogs.html"><i class="mdi-action-swap-vert-circle"></i> Changelogs</a>
-                    </li>                    
-                    <li class="li-hover"><div class="divider"></div></li>
-                    <li class="li-hover"><p class="ultra-small margin more-text">Daily Sales</p></li>
-                    <li class="li-hover">
-                        <div class="row">
-                            <div class="col s12 m12 l12">
-                                <div class="sample-chart-wrapper">                            
-                                    <div class="ct-chart ct-golden-section" id="ct2-chart"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating btn-medium waves-effect waves-light hide-on-large-only darken-2"><i class="mdi-navigation-menu" ></i></a>
-            </aside>
-            <!-- END LEFT SIDEBAR NAV-->
-
-            <!-- //////////////////////////////////////////////////////////////////////////// -->
-
             <!-- START CONTENT -->
             <section id="content">
 
@@ -272,161 +111,53 @@
                     <!--chart dashboard start-->
                     <div id="chart-dashboard">
                         <div class="row">
-                            <!-- <div class="col s12 m8 l8"> -->
-                                <div class="card">
-                                    <div class="card-move-up waves-effect waves-block waves-light">
-                                        <div class="move-up cyan darken-1">
-                                            <div>
-                                                <span class="chart-title white-text">Activity</span>
-                                            </div>
-                                            <div class="trending-line-chart-wrapper" id="trending-line-chart-wrapper">
-                                                <div class="preloader-wrapper big active">
-                                                    <div class="spinner-layer spinner-blue-only">
-                                                        <div class="circle-clipper left">
-                                                            <div class="circle"></div>
-                                                        </div>
+                            <div class="card">
+                                <div class="card-move-up waves-effect waves-block waves-light">
+                                    <div class="move-up cyan darken-1">
+                                        <div>
+                                            <span class="chart-title white-text">Activity</span>
+                                        </div>
+                                        <div class="trending-line-chart-wrapper" id="trending-line-chart-wrapper">
+                                            <div class="preloader-wrapper big active">
+                                                <div class="spinner-layer spinner-blue-only">
+                                                    <div class="circle-clipper left">
+                                                        <div class="circle"></div>
                                                     </div>
                                                 </div>
-                                                <!-- <canvas id="trending-line-chart" height="70"></canvas> -->
+                                            </div>
+                                            <!-- <canvas id="trending-line-chart" height="70"></canvas> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <a class="btn-floating btn-move-up waves-effect waves-light darken-2 right"><i class="mdi-file-file-download activator" onclick="space.exportToJson()"></i></a>
+                                    <div class="col s12 m3 l3">
+                                        <div id="doughnut-chart-wrapper">
+                                            <div class="preloader-wrapper big active">
+                                                <div class="spinner-layer spinner-red-only">
+                                                    <div class="circle-clipper right">
+                                                        <div class="circle"></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-content">
-                                        <a class="btn-floating btn-move-up waves-effect waves-light darken-2 right"><i class="mdi-file-file-download activator" onclick="space.exportToJson()"></i></a>
-                                        <div class="col s12 m3 l3">
-                                            <div id="doughnut-chart-wrapper">
-                                                <div class="preloader-wrapper big active">
-                                                    <div class="spinner-layer spinner-red-only">
-                                                        <div class="circle-clipper right">
-                                                            <div class="circle"></div>
-                                                        </div>
+                                    <div class="col s12 m2 l2">
+                                        <ul class="doughnut-chart-legend">
+                                        </ul>
+                                    </div>
+                                    <div class="col s12 m5 l6">
+                                        <div class="trending-bar-chart-wrapper" id="trending-bar-chart-wrapper">
+                                            <div class="preloader-wrapper big active">
+                                                <div class="spinner-layer spinner-yellow-only">
+                                                    <div class="circle-clipper right">
+                                                        <div class="circle"></div>
                                                     </div>
                                                 </div>
-                                                <!-- <canvas id="doughnut-chart" height="200"></canvas>
-                                                <div class="doughnut-chart-status" id="doughnut-chart-status">0
-                                                    <p class="ultra-small center-align">Records</p>
-                                                </div> -->
-                                            </div>
-                                        </div>
-                                        <div class="col s12 m2 l2">
-                                            <ul class="doughnut-chart-legend">
-                                            </ul>
-                                        </div>
-                                        <div class="col s12 m5 l6">
-                                            <div class="trending-bar-chart-wrapper" id="trending-bar-chart-wrapper">
-                                                <div class="preloader-wrapper big active">
-                                                    <div class="spinner-layer spinner-yellow-only">
-                                                        <div class="circle-clipper right">
-                                                            <div class="circle"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- <canvas id="trending-bar-chart" height="90"></canvas> -->                                                
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- <div class="card-reveal">
-                                        <span class="card-title grey-text text-darken-4">Activity by Project <i class="mdi-navigation-close right"></i></span>
-                                        <table class="responsive-table">
-                                            <thead>
-                                                <tr>
-                                                    <th data-field="id">ID</th>
-                                                    <th data-field="month">Record</th>
-                                                    <th data-field="item-sold">Item Sold</th>
-                                                    <th data-field="item-price">Item Price</th>
-                                                    <th data-field="total-profit">Total Profit</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>January</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>February</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>March</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>4</td>
-                                                    <td>April</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>5</td>
-                                                    <td>May</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>6</td>
-                                                    <td>June</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>7</td>
-                                                    <td>July</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>8</td>
-                                                    <td>August</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>9</td>
-                                                    <td>Septmber</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10</td>
-                                                    <td>Octomber</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>11</td>
-                                                    <td>November</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>12</td>
-                                                    <td>December</td>
-                                                    <td>122</td>
-                                                    <td>100</td>
-                                                    <td>$122,00.00</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div> -->
-                                <!-- </div> -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -435,494 +166,11 @@
                         <div class="progress">
                           <div class="indeterminate"></div>
                         </div>
-<!--                             <div class="col s12 m6 l4">
-                                <div id="profile-card" class="card">
-                                    <div class="card-image waves-effect waves-block waves-light">
-                                        <img class="activator" src="../images/user-bg.jpg" alt="user background">
-                                    </div>
-                                    <div class="card-content">
-                                        <img src="../images/avatar.jpg" alt="" class="circle responsive-img activator card-profile-image">
-                                        <a class="btn-floating activator btn-move-up waves-effect waves-light darken-2 right">
-                                            <i class="mdi-editor-mode-edit"></i>
-                                        </a>
-
-                                        <span class="card-title activator grey-text text-darken-4">Name: repro_lab</span>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Created: 2015-06-18 17:05:03.476000</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> Duration: 0:46:06.305000</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> Goals: This project is funded by the Kugri foundation for Research.</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Records: 4</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Diffs: 0</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Private: false</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> History: 1</p>
-
-                                    </div>
-                                    <div class="card-reveal">
-                                        <span class="card-title grey-text text-darken-4">Name: repro_lab <i class="mdi-navigation-close right"></i></span>
-                                        <p>Description: This project is a sample project.</p>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Project Manager</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +1 (612) 222 8989</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> mail@domain.com</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> 18th June 1990</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> BAR - AUS</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col s12 m6 l4">
-                                <div id="profile-card" class="card">
-                                    <div class="card-image waves-effect waves-block waves-light">
-                                        <img class="activator" src="../images/user-bg.jpg" alt="user background">
-                                    </div>
-                                     <div class="card-content">
-                                        <img src="../images/avatar.jpg" alt="" class="circle responsive-img activator card-profile-image">
-                                        <a class="btn-floating activator btn-move-up waves-effect waves-light darken-2 right">
-                                            <i class="mdi-editor-mode-edit"></i>
-                                        </a>
-
-                                        <span class="card-title activator grey-text text-darken-4">Name: repro_lab</span>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Created: 2015-06-18 17:05:03.476000</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> Duration: 0:46:06.305000</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> Goals: This project is funded by the Kugri foundation for Research.</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Records: 4</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Diffs: 0</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Private: false</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> History: 1</p>
-
-                                    </div>
-                                    <div class="card-reveal">
-                                        <span class="card-title grey-text text-darken-4">Name: repro_lab <i class="mdi-navigation-close right"></i></span>
-                                        <p>Description: This project is a sample project.</p>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Project Manager</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +1 (612) 222 8989</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> mail@domain.com</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> 18th June 1990</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> BAR - AUS</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col s12 m6 l4">
-                                <div id="profile-card" class="card">
-                                    <div class="card-image waves-effect waves-block waves-light">
-                                        <img class="activator" src="../images/user-bg.jpg" alt="user background">
-                                    </div>
-                                     <div class="card-content">
-                                        <img src="../images/avatar.jpg" alt="" class="circle responsive-img activator card-profile-image">
-                                        <a class="btn-floating activator btn-move-up waves-effect waves-light darken-2 right">
-                                            <i class="mdi-editor-mode-edit"></i>
-                                        </a>
-
-                                        <span class="card-title activator grey-text text-darken-4">Name: repro_lab</span>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Created: 2015-06-18 17:05:03.476000</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> Duration: 0:46:06.305000</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> Goals: This project is funded by the Kugri foundation for Research.</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Records: 4</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Diffs: 0</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Private: false</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> History: 1</p>
-
-                                    </div>
-                                    <div class="card-reveal">
-                                        <span class="card-title grey-text text-darken-4">Name: repro_lab <i class="mdi-navigation-close right"></i></span>
-                                        <p>Description: This project is a sample project.</p>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Project Manager</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +1 (612) 222 8989</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> mail@domain.com</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> 18th June 1990</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> BAR - AUS</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col s12 m6 l4">
-                                <div id="profile-card" class="card">
-                                    <div class="card-image waves-effect waves-block waves-light">
-                                        <img class="activator" src="../images/user-bg.jpg" alt="user background">
-                                    </div>
-                                     <div class="card-content">
-                                        <img src="../images/avatar.jpg" alt="" class="circle responsive-img activator card-profile-image">
-                                        <a class="btn-floating activator btn-move-up waves-effect waves-light darken-2 right">
-                                            <i class="mdi-editor-mode-edit"></i>
-                                        </a>
-
-                                        <span class="card-title activator grey-text text-darken-4">Name: repro_lab</span>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Created: 2015-06-18 17:05:03.476000</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> Duration: 0:46:06.305000</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> Goals: This project is funded by the Kugri foundation for Research.</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Records: 4</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Diffs: 0</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Private: false</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> History: 1</p>
-
-                                    </div>
-                                    <div class="card-reveal">
-                                        <span class="card-title grey-text text-darken-4">Name: repro_lab <i class="mdi-navigation-close right"></i></span>
-                                        <p>Description: This project is a sample project.</p>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Project Manager</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +1 (612) 222 8989</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> mail@domain.com</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> 18th June 1990</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> BAR - AUS</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col s12 m6 l4">
-                                <div id="profile-card" class="card">
-                                    <div class="card-image waves-effect waves-block waves-light">
-                                        <img class="activator" src="../images/user-bg.jpg" alt="user background">
-                                    </div>
-                                     <div class="card-content">
-                                        <img src="../images/avatar.jpg" alt="" class="circle responsive-img activator card-profile-image">
-                                        <a class="btn-floating activator btn-move-up waves-effect waves-light darken-2 right">
-                                            <i class="mdi-editor-mode-edit"></i>
-                                        </a>
-
-                                        <span class="card-title activator grey-text text-darken-4">Name: repro_lab</span>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Created: 2015-06-18 17:05:03.476000</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> Duration: 0:46:06.305000</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> Goals: This project is funded by the Kugri foundation for Research.</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Records: 4</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Diffs: 0</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Private: false</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> History: 1</p>
-
-                                    </div>
-                                    <div class="card-reveal">
-                                        <span class="card-title grey-text text-darken-4">Name: repro_lab <i class="mdi-navigation-close right"></i></span>
-                                        <p>Description: This project is a sample project.</p>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Project Manager</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +1 (612) 222 8989</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> mail@domain.com</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> 18th June 1990</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> BAR - AUS</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col s12 m6 l4">
-                                <div id="profile-card" class="card">
-                                    <div class="card-image waves-effect waves-block waves-light">
-                                        <img class="activator" src="../images/user-bg.jpg" alt="user background">
-                                    </div>
-                                     <div class="card-content">
-                                        <img src="../images/avatar.jpg" alt="" class="circle responsive-img activator card-profile-image">
-                                        <a class="btn-floating activator btn-move-up waves-effect waves-light darken-2 right">
-                                            <i class="mdi-editor-mode-edit"></i>
-                                        </a>
-
-                                        <span class="card-title activator grey-text text-darken-4">Name: repro_lab</span>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Created: 2015-06-18 17:05:03.476000</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> Duration: 0:46:06.305000</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> Goals: This project is funded by the Kugri foundation for Research.</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Records: 4</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Total Diffs: 0</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> Private: false</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> History: 1</p>
-
-                                    </div>
-                                    <div class="card-reveal">
-                                        <span class="card-title grey-text text-darken-4">Name: repro_lab <i class="mdi-navigation-close right"></i></span>
-                                        <p>Description: This project is a sample project.</p>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Project Manager</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +1 (612) 222 8989</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> mail@domain.com</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> 18th June 1990</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> BAR - AUS</p>
-                                    </div>
-                                </div>
-                            </div> -->
-                            
                         </div>
                         <br/>
                         <div id="temporal-slider">
-                            <!-- <div class="slider-date">
-                                <div class="lower">
-                                </div>
-                                <div class="upper">
-                                </div>
-                            </div>
-                            <span id="event-start" class="temporal-val">
-                                Thursday, 30th December 2010
-                            </span>
-                            <span id="event-end" class="temporal-val date-right">
-                                Thursday, 1st January 2015
-                            </span> -->
                         </div>
                     </div>
-                    <!--card widgets start-->
-                    <!-- <div id="card-widgets">
-                        <div class="row">
-
-                            <div class="col s12 m12 l4">
-                                <ul id="task-card" class="collection with-header">
-                                    <li class="collection-header cyan">
-                                        <h4 class="task-card-title">My Task</h4>
-                                        <p class="task-card-date">March 26, 2015</p>
-                                    </li>
-                                    <li class="collection-item dismissable">
-                                        <input type="checkbox" id="task1" />
-                                        <label for="task1">Create Mobile App UI. <a href="#" class="secondary-content"><span class="ultra-small">Today</span></a>
-                                        </label>
-                                        <span class="task-cat teal">Mobile App</span>
-                                    </li>
-                                    <li class="collection-item dismissable">
-                                        <input type="checkbox" id="task2" />
-                                        <label for="task2">Check the new API standerds. <a href="#" class="secondary-content"><span class="ultra-small">Monday</span></a>
-                                        </label>
-                                        <span class="task-cat purple">Web API</span>
-                                    </li>
-                                    <li class="collection-item dismissable">
-                                        <input type="checkbox" id="task3" checked="checked" />
-                                        <label for="task3">Check the new Mockup of ABC. <a href="#" class="secondary-content"><span class="ultra-small">Wednesday</span></a>
-                                        </label>
-                                        <span class="task-cat pink">Mockup</span>
-                                    </li>
-                                    <li class="collection-item dismissable">
-                                        <input type="checkbox" id="task4" checked="checked" disabled="disabled" />
-                                        <label for="task4">I did it !</label>
-                                        <span class="task-cat cyan">Mobile App</span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="col s12 m6 l4">
-                                <div id="flight-card" class="card">
-                                    <div class="card-header amber darken-2">
-                                        <div class="card-title">
-                                            <h4 class="flight-card-title">Flight</h4>
-                                            <p class="flight-card-date">June 18, Thu 04:50</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-content-bg white-text">
-                                        <div class="card-content">
-                                            <div class="row flight-state-wrapper">
-                                                <div class="col s5 m5 l5 center-align">
-                                                    <div class="flight-state">
-                                                        <h4 class="margin">LDN</h4>
-                                                        <p class="ultra-small">London</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col s2 m2 l2 center-align">
-                                                    <i class="mdi-device-airplanemode-on flight-icon"></i>
-                                                </div>
-                                                <div class="col s5 m5 l5 center-align">
-                                                    <div class="flight-state">
-                                                        <h4 class="margin">SFO</h4>
-                                                        <p class="ultra-small">San Francisco</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s6 m6 l6 center-align">
-                                                    <div class="flight-info">
-                                                        <p class="small"><span class="grey-text text-lighten-4">Depart:</span> 04.50</p>
-                                                        <p class="small"><span class="grey-text text-lighten-4">Flight:</span> IB 5786</p>
-                                                        <p class="small"><span class="grey-text text-lighten-4">Terminal:</span> B</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col s6 m6 l6 center-align flight-state-two">
-                                                    <div class="flight-info">
-                                                        <p class="small"><span class="grey-text text-lighten-4">Arrive:</span> 08.50</p>
-                                                        <p class="small"><span class="grey-text text-lighten-4">Flight:</span> IB 5786</p>
-                                                        <p class="small"><span class="grey-text text-lighten-4">Terminal:</span> C</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col s12 m6 l4">
-                                <div id="profile-card" class="card">
-                                    <div class="card-image waves-effect waves-block waves-light">
-                                        <img class="activator" src="../images/user-bg.jpg" alt="user background">
-                                    </div>
-                                    <div class="card-content">
-                                        <img src="../images/avatar.jpg" alt="" class="circle responsive-img activator card-profile-image">
-                                        <a class="btn-floating activator btn-move-up waves-effect waves-light darken-2 right">
-                                            <i class="mdi-editor-mode-edit"></i>
-                                        </a>
-
-                                        <span class="card-title activator grey-text text-darken-4">Roger Waters</span>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Project Manager</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +1 (612) 222 8989</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> mail@domain.com</p>
-
-                                    </div>
-                                    <div class="card-reveal">
-                                        <span class="card-title grey-text text-darken-4">Roger Waters <i class="mdi-navigation-close right"></i></span>
-                                        <p>Here is some more information about this card.</p>
-                                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Project Manager</p>
-                                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +1 (612) 222 8989</p>
-                                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> mail@domain.com</p>
-                                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> 18th June 1990</p>
-                                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> BAR - AUS</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div> -->
-                    <!--card widgets end-->
-
-                    <!-- //////////////////////////////////////////////////////////////////////////// -->
-
-                    <!--work collections start-->
-                    <!-- <div id="work-collections">
-                        <div class="row">
-                            <div class="col s12 m12 l6">
-                                <ul id="projects-collection" class="collection">
-                                    <li class="collection-item avatar">
-                                        <i class="mdi-file-folder circle light-blue darken-2"></i>
-                                        <span class="collection-header">Projects</span>
-                                        <p>Your Favorites</p>
-                                        <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">Web App</p>
-                                                <p class="collections-content">AEC Company</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat cyan">Development</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-1"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">Mobile App for Social</p>
-                                                <p class="collections-content">iSocial App</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat grey darken-3">UI/UX</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-2"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">Website</p>
-                                                <p class="collections-content">MediTab</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat teal">Marketing</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-3"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">AdWord campaign</p>
-                                                <p class="collections-content">True Line</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat green">SEO</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-4"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col s12 m12 l6">
-                                <ul id="issues-collection" class="collection">
-                                    <li class="collection-item avatar">
-                                        <i class="mdi-action-bug-report circle red darken-2"></i>
-                                        <span class="collection-header">Issues</span>
-                                        <p>Assigned to you</p>
-                                        <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s7">
-                                                <p class="collections-title"><strong>#102</strong> Home Page</p>
-                                                <p class="collections-content">Web Project</p>
-                                            </div>
-                                            <div class="col s2">
-                                                <span class="task-cat pink accent-2">P1</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div class="progress">
-                                                     <div class="determinate" style="width: 70%"></div>   
-                                                </div>                                                
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s7">
-                                                <p class="collections-title"><strong>#108</strong> API Fix</p>
-                                                <p class="collections-content">API Project </p>
-                                            </div>
-                                            <div class="col s2">
-                                                <span class="task-cat yellow darken-4">P2</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div class="progress">
-                                                    <div class="determinate" style="width: 40%"></div>   
-                                                </div>                                                
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s7">
-                                                <p class="collections-title"><strong>#205</strong> Profile page css</p>
-                                                <p class="collections-content">New Project </p>
-                                            </div>
-                                            <div class="col s2">                                                
-                                                <span class="task-cat light-green darken-3">P3</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div class="progress">
-                                                    <div class="determinate" style="width: 95%"></div>   
-                                                </div>                                                
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s7">
-                                                <p class="collections-title"><strong>#188</strong> SAP Changes</p>
-                                                <p class="collections-content">SAP Project</p>
-                                            </div>
-                                            <div class="col s2">
-                                                <span class="task-cat pink accent-2">P1</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div class="progress">
-                                                     <div class="determinate" style="width: 10%"></div>   
-                                                </div>                                                
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> -->
-                    <!-- Floating Action Button -->
-<!--
-                    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-                        <a class="btn-floating btn-large red">
-                          <i class="large mdi-editor-mode-edit"></i>
-                        </a>
-                        <ul>
-                          <li><a href="css-helpers.html" class="btn-floating red"><i class="large mdi-communication-live-help"></i></a></li>
-                          <li><a href="app-widget.html" class="btn-floating yellow darken-1"><i class="large mdi-device-now-widgets"></i></a></li>
-                          <li><a href="app-calendar.html" class="btn-floating green"><i class="large mdi-editor-insert-invitation"></i></a></li>
-                          <li><a href="app-email.html" class="btn-floating blue"><i class="large mdi-communication-email"></i></a></li>
-                        </ul>
-                    </div>
--->
                 </div>
             </section>
         </div>
@@ -948,6 +196,8 @@
     <!-- ================================================
     Scripts
     ================================================ -->
+
+    <script src="../js/config.js"></script>
     
     <!-- jQuery Library -->
     <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>    
@@ -1014,7 +264,7 @@
             var session = parts[1];
             // var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             // console.log(session);
-            // xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v0.1/user/dashboard/"+session);
+            // xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/user/dashboard/"+session);
             // xmlhttp.send();
             // xmlhttp.onreadystatechange=function()
             // {
@@ -1040,10 +290,10 @@
             user.session = parts[1];
             console.log(user.session);
             user.trusted();
-            document.getElementById("nav-home-2").href = "http://0.0.0.0:5000/?session="+user.session;
-            document.getElementById("nav-home").href = "http://0.0.0.0:5000/?session="+user.session;
-            document.getElementById("nav-api").href = "http://0.0.0.0:5000/dashboard/api/?session="+user.session;
-            document.getElementById("nav-dashboard").href = "http://0.0.0.0:5000/dashboard/?session="+user.session;
+            document.getElementById("nav-home-2").href = "../?session="+user.session;
+            document.getElementById("nav-home").href = "../?session="+user.session;
+            document.getElementById("nav-api").href = "./api/?session="+user.session;
+            document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
             var space = new Space(user.session);
             space.dashboard();

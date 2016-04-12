@@ -8,6 +8,11 @@ MONGODB_SETTINGS = {
     'port': 27017
 }
 
+VIEW_SETTINGS = {
+    'host': '{{ hostvars['frontendhost']['ansible_ssh_host'] }}',
+    'port': {{hostvars['frontendhost']['mapped_port']}}
+}
+
 STORMPATH_API_KEY_FILE = 'apiKey.properties'
 STORMPATH_APPLICATION = '{{ stormpath_app }}'
 STORMPATH_REDIRECT_URL = '/cloud'

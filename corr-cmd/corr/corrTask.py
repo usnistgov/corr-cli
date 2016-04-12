@@ -33,7 +33,7 @@ class CoRRTask:
                 try:
                     p = psutil.Process(pids[i])
                     if self.marker in ' '.join(
-                            p.cmdline()) and 'CoRRTask' not in ' '.join(
+                            p.cmdline()) and 'corrTask' not in ' '.join(
                                 p.cmdline()):
                         found = True
                         running = True

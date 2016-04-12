@@ -1151,6 +1151,8 @@
     <!-- ================================================
     Scripts
     ================================================ -->
+
+    <script src="../../js/config.js"></script>
     
     <!-- jQuery Library -->
     <script type="text/javascript" src="../../js/jquery-1.11.2.min.js"></script>    
@@ -1189,10 +1191,10 @@
             user.session = parts[1];
             console.log(user.session);
             user.trusted();
-            document.getElementById("nav-home-2").href = "http://0.0.0.0:5000/?session="+user.session;
-            document.getElementById("nav-home").href = "http://0.0.0.0:5000/?session="+user.session;
-            document.getElementById("nav-api").href = "http://0.0.0.0:5000/dashboard/api/?session="+user.session;
-            document.getElementById("nav-dashboard").href = "http://0.0.0.0:5000/dashboard/?session="+user.session;
+            document.getElementById("nav-home-2").href = "../../?session="+user.session;
+            document.getElementById("nav-home").href = "../../?session="+user.session;
+            document.getElementById("nav-api").href = "./?session="+user.session;
+            document.getElementById("nav-dashboard").href = "../?session="+user.session;
         }else if(parts[0] == "action"){
             var scope = parts[1];
         }

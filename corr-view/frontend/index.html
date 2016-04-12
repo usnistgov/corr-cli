@@ -573,6 +573,7 @@
     </footer>
 
     <!--  Scripts-->
+    <script src="js/config.js"></script>
     <!--materialize js-->
     <script type="text/javascript" src="js/materialize.js"></script>
     <!--prism-->
@@ -603,6 +604,7 @@
 
 
     <!--plugins.js - Some Specific JS codes for Plugin Settings-->
+
     <script type="text/javascript" src="js/plugins.js"></script>
     <!--scrollbar-->
     <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -617,7 +619,7 @@
         });
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
         console.log(this.session);
-        xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v0.1/public/user/home");
+        xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -683,9 +685,9 @@
             document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"http://0.0.0.0:5000/dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
             document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-settings\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"account\"><a href=\"#account-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-communication-vpn-key\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"profile\"><a href=\"#profile-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-action-account-circle\"></i></a></li></ul>";
 
-            document.getElementById('account-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
-            document.getElementById('update-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
-            document.getElementById('profile-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
+            document.getElementById('account-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
+            document.getElementById('update-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
+            document.getElementById('profile-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
             // document.getElementById("view-username").value = user.username;
             // document.getElementById("view-email").value = user.email;
             // document.getElementById("view-api").value = user.api;
@@ -719,11 +721,11 @@
         }
 
         // document.getElementById('profile-modal').click(function() {
-        //   document.getElementById('user-picture').href = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
+        //   document.getElementById('user-picture').href = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
         // });
 
         // document.getElementById('edit-modal').click(function() {
-        //   document.getElementById('user-picture').href = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
+        //   document.getElementById('user-picture').href = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
         // });
 
         function registerKeyPress(e)
