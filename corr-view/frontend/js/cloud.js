@@ -26,7 +26,7 @@ var user = {
                 console.log(xmlhttp.responseText);
                 Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 // console.log(xmlhttp.responseText);
-                // window.location.replace("./error-500/");
+                // window.location.replace("../error-500/");
             }
         }
         
@@ -50,7 +50,7 @@ var user = {
                     var response = JSON.parse(xmlhttp.responseText);
                     this.session = response['session'];
                     console.log(this.session);
-                    window.location.replace("./?session="+this.session);
+                    window.location.replace("../?session="+this.session);
                 } else {
                     var response = xmlhttp.responseText;
                     console.log(response);
@@ -60,7 +60,7 @@ var user = {
                     }else{
                         Materialize.toast('<span>Register failed: '+response+'</span>', 3000);
                     }
-                    // window.location.replace("./error-500/");
+                    // window.location.replace("../error-500/");
                 }
             }
         }else{
@@ -68,7 +68,7 @@ var user = {
         }
         
     },
-    logout: function() {
+    logout: function(where) {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
@@ -78,11 +78,15 @@ var user = {
         {
             // console.log(xmlhttp.responseText);
             if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                window.location.replace("./");
+                if(where != "dashboard"){
+                    window.location.replace("./");
+                }else{
+                    window.location.replace("../");
+                }
             } else {
                 console.log("Logout failed");
                 Materialize.toast('<span>Logout failed</span>', 3000);
-                // window.location.replace("./error-500/");
+                // window.location.replace("../error-500/");
             }
         }
         
@@ -127,14 +131,14 @@ var user = {
                         user.upload_file(file, 'picture', 'none');
                     }else{
                         console.log("No picture to change");
-                        window.location.replace("./?session="+user.session);
+                        window.location.replace("../?session="+user.session);
                     }
                     Materialize.toast('<span>Update succeeded</span>', 3000);
-                    // window.location.replace("./?session="+user.session);
+                    // window.location.replace("../?session="+user.session);
                 } else {
                     console.log("Update failed");
                     Materialize.toast('<span>Update failed</span>', 3000);
-                    // window.location.replace("./page-500.html");
+                    // window.location.replace("../page-500.html");
                 }
             }
         }
@@ -153,7 +157,7 @@ var user = {
         // xmlhttp.addEventListener("load", function (e) {
         //     // file upload is complete
         //     console.log(xmlhttp.responseText.toString);
-        //     // window.location.replace("./?session="+user.session);
+        //     // window.location.replace("../?session="+user.session);
         // });
         // xmlhttp.send(formData);
 
@@ -167,7 +171,7 @@ var user = {
             contentType: false,
             success    : function(callback){
                console.log(xmlhttp.responseText.toString);
-               window.location.replace("./?session="+user.session);
+               window.location.replace("../?session="+user.session);
             }
          });
          event.preventDefault();
@@ -178,7 +182,7 @@ var user = {
         //         var response = xmlhttp.responseText;
         //         console.log(response)
         //         Materialize.toast('<span>Upload succeeded</span>', 3000);
-        //         // window.location.replace("./?session="+user.session);
+        //         // window.location.replace("../?session="+user.session);
         //     } else {
         //         var response = xmlhttp.responseText;
         //         console.log(response)
@@ -201,11 +205,11 @@ var user = {
             if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                 console.log(xmlhttp.responseText);                
                 Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
-                // window.location.replace("./?action=message_sent");
+                // window.location.replace("../?action=message_sent");
             } else {
                 console.log(xmlhttp.responseText);                
                 Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
-                // window.location.replace("./page-500.html");
+                // window.location.replace("../page-500.html");
             }
         }
         
@@ -225,11 +229,11 @@ var user = {
             if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                 // console.log(xmlhttp.responseText)                
                 // Materialize.toast('<span>Your message has been sent!</span>', 3000);
-                window.location.replace("./?action=message_sent");
+                window.location.replace("../?action=message_sent");
             } else {
                 console.log("Contactus failed");
                 Materialize.toast('<span class="yellow-text">Contact us failed</span>', 3000);
-                // window.location.replace("./page-500.html");
+                // window.location.replace("../page-500.html");
             }
         }
         
@@ -244,9 +248,17 @@ var user = {
         {
             // console.log(xmlhttp.responseText);
             if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                console.log(xmlhttp.responseText);
+                if(xmlhttp.responseText != ""){
+                    var response = JSON.parse(xmlhttp.responseText);
+                    var version = response["version"];
+                    console.log("Version: "+version);
+                    document.getElementById("footer-version").innerHTML = version;
+                }
                 Materialize.toast('<span>Access trusted!</span>', 3000);
+                
             } else {
-                window.location.replace("./error-404/");
+                window.location.replace("../error-404/");
             }
         }
         
@@ -303,7 +315,7 @@ var user = {
 
                 console.log("Account Api: "+this.api);
             } else {
-                window.location.replace("./error-404/");
+                window.location.replace("../error-404/");
             }
         }
         
@@ -327,7 +339,7 @@ var user = {
                 }
                 Materialize.toast('<span>API Token renewed!</span>', 3000);
             } else {
-                window.location.replace("./error-404/");
+                window.location.replace("../error-404/");
             }
         }
         
@@ -419,7 +431,7 @@ var Space = function (session){
             } else {
                 console.log("Dashboard failed");
                 // Materialize.toast('<span>Dashboard failed</span>', 3000);
-                // window.location.replace("./error-500/");
+                // window.location.replace("../error-500/");
             }
         }
         
@@ -505,7 +517,7 @@ var Space = function (session){
             } else {
                 console.log("Dashboard failed");
                 // Materialize.toast('<span>Dashboard failed</span>', 3000);
-                // window.location.replace("./error-500/");
+                // window.location.replace("../error-500/");
             }
         }
         
@@ -541,7 +553,7 @@ var Space = function (session){
             } else {
                 console.log("Dashboard download failed");
                 // Materialize.toast('<span>Dashboard download failed</span>', 3000);
-                // window.location.replace("./error-500/");
+                // window.location.replace("../error-500/");
             }
         }
     }

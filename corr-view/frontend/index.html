@@ -68,18 +68,13 @@
                                 <i class=" nav-action mdi-action-search"></i>
                             </a>
                         </li>
-                        <!-- <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="fullscreen">
-                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen">
-                                <i class="nav-action mdi-action-settings-overscan"></i>
-                            </a>
-                        </li> -->
                         <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                             <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
                                 <i class="nav-action nav-action mdi-action-home"></i>
                             </a>
                         </li>
                         <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
-                            <a href="./api" id= "nav-api" class="waves-effect waves-block waves-light">
+                            <a href="./help" id= "nav-help" class="waves-effect waves-block waves-light">
                                 <i class="nav-action mdi-communication-live-help"></i>
                             </a>
                         </li>
@@ -675,14 +670,14 @@
             user.trusted();
             user.account();
             console.log("Api Index: "+this.api);
-            document.getElementById("nav-home-2").href = "http://0.0.0.0:5000/?session="+user.session;
-            document.getElementById("nav-home").href = "http://0.0.0.0:5000/?session="+user.session;
-            document.getElementById("nav-api").href = "http://0.0.0.0:5000/dashboard/api/?session="+user.session;
+            document.getElementById("nav-home-2").href = "./?session="+user.session;
+            document.getElementById("nav-home").href = "./?session="+user.session;
+            document.getElementById("nav-help").href = "./help/?session="+user.session;
             document.getElementById("nav-login").remove();
             // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"
             // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"account\"
             // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"profile\"
-            document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"http://0.0.0.0:5000/dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
+            document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"./dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
             document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-settings\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"account\"><a href=\"#account-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-communication-vpn-key\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"profile\"><a href=\"#profile-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-action-account-circle\"></i></a></li></ul>";
 
             document.getElementById('account-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";

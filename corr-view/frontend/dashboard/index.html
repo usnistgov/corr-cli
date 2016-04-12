@@ -67,24 +67,18 @@
                                 <i class=" nav-action mdi-action-search"></i>
                             </a>
                         </li>
-                        <!-- <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="fullscreen">
-                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen">
-                                <i class="nav-action mdi-action-settings-overscan"></i>
-                            </a>
-                        </li> -->
                         <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                             <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
                                 <i class="nav-action nav-action mdi-action-home"></i>
                             </a>
                         </li>
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="dashboard"><a href="" id="nav-dashboard" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-dashboard"></i></a></li>
                         <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
-                            <a href="./" id= "nav-api" class="waves-effect waves-block waves-light">
+                            <a href="../help" id= "nav-help" class="waves-effect waves-block waves-light">
                                 <i class="nav-action mdi-communication-live-help"></i>
                             </a>
                         </li>
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="dashboard"><a href="" id="nav-dashboard" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-dashboard"></i></a></li>
-
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help"><a onclick="user.logout()" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-exit-to-app"></i></a>
+                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help"><a onclick="user.logout('dashboard')" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-exit-to-app"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -204,8 +198,7 @@
     <!--materialize js-->
     <script type="text/javascript" src="../js/materialize.min.js"></script>
     <!--scrollbar-->
-    <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <!--script type="text/javascript" src="../js/plugins/material-preloader/materialPreloader.js"></script-->   
+    <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>  
 
     <!-- chartist -->
     <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>   
@@ -262,78 +255,21 @@
         var parts = param.split("=");
         if(parts[0] == "session"){
             var session = parts[1];
-            // var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-            // console.log(session);
-            // xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/user/dashboard/"+session);
-            // xmlhttp.send();
-            // xmlhttp.onreadystatechange=function()
-            // {
-            //     // console.log(xmlhttp.responseText);
-            //     if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-            //         var response = JSON.parse(xmlhttp.responseText);
-            //         console.log(response);
-            //         var projects_total = response["projects_total"];
-            //         var records_total = response["records_total"];
-            //         var containers_total = response["containers_total"];
-            //         var projects = response["projects"];
-                    
-            //         console.log("Total Projects:"+projects_total);
-            //         console.log("Total Records:"+records_total);
-            //         console.log("Total Containers:"+containers_total);
-            //         console.log("Projects:"+projects);
-
-            //     } else {
-            //         Materialize.toast('<span>Cannot reach the cloud!</span>', 3000);
-            //     }
-            // }
 
             user.session = parts[1];
             console.log(user.session);
             user.trusted();
             document.getElementById("nav-home-2").href = "../?session="+user.session;
             document.getElementById("nav-home").href = "../?session="+user.session;
-            document.getElementById("nav-api").href = "./api/?session="+user.session;
+            document.getElementById("nav-help").href = "../help/?session="+user.session;
             document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
             var space = new Space(user.session);
             space.dashboard();
         }else if(parts[0] == "action"){
             var scope = parts[1];
+            window.location.replace("../error-404/");
         }
-
-        // function timestamp(str){
-        //     return new Date(str).getTime();   
-        // }
-
-        // function nth (d) {
-        //   if(d>3 && d<21) return 'th';
-        //   switch (d % 10) {
-        //     case 1:  return "st";
-        //     case 2:  return "nd";
-        //     case 3:  return "rd";
-        //     default: return "th";
-        //     }
-        // }
-
-        // function formatDate ( date ) {
-        //     var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        //     var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        //     return weekdays[date.getDay()] + ", " + date.getDate() + nth(date.getDate()) + " " + months[date.getMonth()] + " " + date.getFullYear();
-        // }
-
-        // function setDate( value ){
-        //     $(this).html(formatDate(new Date(+value)));   
-        // }
-
-    </script>
-    <script>
-      // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      // })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      // ga('create', 'UA-64854835-1', 'auto');
-      // ga('send', 'pageview');
 
     </script>
 </body>

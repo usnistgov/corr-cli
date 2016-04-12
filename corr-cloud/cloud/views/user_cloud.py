@@ -967,7 +967,14 @@ def user_truested(hash_session):
             logAccess('cloud', '/private/<hash_session>/user/trusted')
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             if allowance == hash_session:
-                return fk.Response('Trusting succeed', status.HTTP_200_OK)
+                # return fk.Response('Trusting succeed', status.HTTP_200_OK)
+                version = 'N/A'
+                try:
+                    from corrdb import __version__
+                    version = __version__
+                except:
+                    pass
+                return fk.Response(json.dumps({'version':version}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.make_response('Trusting failed.', status.HTTP_401_UNAUTHORIZED)
     else:
