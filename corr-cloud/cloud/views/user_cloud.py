@@ -12,7 +12,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, cloud_response, upload_picture, CLOUD_URL, s3_get_file, s3_upload_file, s3_delete_file, logStat, logTraffic, logAccess
+from cloud import app, stormpath_manager, crossdomain, cloud_response, upload_picture, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, s3_upload_file, s3_delete_file, logStat, logTraffic, logAccess
 import datetime
 import json
 import traceback
@@ -211,7 +211,7 @@ def user_register():
                     logStat(user=user_model)
 
                     return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
-                    # return fk.redirect('http://0.0.0.0:5000/%s'%user_model.session)
+                    # return fk.redirect('{0}:{1}/{2}'.format(VIEW_HOST, VIEW_PORT, user_model.session)
                 except:
                     print str(traceback.print_exc())
                     print "This user already exists."
@@ -261,7 +261,7 @@ def user_password_renew():
             if account != None:
                 account.password = password
                 account.save()
-                return fk.redirect('http://0.0.0.0:5000')
+                return fk.redirect('{0}:{1}'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.make_response('Password renew failed.', status.HTTP_401_UNAUTHORIZED)
                     
@@ -280,7 +280,7 @@ def user_password_change():
         user_model = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if user_model is None:
-            return fk.redirect('http://0.0.0.0:5000/?action=change_denied')
+            return fk.redirect('{0}:{1}/?action=change_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/user/password/change')
             # print "Connected_at: %s"%str(user_model.connected_at)
@@ -307,7 +307,7 @@ def user_password_change():
                 else:
                     return fk.make_response('Password change failed.', status.HTTP_401_UNAUTHORIZED)
             else:
-                return fk.redirect('http://0.0.0.0:5000/?action=change_failed')
+                return fk.redirect('{0}:{1}/?action=change_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -384,8 +384,7 @@ def user_login():
                     account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                     # print "Session: %s"%account.session
                     return fk.Response(json.dumps({'session':account.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
-                    # return fk.redirect('http://0.0.0.0:5000/?session=%s'%account.session)
-                    # return fk.redirect('http://0.0.0.0:5200%s/%s/user/sync'%(CLOUD_URL, account.session))
+                    # return fk.redirect('{0}:{1}/?session={2}'.format(VIEW_HOST, VIEW_PORT, account.session))
                 except:
                     print str(traceback.print_exc())
                     return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
@@ -423,7 +422,7 @@ def user_logout(hash_session):
         user_model = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if user_model is None:
-            return fk.redirect('http://0.0.0.0:5000/?action=logout_denied')
+            return fk.redirect('{0}:{1}/?action=logout_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/user/logout')
             # print "Connected_at: %s"%str(user_model.connected_at)
@@ -434,10 +433,9 @@ def user_logout(hash_session):
                 # user_model.connected_at = datetime.datetime.utcnow()
                 # user_model.save()
                 user_model.renew("%sLogout"%(fk.request.headers.get('User-Agent')))
-                # return fk.redirect('http://0.0.0.0:5000/?action=logout_success')
                 return fk.Response('Logout succeed', status.HTTP_200_OK)
             else:
-                return fk.redirect('http://0.0.0.0:5000/?action=logout_failed')
+                return fk.redirect('{0}:{1}/?action=logout_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -451,7 +449,7 @@ def user_unregister(hash_session):
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
         if user_model is None:
-            return fk.redirect('http://0.0.0.0:5000/?action=unregister_denied')
+            return fk.redirect('{0}:{1}/?action=unregister_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/user/unregister')
             # print "Connected_at: %s"%str(user_model.connected_at)
@@ -462,7 +460,7 @@ def user_unregister(hash_session):
                 # logStat(deleted=True, user=user_model)
                 return fk.make_response('Currently not implemented. Try later.', status.HTTP_501_NOT_IMPLEMENTED)
             else:
-                return fk.redirect('http://0.0.0.0:5000/?action=unregister_failed')
+                return fk.redirect('{0}:{1}/?action=unregister_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -477,7 +475,7 @@ def user_dashboard(hash_session):
         user_model = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if user_model is None:
-            return fk.redirect('http://0.0.0.0:5000/?action=logout_denied')
+            return fk.redirect('{0}:{1}/?action=logout_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/user/dashboard')
             profile_model = ProfileModel.objects(user=user_model).first()
@@ -559,7 +557,7 @@ def user_dashboard(hash_session):
 
                 return fk.Response(json.dumps(dashboard, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
-                return fk.redirect('http://0.0.0.0:5000/?action=dashboard_failed')
+                return fk.redirect('{0}:{1}/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -571,25 +569,18 @@ def user_update(hash_session):
 
     user_model = UserModel.objects(session=hash_session).first()
     if user_model is None:
-        return fk.redirect('http://0.0.0.0:5000/?action=update_denied')
+        return fk.redirect('{0}:{1}/?action=update_denied'.format(VIEW_HOST, VIEW_PORT))
     else:    
         if fk.request.method == 'POST':
             if fk.request.data:
                 data = json.loads(fk.request.data)
                 application = stormpath_manager.application
-                # user_model = UserModel.objects(session=hash_session).first()
-                print fk.request.path
-                # if user_model is None:
-                #     return fk.redirect('http://0.0.0.0:5000/?action=update_denied')
-                # else:
-                # print "Connected_at: %s"%str(user_model.connected_at)
                 allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                 print "Allowance: "+allowance
                 # print "Connected_at: %s"%str(user_model.connected_at)
                 if allowance == hash_session:
                     #Update stormpath user if password is affected
                     #Update local profile data and picture if other data are affected.
-                    # return fk.redirect('http://0.0.0.0:5000/?action=update_success')
                     profile_model = ProfileModel.objects(user=user_model).first_or_404()
                     fname = data.get("fname", profile_model.fname)
                     lname = data.get("lname", profile_model.lname)
@@ -627,7 +618,6 @@ def user_update(hash_session):
                     return fk.Response('Account update succeed', status.HTTP_200_OK)
                 else:
                     return fk.make_response('Account update failed.', status.HTTP_401_UNAUTHORIZED)
-                    # return fk.redirect('http://0.0.0.0:5000/?action=update_failed')
         else:
             return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -637,13 +627,15 @@ def user_file_upload(hash_session, group, item_id):
     logTraffic(endpoint='/private/<hash_session>/file/upload/<group>/<item_id>')
     user_model = UserModel.objects(session=hash_session).first()
     if user_model is None:
-        return fk.redirect('http://0.0.0.0:5000/?action=update_denied')
+        return fk.redirect('{0}:{1}/?action=update_denied'.format(VIEW_HOST, VIEW_PORT))
     else: 
         logAccess('cloud', '/private/<hash_session>/file/upload/<group>/<item_id>')
         if fk.request.method == 'POST':
             if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                 return cloud_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
             else:
+                if group == "picture":
+                    item_id = str(user_model.id)
                 print "item_id: %s"%item_id
                 if fk.request.files:
                     file_obj = fk.request.files['file']
@@ -961,38 +953,6 @@ def user_picture(hash_session):
         else:
             return cloud_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-    #     print fk.request.path
-    #     if user_model is None:
-    #         return fk.make_response('Picture get failed.', status.HTTP_401_UNAUTHORIZED)
-    #     else:
-    #         # print "Connected_at: %s"%str(user_model.connected_at)
-    #         allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-    #         print "Allowance: "+allowance
-    #         # print "Connected_at: %s"%str(user_model.connected_at)
-    #         if allowance == hash_session:
-    #             profile_model = ProfileModel.objects(user=user_model).first_or_404()
-    #             if profile_model.picture['scope'] == 'remote':
-    #                 return fk.redirect(profile_model.picture['location'])
-    #             elif profile_model.picture['scope'] == 'local':
-    #                 if profile_model.picture['location']:
-    #                     #Refuse images that are more than 5Mb
-    #                     picture = load_picture(profile_model)
-    #                     print picture[1]
-    #                     return fk.send_file(
-    #                         picture[0],
-    #                         mimetypes.guess_type(picture[1])[0],
-    #                         as_attachment=True,
-    #                         attachment_filename=profile_model.picture['location'],
-    #                     )
-    #                 else:
-    #                     print "Failed because of picture location not found."
-    #                     return fk.make_response('Empty location. Nothing to pull from here!', status.HTTP_204_NO_CONTENT)
-    #         else:
-    #             return fk.make_response('Picture get failed.', status.HTTP_401_UNAUTHORIZED)
-    # else:
-    #     return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
 @app.route(CLOUD_URL + '/private/<hash_session>/user/trusted', methods=['GET'])
 @crossdomain(origin='*')
 def user_truested(hash_session):
@@ -1007,7 +967,14 @@ def user_truested(hash_session):
             logAccess('cloud', '/private/<hash_session>/user/trusted')
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             if allowance == hash_session:
-                return fk.Response('Trusting succeed', status.HTTP_200_OK)
+                # return fk.Response('Trusting succeed', status.HTTP_200_OK)
+                version = 'N/A'
+                try:
+                    from corrdb import __version__
+                    version = __version__
+                except:
+                    pass
+                return fk.Response(json.dumps({'version':version}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.make_response('Trusting failed.', status.HTTP_401_UNAUTHORIZED)
     else:
@@ -1017,8 +984,6 @@ def user_truested(hash_session):
 @crossdomain(origin='*')
 def user_home():
     logTraffic(endpoint='/public/user/home')
-
-        
     if fk.request.method == 'GET':
         users = UserModel.objects()
         projects = ProjectModel.objects()
@@ -1071,8 +1036,6 @@ def user_home():
 @crossdomain(origin='*')
 def user_profile(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/profile')
-
-        
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
         profile_model = ProfileModel.objects(user=user_model).first()
@@ -1101,8 +1064,6 @@ def user_profile(hash_session):
 @crossdomain(origin='*')
 def user_renew(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/renew')
-
-        
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
         print fk.request.path
@@ -1123,7 +1084,6 @@ def user_renew(hash_session):
 @crossdomain(origin='*')
 def cloud_public_user_recover():
     logTraffic(endpoint='/public/user/recover')
-
     if fk.request.method == 'POST':
         if fk.request.data:
             data = json.loads(fk.request.data)
@@ -1162,12 +1122,10 @@ def cloud_public_user_recover():
 @crossdomain(origin='*')
 def cloud_public_user_picture(user_id):
     logTraffic(endpoint='/public/user/picture/<user_id>')
-
-        
     if fk.request.method == 'GET':
         user_model = UserModel.object.with_id(user_id)
         if user_model == None:
-            return fk.redirect('http://0.0.0.0:5000/error-204/')
+            return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
         else:
             profile_model = ProfileModel.object(user=user_model).first_or_404()
             if profile_model.picture['scope'] == 'remote':

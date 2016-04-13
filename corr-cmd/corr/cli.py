@@ -35,6 +35,8 @@ from corr import api
               help="Unwatch software processes.")
 @click.option('--marker', default=None,
               help="An execution marker.")
+@click.option('--force/--no-force', default=None,
+              help="Bypass some conditions.")
 
 # Files Management
 @click.option('--upload/--no-upload', default=None,
@@ -57,7 +59,7 @@ from corr import api
 
 def handle(config, conx, register, sync, align, unregister,
            name, host, port, key, watch, unwatch, list, show, marker,
-           upload, file, env, path, obj, group):
+           upload, file, env, path, obj, group, force):
     if config:
         core.configure(host=host, port=port, key=key)
 
@@ -83,7 +85,7 @@ def handle(config, conx, register, sync, align, unregister,
         core.register(name=name)
 
     if sync:
-        core.sync(name=name, marker=marker)
+        core.sync(name=name, marker=marker, force=force)
 
     if unregister:
         core.unregister(name=name)

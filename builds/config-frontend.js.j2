@@ -1,0 +1,4 @@
+var config = {
+    host: '{{ hostvars['cloudhost']['ansible_ssh_host'] }}',
+    port: {{hostvars['cloudhost']['mapped_port']}}
+}
