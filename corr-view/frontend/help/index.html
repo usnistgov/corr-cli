@@ -1,113 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!--================================================================================
-    Item Name: Materialize - Material Design Admin Template
-    Version: 1.0
-    Author: GeeksLabs
-    Author URL: http://www.themeforest.net/user/geekslabs
-================================================================================ -->
+    <!--================================================================================
+        Item Name: CoRR - Cloud of Reproducible Records
+        Version: 0.1
+        Authors: Faical Yannick P. Congo & Daniel Wheeler
+        Authors URL: https://github.com/usnistgov/corr
+    ================================================================================ -->
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="msapplication-tap-highlight" content="no">
-    <meta name="description" content="CoRR is a generic cloud platform for reproducible records that allows software management tools and experiment control tools federation and scientific collaboration.">
-    <meta name="keywords" content="simulation, experiment, cloud, service, record, atom, metadata, reproducible, repeatable, replicable, managements, generic, platform">
-    <title>CoRR - Cloud of Reproducible Records</title>
+    <head>
 
-    <!-- Favicons-->
-    <link rel="icon" href="../images/favicon/favicon-32x32.png" sizes="32x32">
-    <!-- Favicons-->
-    <link rel="apple-touch-icon-precomposed" href="../images/favicon/apple-touch-icon-152x152.png">
-    <!-- For iPhone -->
-    <meta name="msapplication-TileColor" content="#00bcd4">
-    <meta name="msapplication-TileImage" content="../images/favicon/mstile-144x144.png">
-    <!-- For Windows Phone -->
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="description" content="CoRR is a generic cloud platform for reproducible records that allows software management tools and experiment control tools federation and scientific collaboration.">
+        <meta name="keywords" content="simulation, experiment, cloud, service, record, atom, metadata, reproducible, repeatable, replicable, managements, generic, platform">
+        
+        <title>CoRR - Cloud of Reproducible Records</title>
 
+        <link rel="icon" href="../images/favicon/favicon-32x32.png" sizes="32x32">
+        <link rel="apple-touch-icon-precomposed" href="../images/favicon/apple-touch-icon-152x152.png">
+        <meta name="msapplication-TileColor" content="#00bcd4">
+        <meta name="msapplication-TileImage" content="../images/favicon/mstile-144x144.png">
 
-    <!-- CORE CSS-->    
-    <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
-    <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="../js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="../js/plugins/jvectormap/jquery-jvectormap.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="../js/plugins/chartist-js/chartist.min.css" type="text/css" rel="stylesheet" media="screen,projection">
 
+    </head>
 
-    <!-- INCLUDED PLUGIN CSS ON THIS PAGE -->
-    <!-- <link href="../js/plugins/material-preloader/materialPreloader.css" type="text/css" rel="stylesheet" media="screen,projection"> -->
-    <link href="../js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
-    <link href="../js/plugins/jvectormap/jquery-jvectormap.css" type="text/css" rel="stylesheet" media="screen,projection">
-    <link href="../js/plugins/chartist-js/chartist.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+    <body>
 
-
-</head>
-
-<body>
-    <!-- Start Page Loading -->
-    <div id="loader-wrapper">
-        <div id="loader"></div>        
-        <div class="loader-section section-left"></div>
-        <div class="loader-section section-right"></div>
-    </div>
-    <!-- End Page Loading -->
-
-    <!-- //////////////////////////////////////////////////////////////////////////// -->
-
-    <!-- START HEADER -->
-    <header id="header" class="page-topbar">
-        <!-- start header nav-->
-        <div class="navbar-fixed">
-            <nav class="cyan">
-                <div class="nav-wrapper">
-                    <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
-                    <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
-                        <li class="search-out">
-                            <input type="text" class="search-out-text">
-                        </li>
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
-                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
-                                <i class=" nav-action mdi-action-search"></i>
-                            </a>
-                        </li>
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
-                            <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
-                                <i class="nav-action nav-action mdi-action-home"></i>
-                            </a>
-                        </li>
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
-                            <a href="../help" id= "nav-help" class="waves-effect waves-block waves-light">
-                                <i class="nav-action mdi-communication-live-help"></i>
-                            </a>
-                        </li>
-                        <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="login">
-                            <a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse">
-                                <i class="nav-action nav-action mdi-navigation-menu"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+        <div id="loader-wrapper">
+            <div id="loader"></div>        
+            <div class="loader-section section-left"></div>
+            <div class="loader-section section-right"></div>
         </div>
-        <!-- end header nav-->
-    </header>
-    <!-- END HEADER -->
-    <aside id="right-sidebar-nav">
-                <ul id="chat-out" class="side-nav rightside-navigation">
-<!--
-                    <li class="li-hover">
-                    <a href="#" data-activates="chat-out" class="chat-close-collapse right"><i class="mdi-navigation-close"></i></a>
-                    <div id="right-search" class="row">
-                        <form class="col s12">
-                            <div class="input-field">
-                                <i class="mdi-action-search prefix"></i>
-                                <input id="icon_prefix" type="text" class="validate">
-                                <label for="icon_prefix">Search</label>
-                            </div>
-                        </form>
+
+        <header id="header" class="page-topbar">
+            <div class="navbar-fixed">
+                <nav class="cyan">
+                    <div class="nav-wrapper">
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/></a> <span class="logo-text">CoRR</span></h1>
+                        <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
+                            <li class="search-out">
+                                <input type="text" class="search-out-text">
+                            </li>
+                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
+                                <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
+                                    <i class=" nav-action mdi-action-search"></i>
+                                </a>
+                            </li>
+                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
+                                <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
+                                    <i class="nav-action nav-action mdi-action-home"></i>
+                                </a>
+                            </li>
+                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
+                                <a href="../help" id= "nav-help" class="waves-effect waves-block waves-light">
+                                    <i class="nav-action mdi-communication-live-help"></i>
+                                </a>
+                            </li>
+                            <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="login">
+                                <a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse">
+                                    <i class="nav-action nav-action mdi-navigation-menu"></i>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-                    </li>
--->
-                    <li class="li-hover">
-                        <ul class="chat-collapsible" data-collapsible="expandable">
+                </nav>
+            </div>
+        </header>
+
+        <aside id="right-sidebar-nav">
+            <ul id="chat-out" class="side-nav rightside-navigation">
+                <li class="li-hover">
+                    <ul class="chat-collapsible" data-collapsible="expandable">
                         <li>
                             <div class="collapsible-header teal white-text active"><i class="mdi-action-home"></i>Login</div>
                             <div class="collapsible-body recent-activity">
@@ -125,12 +96,6 @@
                                     <label for="login-password">Password</label>
                                   </div>
                                 </div>
-                                <!-- <div class="row">
-                                  <div class="input-field col s12 m12 l12  login-text">
-                                      <input type="checkbox" id="remember-me" onkeypress="loginKeyPress(event);"/>
-                                      <label for="remember-me">Remember me</label>
-                                  </div>
-                                </div> -->
                                 <div class="row">
                                   <div class="input-field col s12">
                                     <a id="buttonLogin" onclick="return user.login();" class="btn login-button waves-effect waves-light green col s12">Login</a>
@@ -141,13 +106,6 @@
                         <li>
                             <div class="collapsible-header light-blue white-text"><i class="mdi-action-input"></i>Register</div>
                             <div class="collapsible-body sales-repoart">
-                                <!-- <div class="row margin">
-                                  <div class="input-field col s12">
-                                    <i class="mdi-social-person-outline prefix"></i>
-                                    <input id="register-username" type="text" onkeypress="registerKeyPress(event);">
-                                    <label for="register-username" class="center-align">Username</label>
-                                  </div>
-                                </div> -->
                                 <div class="row margin">
                                   <div class="input-field col s12">
                                     <i class="mdi-communication-email prefix"></i>
@@ -195,582 +153,512 @@
                         </li>
                         <li>
                             <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
-
                         </li>
                         <li>
                             <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i><a href="mailto:contactus.corr@gmail.com">Email</a></div>
                         </li>
-                        </ul>
-                    </li>
-                </ul>
-            </aside>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
 
-    <!-- //////////////////////////////////////////////////////////////////////////// -->
-
-    <!-- START MAIN -->
-    <div id="main">
-        <!-- START WRAPPER -->
-        <div class="wrapper">
-            <!-- START CONTENT -->
-            <section id="content">
-
-                <!--start container-->
-                <div class="container">
-
-                    <!--work collections start-->
-                    <div id="work-collections">
-                        <div class="row">
-                            <div class="col s12 m12 l6">
-                                <ul id="projects-collection" class="collection collapsible" data-collapsible="accordion">
-                                    <li class="collection-item avatar">
-                                        <i class="mdi-action-lock-open circle light-green darken-2"></i>
-                                        <span class="collection-header">Projects</span>
-                                        <p>API access to the projects.</p>
-                                        <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/api_key/project/push/project_name</p>
-                                                <p class="collections-content">Push a new project.</p>
+        <div id="main">
+            <div class="wrapper">
+                <section id="content">
+                    <div class="container">
+                        <!--work collections start-->
+                        <div id="work-collections">
+                            <div class="row">
+                                <div class="col s12 m12 l6">
+                                    <ul id="projects-collection" class="collection collapsible" data-collapsible="accordion">
+                                        <li class="collection-item avatar">
+                                            <i class="mdi-action-lock-open circle light-green darken-2"></i>
+                                            <span class="collection-header">Projects</span>
+                                            <p>API access to the projects.</p>
+                                            <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/api_key/project/push/project_name</p>
+                                                    <p class="collections-content">Push a new project.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat orange">POST</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-1"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <span class="task-cat orange">POST</span>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/api_key/project/pull/project_name</p>
+                                                    <p class="collections-content">Pull a single project.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat pink">GET</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-2"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <div id="project-line-1"></div>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/api_key/project/pull</p>
+                                                    <p class="collections-content">Pull all the projects.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat pink">GET</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-3"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/api_key/project/pull/project_name</p>
-                                                <p class="collections-content">Pull a single project.</p>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/api_key/project/sync/project_name</p>
+                                                    <p class="collections-content">Update a single project.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat blue">PUT</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-4"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <span class="task-cat pink">GET</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col s12 m12 l6">
+                                    <ul id="issues-collection" class="collection collapsible" data-collapsible="accordion">
+                                        <li class="collection-item avatar">
+                                            <i class="mdi-action-lock-open circle light-green darken-2"></i>
+                                            <span class="collection-header">Records</span>
+                                            <p>API access to the records.</p>
+                                            <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/record/push/project_name</p>
+                                                    <p class="collections-content">Push a new record.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat orange">POST</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-9"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <div id="project-line-2"></div>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/record/sync/project_name/record_id</p>
+                                                    <p class="collections-content">Update a record.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat orange">POST</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-10"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/api_key/project/pull</p>
-                                                <p class="collections-content">Pull all the projects.</p>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/record/pull/project_name/record_id</p>
+                                                    <p class="collections-content">Pull project's record.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat pink">GET</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-11"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <span class="task-cat pink">GET</span>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/record/display/record_id</p>
+                                                    <p class="collections-content">Show project's record infos.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat pink">GET</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-12"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <div id="project-line-3"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/api_key/project/sync/project_name</p>
-                                                <p class="collections-content">Update a single project.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat blue">PUT</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-4"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div class="col s12 m12 l6">
-                                <ul id="issues-collection" class="collection collapsible" data-collapsible="accordion">
-                                    <li class="collection-item avatar">
-                                        <i class="mdi-action-lock-open circle light-green darken-2"></i>
-                                        <span class="collection-header">Records</span>
-                                        <p>API access to the records.</p>
-                                        <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/record/push/project_name</p>
-                                                <p class="collections-content">Push a new record.</p>
+                        </div>
+                        <!--work collections end-->
+                        <div id="work-collections">
+                            <div class="row">
+                                <div class="col s12 m12 l6">
+                                    <ul id="projects-collection" class="collection collapsible" data-collapsible="accordion">
+                                        <li class="collection-item avatar">
+                                            <i class="mdi-action-lock-outline circle red darken-2"></i>
+                                            <span class="collection-header">Users</span>
+                                            <p>API access to the users accounts.</p>
+                                            <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/public/user/create</p>
+                                                    <p class="collections-content">Create a new user.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat orange">POST</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-5"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <span class="task-cat orange">POST</span>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/user/show</p>
+                                                    <p class="collections-content">Show a user infos.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat pink">GET</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-6"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <div id="project-line-9"></div>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/user/edit</p>
+                                                    <p class="collections-content">Update user infos.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat blue">PUT</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-7"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/record/sync/project_name/record_id</p>
-                                                <p class="collections-content">Update a record.</p>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/user/remove</p>
+                                                    <p class="collections-content">Delete a user account.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat orange">POST</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-8"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <span class="task-cat orange">POST</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col s12 m12 l6">
+                                    <ul id="issues-collection" class="collection collapsible" data-collapsible="accordion">
+                                        <li class="collection-item avatar">
+                                            <i class="mdi-action-lock-outline red circle darken-2"></i>
+                                            <span class="collection-header">Differentions</span>
+                                            <p>API access to the differentions requests.</p>
+                                            <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/diff/create</p>
+                                                    <p class="collections-content">Create a new diff request.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat orange">POST</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-13"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <div id="project-line-10"></div>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/diff/show/diff_id</p>
+                                                    <p class="collections-content">Get user diff requests.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat pink">GET</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-14"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/record/pull/project_name/record_id</p>
-                                                <p class="collections-content">Pull project's record.</p>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/diff/resolve/diff_id</p>
+                                                    <p class="collections-content">Resolve user diff request.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat blue">PUT</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-15"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <span class="task-cat pink">GET</span>
+                                        </li>
+                                        <li class="collection-item">
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <p class="collections-title">/api/v1/private/api_key/diff/assess</p>
+                                                    <p class="collections-content">Reproduciblity assessment by search on diffs.</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <span class="task-cat orange">POST</span>
+                                                </div>
+                                                <div class="col s3">
+                                                    <div id="project-line-16"></div>
+                                                </div>
                                             </div>
-                                            <div class="col s3">
-                                                <div id="project-line-11"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/record/display/record_id</p>
-                                                <p class="collections-content">Show project's record infos.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat pink">GET</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-12"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!--work collections end-->
-                    
-                    <div id="work-collections">
-                        <div class="row">
-                            <div class="col s12 m12 l6">
-                                <ul id="projects-collection" class="collection collapsible" data-collapsible="accordion">
-                                    <li class="collection-item avatar">
-                                        <i class="mdi-action-lock-outline circle red darken-2"></i>
-                                        <span class="collection-header">Users</span>
-                                        <p>API access to the users accounts.</p>
-                                        <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/public/user/create</p>
-                                                <p class="collections-content">Create a new user.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat orange">POST</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-5"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/user/show</p>
-                                                <p class="collections-content">Show a user infos.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat pink">GET</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-6"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/user/edit</p>
-                                                <p class="collections-content">Update user infos.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat blue">PUT</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-7"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/user/remove</p>
-                                                <p class="collections-content">Delete a user account.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat orange">POST</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-8"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col s12 m12 l6">
-                                <ul id="issues-collection" class="collection collapsible" data-collapsible="accordion">
-                                    <li class="collection-item avatar">
-                                        <i class="mdi-action-lock-outline red circle darken-2"></i>
-                                        <span class="collection-header">Differentions</span>
-                                        <p>API access to the differentions requests.</p>
-                                        <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/diff/create</p>
-                                                <p class="collections-content">Create a new diff request.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat orange">POST</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-13"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/diff/show/diff_id</p>
-                                                <p class="collections-content">Get user diff requests.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat pink">GET</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-14"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/diff/resolve/diff_id</p>
-                                                <p class="collections-content">Resolve user diff request.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat blue">PUT</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-15"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="collection-item">
-                                        <div class="row">
-                                            <div class="col s6">
-                                                <p class="collections-title">/api/v1/private/api_key/diff/assess</p>
-                                                <p class="collections-content">Reproduciblity assessment by search on diffs.</p>
-                                            </div>
-                                            <div class="col s3">
-                                                <span class="task-cat orange">POST</span>
-                                            </div>
-                                            <div class="col s3">
-                                                <div id="project-line-16"></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
+                    <!--end container-->
+                </section>
+                <aside id="right-sidebar-nav">
+                    <ul id="chat-out" class="side-nav rightside-navigation">
+                        <li class="li-hover">
+                        <a href="#" data-activates="chat-out" class="chat-close-collapse right"><i class="mdi-navigation-close"></i></a>
+                        <div id="right-search" class="row">
+                            <form class="col s12">
+                                <div class="input-field">
+                                    <i class="mdi-action-search prefix"></i>
+                                    <input id="icon_prefix" type="text" class="validate">
+                                    <label for="icon_prefix">Search</label>
+                                </div>
+                            </form>
                         </div>
-                    </div>
-
-                    <!-- Floating Action Button -->
-<!--
-                    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-                        <a class="btn-floating btn-large red">
-                          <i class="large mdi-editor-mode-edit"></i>
-                        </a>
-                        <ul>
-                          <li><a href="css-helpers.html" class="btn-floating red"><i class="large mdi-communication-live-help"></i></a></li>
-                          <li><a href="app-widget.html" class="btn-floating yellow darken-1"><i class="large mdi-device-now-widgets"></i></a></li>
-                          <li><a href="app-calendar.html" class="btn-floating green"><i class="large mdi-editor-insert-invitation"></i></a></li>
-                          <li><a href="app-email.html" class="btn-floating blue"><i class="large mdi-communication-email"></i></a></li>
-                        </ul>
-                    </div>
--->
-                    <!-- Floating Action Button -->
-
-                </div>
-                <!--end container-->
-            </section>
-            <!-- END CONTENT -->
-
-            <!-- //////////////////////////////////////////////////////////////////////////// -->
-            <!-- START RIGHT SIDEBAR NAV-->
-            <aside id="right-sidebar-nav">
-                <ul id="chat-out" class="side-nav rightside-navigation">
-                    <li class="li-hover">
-                    <a href="#" data-activates="chat-out" class="chat-close-collapse right"><i class="mdi-navigation-close"></i></a>
-                    <div id="right-search" class="row">
-                        <form class="col s12">
-                            <div class="input-field">
-                                <i class="mdi-action-search prefix"></i>
-                                <input id="icon_prefix" type="text" class="validate">
-                                <label for="icon_prefix">Search</label>
-                            </div>
-                        </form>
-                    </div>
-                    </li>
-                    <li class="li-hover">
-                        <ul class="chat-collapsible" data-collapsible="expandable">
-                        <li>
-                            <div class="collapsible-header teal white-text active"><i class="mdi-social-whatshot"></i>Recent Activity</div>
-                            <div class="collapsible-body recent-activity">
-                                <div class="recent-activity-list chat-out-list row">
-                                    <div class="col s3 recent-activity-list-icon"><i class="mdi-action-add-shopping-cart"></i>
-                                    </div>
-                                    <div class="col s9 recent-activity-list-text">
-                                        <a href="#">just now</a>
-                                        <p>Jim Doe Purchased new equipments for zonal office.</p>
-                                    </div>
-                                </div>
-                                <div class="recent-activity-list chat-out-list row">
-                                    <div class="col s3 recent-activity-list-icon"><i class="mdi-device-airplanemode-on"></i>
-                                    </div>
-                                    <div class="col s9 recent-activity-list-text">
-                                        <a href="#">Yesterday</a>
-                                        <p>Your Next flight for USA will be on 15th August 2015.</p>
-                                    </div>
-                                </div>
-                                <div class="recent-activity-list chat-out-list row">
-                                    <div class="col s3 recent-activity-list-icon"><i class="mdi-action-settings-voice"></i>
-                                    </div>
-                                    <div class="col s9 recent-activity-list-text">
-                                        <a href="#">5 Days Ago</a>
-                                        <p>Natalya Parker Send you a voice mail for next conference.</p>
-                                    </div>
-                                </div>
-                                <div class="recent-activity-list chat-out-list row">
-                                    <div class="col s3 recent-activity-list-icon"><i class="mdi-action-store"></i>
-                                    </div>
-                                    <div class="col s9 recent-activity-list-text">
-                                        <a href="#">Last Week</a>
-                                        <p>Jessy Jay open a new store at S.G Road.</p>
-                                    </div>
-                                </div>
-                                <div class="recent-activity-list chat-out-list row">
-                                    <div class="col s3 recent-activity-list-icon"><i class="mdi-action-settings-voice"></i>
-                                    </div>
-                                    <div class="col s9 recent-activity-list-text">
-                                        <a href="#">5 Days Ago</a>
-                                        <p>Natalya Parker Send you a voice mail for next conference.</p>
-                                    </div>
-                                </div>
-                            </div>
                         </li>
-                        <li>
-                            <div class="collapsible-header light-blue white-text active"><i class="mdi-editor-attach-money"></i>Sales Repoart</div>
-                            <div class="collapsible-body sales-repoart">
-                                <div class="sales-repoart-list  chat-out-list row">
-                                    <div class="col s8">Target Salse</div>
-                                    <div class="col s4"><span id="sales-line-1"></span>
+                        <li class="li-hover">
+                            <ul class="chat-collapsible" data-collapsible="expandable">
+                                <li>
+                                    <div class="collapsible-header teal white-text active"><i class="mdi-social-whatshot"></i>Recent Activity</div>
+                                    <div class="collapsible-body recent-activity">
+                                        <div class="recent-activity-list chat-out-list row">
+                                            <div class="col s3 recent-activity-list-icon"><i class="mdi-action-add-shopping-cart"></i>
+                                            </div>
+                                            <div class="col s9 recent-activity-list-text">
+                                                <a href="#">just now</a>
+                                                <p>Jim Doe Purchased new equipments for zonal office.</p>
+                                            </div>
+                                        </div>
+                                        <div class="recent-activity-list chat-out-list row">
+                                            <div class="col s3 recent-activity-list-icon"><i class="mdi-device-airplanemode-on"></i>
+                                            </div>
+                                            <div class="col s9 recent-activity-list-text">
+                                                <a href="#">Yesterday</a>
+                                                <p>Your Next flight for USA will be on 15th August 2015.</p>
+                                            </div>
+                                        </div>
+                                        <div class="recent-activity-list chat-out-list row">
+                                            <div class="col s3 recent-activity-list-icon"><i class="mdi-action-settings-voice"></i>
+                                            </div>
+                                            <div class="col s9 recent-activity-list-text">
+                                                <a href="#">5 Days Ago</a>
+                                                <p>Natalya Parker Send you a voice mail for next conference.</p>
+                                            </div>
+                                        </div>
+                                        <div class="recent-activity-list chat-out-list row">
+                                            <div class="col s3 recent-activity-list-icon"><i class="mdi-action-store"></i>
+                                            </div>
+                                            <div class="col s9 recent-activity-list-text">
+                                                <a href="#">Last Week</a>
+                                                <p>Jessy Jay open a new store at S.G Road.</p>
+                                            </div>
+                                        </div>
+                                        <div class="recent-activity-list chat-out-list row">
+                                            <div class="col s3 recent-activity-list-icon"><i class="mdi-action-settings-voice"></i>
+                                            </div>
+                                            <div class="col s9 recent-activity-list-text">
+                                                <a href="#">5 Days Ago</a>
+                                                <p>Natalya Parker Send you a voice mail for next conference.</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="sales-repoart-list chat-out-list row">
-                                    <div class="col s8">Payment Due</div>
-                                    <div class="col s4"><span id="sales-bar-1"></span>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header light-blue white-text active"><i class="mdi-editor-attach-money"></i>Sales Repoart</div>
+                                    <div class="collapsible-body sales-repoart">
+                                        <div class="sales-repoart-list  chat-out-list row">
+                                            <div class="col s8">Target Salse</div>
+                                            <div class="col s4"><span id="sales-line-1"></span>
+                                            </div>
+                                        </div>
+                                        <div class="sales-repoart-list chat-out-list row">
+                                            <div class="col s8">Payment Due</div>
+                                            <div class="col s4"><span id="sales-bar-1"></span>
+                                            </div>
+                                        </div>
+                                        <div class="sales-repoart-list chat-out-list row">
+                                            <div class="col s8">Total Delivery</div>
+                                            <div class="col s4"><span id="sales-line-2"></span>
+                                            </div>
+                                        </div>
+                                        <div class="sales-repoart-list chat-out-list row">
+                                            <div class="col s8">Total Progress</div>
+                                            <div class="col s4"><span id="sales-bar-2"></span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="sales-repoart-list chat-out-list row">
-                                    <div class="col s8">Total Delivery</div>
-                                    <div class="col s4"><span id="sales-line-2"></span>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header red white-text"><i class="mdi-action-stars"></i>Favorite Associates</div>
+                                    <div class="collapsible-body favorite-associates">
+                                        <div class="favorite-associate-list chat-out-list row">
+                                            <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img online-user valign profile-image">
+                                            </div>
+                                            <div class="col s8">
+                                                <p>Eileen Sideways</p>
+                                                <p class="place">Los Angeles, CA</p>
+                                            </div>
+                                        </div>
+                                        <div class="favorite-associate-list chat-out-list row">
+                                            <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img online-user valign profile-image">
+                                            </div>
+                                            <div class="col s8">
+                                                <p>Zaham Sindil</p>
+                                                <p class="place">San Francisco, CA</p>
+                                            </div>
+                                        </div>
+                                        <div class="favorite-associate-list chat-out-list row">
+                                            <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img offline-user valign profile-image">
+                                            </div>
+                                            <div class="col s8">
+                                                <p>Renov Leongal</p>
+                                                <p class="place">Cebu City, Philippines</p>
+                                            </div>
+                                        </div>
+                                        <div class="favorite-associate-list chat-out-list row">
+                                            <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img online-user valign profile-image">
+                                            </div>
+                                            <div class="col s8">
+                                                <p>Weno Carasbong</p>
+                                                <p>Tokyo, Japan</p>
+                                            </div>
+                                        </div>
+                                        <div class="favorite-associate-list chat-out-list row">
+                                            <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img offline-user valign profile-image">
+                                            </div>
+                                            <div class="col s8">
+                                                <p>Nusja Nawancali</p>
+                                                <p class="place">Bangkok, Thailand</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="sales-repoart-list chat-out-list row">
-                                    <div class="col s8">Total Progress</div>
-                                    <div class="col s4"><span id="sales-bar-2"></span>
-                                    </div>
-                                </div>
-                            </div>
+                                </li>
+                            </ul>
                         </li>
-                        <li>
-                            <div class="collapsible-header red white-text"><i class="mdi-action-stars"></i>Favorite Associates</div>
-                            <div class="collapsible-body favorite-associates">
-                                <div class="favorite-associate-list chat-out-list row">
-                                    <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img online-user valign profile-image">
-                                    </div>
-                                    <div class="col s8">
-                                        <p>Eileen Sideways</p>
-                                        <p class="place">Los Angeles, CA</p>
-                                    </div>
-                                </div>
-                                <div class="favorite-associate-list chat-out-list row">
-                                    <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img online-user valign profile-image">
-                                    </div>
-                                    <div class="col s8">
-                                        <p>Zaham Sindil</p>
-                                        <p class="place">San Francisco, CA</p>
-                                    </div>
-                                </div>
-                                <div class="favorite-associate-list chat-out-list row">
-                                    <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img offline-user valign profile-image">
-                                    </div>
-                                    <div class="col s8">
-                                        <p>Renov Leongal</p>
-                                        <p class="place">Cebu City, Philippines</p>
-                                    </div>
-                                </div>
-                                <div class="favorite-associate-list chat-out-list row">
-                                    <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img online-user valign profile-image">
-                                    </div>
-                                    <div class="col s8">
-                                        <p>Weno Carasbong</p>
-                                        <p>Tokyo, Japan</p>
-                                    </div>
-                                </div>
-                                <div class="favorite-associate-list chat-out-list row">
-                                    <div class="col s4"><img src="../images/avatar.jpg" alt="" class="circle responsive-img offline-user valign profile-image">
-                                    </div>
-                                    <div class="col s8">
-                                        <p>Nusja Nawancali</p>
-                                        <p class="place">Bangkok, Thailand</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        </ul>
-                    </li>
-                </ul>
-            </aside>
-            <!-- LEFT RIGHT SIDEBAR NAV-->
-
-        </div>
-        <!-- END WRAPPER -->
-
-    </div>
-    <!-- END MAIN -->
-
-
-
-    <!-- //////////////////////////////////////////////////////////////////////////// -->
-
-    <!-- START FOOTER -->
-    <footer class="page-footer">
-        <div class="footer-copyright">
-          <div class="container">
-            <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
-            <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
+                    </ul>
+                </aside>
             </div>
         </div>
-    </footer>
 
-    <!-- END FOOTER -->
+        <footer class="page-footer">
+            <div class="footer-copyright">
+              <div class="container">
+                <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+                <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
+                </div>
+            </div>
+        </footer>
 
+        <script type="text/javascript" src="../js/config.js"></script>
 
-    <!-- ================================================
-    Scripts
-    ================================================ -->
+        <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>    
+        <script type="text/javascript" src="../js/materialize.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>   
+        <script type="text/javascript" src="../js/plugins/chartjs/chart.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/sparkline/jquery.sparkline.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/sparkline/sparkline-script.js"></script>
+        <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+        <script type="text/javascript" src="../js/plugins/jvectormap/vectormap-script.js"></script>
+        <script type="text/javascript" src="../js/plugins.js"></script>
 
-    <script src="../js/config.js"></script>
-    
-    <!-- jQuery Library -->
-    <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>    
-    <!--materialize js-->
-    <script type="text/javascript" src="../js/materialize.min.js"></script>
-    <!--scrollbar-->
-    <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <!--script type="text/javascript" src="../js/plugins/material-preloader/materialPreloader.js"></script-->   
+        <script type="text/javascript" src="../js/init.js"></script>
+        <script src="../js/cloud.js"></script>
 
-    <!-- chartist -->
-    <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>   
-
-    <!-- chartjs -->
-    <script type="text/javascript" src="../js/plugins/chartjs/chart.min.js"></script>
-    <script type="text/javascript" src="../js/plugins/chartjs/chart-script.js"></script>
-
-    <!-- sparkline -->
-    <script type="text/javascript" src="../js/plugins/sparkline/jquery.sparkline.min.js"></script>
-    <script type="text/javascript" src="../js/plugins/sparkline/sparkline-script.js"></script>
-    
-    <!--jvectormap-->
-    <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script type="text/javascript" src="../js/plugins/jvectormap/vectormap-script.js"></script>
-    
-    
-    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
-    <script type="text/javascript" src="../js/plugins.js"></script>
-    <!-- Toast Notification -->
-    <script src="../js/init.js"></script>
-    <script src="../js/cloud.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function(){
-                $('.tooltipped').tooltip({delay: 50});
-                new Clipboard('.btn');
-        });
-        var param = window.location.search.substring(1);
-        var parts = param.split("=");
-        if(parts[0] == "session"){
-            user.session = parts[1];
-            console.log(user.session);
-            user.trusted();
-            document.getElementById("nav-home-2").href = "../?session="+user.session;
-            document.getElementById("nav-home").href = "../?session="+user.session;
-            document.getElementById("nav-help").href = "./?session="+user.session;
-            document.getElementById("nav-login").remove();
-            document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"../dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
-        }else if(parts[0] == "action"){
-            var scope = parts[1];
-        }
-
-        function loginKeyPress(e)
-        {
-            e = e || window.event;
-            if (e.keyCode == 13)
-            {
-                document.getElementById('buttonLogin').click();
+        <script type="text/javascript">
+            $(document).ready(function(){
+                    $('.tooltipped').tooltip({delay: 50});
+            });
+            var param = window.location.search.substring(1);
+            var parts = param.split("=");
+            if(parts[0] == "session"){
+                user.session = parts[1];
+                console.log(user.session);
+                user.trusted();
+                document.getElementById("nav-home-2").href = "../?session="+user.session;
+                document.getElementById("nav-home").href = "../?session="+user.session;
+                document.getElementById("nav-help").href = "./?session="+user.session;
+                document.getElementById("nav-login").remove();
+                document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"../dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
+            }else if(parts[0] == "action"){
+                var scope = parts[1];
             }
-        }
-
-         function recoverKeyPress(e)
-        {
-            e = e || window.event;
-            if (e.keyCode == 13)
+            function loginKeyPress(e)
             {
-                document.getElementById('buttonRecover').click();
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonLogin').click();
+                }
             }
-        }
-
-        function registerKeyPress(e)
-        {
-            e = e || window.event;
-            if (e.keyCode == 13)
+             function recoverKeyPress(e)
             {
-                document.getElementById('buttonRegister').click();
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonRecover').click();
+                }
             }
-        }
-
-        function emailKeyPress(e)
-        {
-            e = e || window.event;
-            if (e.keyCode == 13)
+            function registerKeyPress(e)
             {
-                document.getElementById('buttonEmail').click();
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonRegister').click();
+                }
             }
-        }
-    </script>
-    <script>
+            function emailKeyPress(e)
+            {
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonEmail').click();
+                }
+            }
+        </script>
 
-    </script>
-</body>
+    </body>
 
 </html>
