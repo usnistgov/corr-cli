@@ -58,22 +58,86 @@ if(parts[0] == "session"){
                 var environments_total = response["environments_total"];
                 var projects = response["projects"];
 
-                document.getElementById("trending-line-chart-wrapper").innerHTML = "<canvas id=\"trending-line-chart\" height=\"70\"></canvas>";
+                if(document.getElementById("trending-line-chart-wrapper"))
+                    document.getElementById("trending-line-chart-wrapper").innerHTML = "<canvas id=\"trending-line-chart\" height=\"70\"></canvas>";
 
-                document.getElementById("doughnut-chart-wrapper").innerHTML = "<canvas id=\"doughnut-chart\" height=\"200\"></canvas><div class=\"doughnut-chart-status\" id=\"doughnut-chart-status\">"+records_total+"<p class=\"ultra-small center-align\">Records</p></div>";
+                if(document.getElementById("doughnut-chart-wrapper"))
+                    document.getElementById("doughnut-chart-wrapper").innerHTML = "<canvas id=\"doughnut-chart\" height=\"200\"></canvas><div class=\"doughnut-chart-status\" id=\"doughnut-chart-status\">"+records_total+"<p class=\"ultra-small center-align\">Records</p></div>";
 
-                document.getElementById("trending-bar-chart-wrapper").innerHTML = "<canvas id=\"trending-bar-chart\" height=\"90\"></canvas>";
+                if(document.getElementById("trending-bar-chart-wrapper"))
+                    document.getElementById("trending-bar-chart-wrapper").innerHTML = "<canvas id=\"trending-bar-chart\" height=\"90\"></canvas>";
                 data["datasets"] = [];
                 dataBarChart["datasets"] = [];
                 doughnutData = [];
                 color = "#000000";
                 console.log(data);
-                for(var i = 0; i < response["projects"].length; i++){
-                    var project = response["projects"][i];
-                    var project_color = (function(m,s,c){return (c ? arguments.callee(m,s,c-1) : '#') + s[m.floor(m.random() * s.length)]})(Math,'0123456789ABCDEF',5);
+                if(response["projects"].length > 0){
+                    for(var i = 0; i < response["projects"].length; i++){
+                        var project = response["projects"][i];
+                        var project_color = (function(m,s,c){return (c ? arguments.callee(m,s,c-1) : '#') + s[m.floor(m.random() * s.length)]})(Math,'0123456789ABCDEF',5);
+                        var highlight_color = (function(m,s,c){return (c ? arguments.callee(m,s,c-1) : '#') + s[m.floor(m.random() * s.length)]})(Math,'0123456789ABCDEF',5);
+                        var dataset = {
+                            label: project["name"],
+                            fillColor : "rgba(128, 222, 234, 0.6)",
+                            strokeColor : project_color,
+                            pointColor : project_color,
+                            pointStrokeColor : "#ffffff",
+                            pointHighlightFill : "#ffffff",
+                            pointHighlightStroke : "#ffffff",
+                            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                        };
+
+                        var dataBarset = {
+                            label: project["name"],
+                            fillColor: project_color,
+                            strokeColor: project_color,
+                            highlightFill: "rgba(70, 191, 189, 0.4)",
+                            highlightStroke: "rgba(70, 191, 189, 0.9)",
+                            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                        };
+
+                        // console.log(dataset);
+
+                        dataset["data"][0] = project["records"]["January"]["number"];
+                        dataset["data"][1] = project["records"]["February"]["number"];
+                        dataset["data"][2] = project["records"]["March"]["number"];
+                        dataset["data"][3] = project["records"]["April"]["number"];
+                        dataset["data"][4] = project["records"]["May"]["number"];
+                        dataset["data"][5] = project["records"]["June"]["number"];
+                        dataset["data"][6] = project["records"]["July"]["number"];
+                        dataset["data"][7] = project["records"]["August"]["number"];
+                        dataset["data"][8] = project["records"]["September"]["number"];
+                        dataset["data"][9] = project["records"]["October"]["number"];
+                        dataset["data"][10] = project["records"]["November"]["number"];
+                        dataset["data"][11] = project["records"]["December"]["number"];
+                        dataBarset["data"][0] = project["records"]["January"]["number"];
+                        dataBarset["data"][1] = project["records"]["February"]["number"];
+                        dataBarset["data"][2] = project["records"]["March"]["number"];
+                        dataBarset["data"][3] = project["records"]["April"]["number"];
+                        dataBarset["data"][4] = project["records"]["May"]["number"];
+                        dataBarset["data"][5] = project["records"]["June"]["number"];
+                        dataBarset["data"][6] = project["records"]["July"]["number"];
+                        dataBarset["data"][7] = project["records"]["August"]["number"];
+                        dataBarset["data"][8] = project["records"]["September"]["number"];
+                        dataBarset["data"][9] = project["records"]["October"]["number"];
+                        dataBarset["data"][10] = project["records"]["November"]["number"];
+                        dataBarset["data"][11] = project["records"]["December"]["number"];
+                        doughnutset = {
+                            value: 0,
+                            color:project_color,
+                            highlight: highlight_color,
+                            label: project["name"]
+                        };
+                        doughnutset["value"] = project["records"]["January"]["number"]+project["records"]["February"]["number"]+project["records"]["March"]["number"]+project["records"]["April"]["number"]+project["records"]["May"]["number"]+project["records"]["June"]["number"]+project["records"]["July"]["number"]+project["records"]["August"]["number"]+project["records"]["September"]["number"]+project["records"]["October"]["number"]+project["records"]["November"]["number"]+project["records"]["December"]["number"];
+                        doughnutData.push(doughnutset);
+                        data["datasets"].push(dataset);
+                        dataBarChart["datasets"].push(dataset);
+                    }
+                }else{
+                    var project_color = "grey";
                     var highlight_color = (function(m,s,c){return (c ? arguments.callee(m,s,c-1) : '#') + s[m.floor(m.random() * s.length)]})(Math,'0123456789ABCDEF',5);
                     var dataset = {
-                        label: project["name"],
+                        label: "no project",
                         fillColor : "rgba(128, 222, 234, 0.6)",
                         strokeColor : project_color,
                         pointColor : project_color,
@@ -84,7 +148,7 @@ if(parts[0] == "session"){
                     };
 
                     var dataBarset = {
-                        label: project["name"],
+                        label: "no project",
                         fillColor: project_color,
                         strokeColor: project_color,
                         highlightFill: "rgba(70, 191, 189, 0.4)",
@@ -94,37 +158,37 @@ if(parts[0] == "session"){
 
                     // console.log(dataset);
 
-                    dataset["data"][0] = project["records"]["January"]["number"];
-                    dataset["data"][1] = project["records"]["February"]["number"];
-                    dataset["data"][2] = project["records"]["March"]["number"];
-                    dataset["data"][3] = project["records"]["April"]["number"];
-                    dataset["data"][4] = project["records"]["May"]["number"];
-                    dataset["data"][5] = project["records"]["June"]["number"];
-                    dataset["data"][6] = project["records"]["July"]["number"];
-                    dataset["data"][7] = project["records"]["August"]["number"];
-                    dataset["data"][8] = project["records"]["September"]["number"];
-                    dataset["data"][9] = project["records"]["October"]["number"];
-                    dataset["data"][10] = project["records"]["November"]["number"];
-                    dataset["data"][11] = project["records"]["December"]["number"];
-                    dataBarset["data"][0] = project["records"]["January"]["number"];
-                    dataBarset["data"][1] = project["records"]["February"]["number"];
-                    dataBarset["data"][2] = project["records"]["March"]["number"];
-                    dataBarset["data"][3] = project["records"]["April"]["number"];
-                    dataBarset["data"][4] = project["records"]["May"]["number"];
-                    dataBarset["data"][5] = project["records"]["June"]["number"];
-                    dataBarset["data"][6] = project["records"]["July"]["number"];
-                    dataBarset["data"][7] = project["records"]["August"]["number"];
-                    dataBarset["data"][8] = project["records"]["September"]["number"];
-                    dataBarset["data"][9] = project["records"]["October"]["number"];
-                    dataBarset["data"][10] = project["records"]["November"]["number"];
-                    dataBarset["data"][11] = project["records"]["December"]["number"];
+                    dataset["data"][0] = 0;
+                    dataset["data"][1] = 0;
+                    dataset["data"][2] = 0;
+                    dataset["data"][3] = 0;
+                    dataset["data"][4] = 0;
+                    dataset["data"][5] = 0;
+                    dataset["data"][6] = 0;
+                    dataset["data"][7] = 0;
+                    dataset["data"][8] = 0;
+                    dataset["data"][9] = 0;
+                    dataset["data"][10] = 0;
+                    dataset["data"][11] = 0;
+                    dataBarset["data"][0] = 0;
+                    dataBarset["data"][1] = 0;
+                    dataBarset["data"][2] = 0;
+                    dataBarset["data"][3] = 0;
+                    dataBarset["data"][4] = 0;
+                    dataBarset["data"][5] = 0;
+                    dataBarset["data"][6] = 0;
+                    dataBarset["data"][7] = 0;
+                    dataBarset["data"][8] = 0;
+                    dataBarset["data"][9] = 0;
+                    dataBarset["data"][10] = 0;
+                    dataBarset["data"][11] = 0;
                     doughnutset = {
                         value: 0,
                         color:project_color,
                         highlight: highlight_color,
-                        label: project["name"]
+                        label: "no records"
                     };
-                    doughnutset["value"] = project["records"]["January"]["number"]+project["records"]["February"]["number"]+project["records"]["March"]["number"]+project["records"]["April"]["number"]+project["records"]["May"]["number"]+project["records"]["June"]["number"]+project["records"]["July"]["number"]+project["records"]["August"]["number"]+project["records"]["September"]["number"]+project["records"]["October"]["number"]+project["records"]["November"]["number"]+project["records"]["December"]["number"];
+                    doughnutset["value"] = 1;
                     doughnutData.push(doughnutset);
                     data["datasets"].push(dataset);
                     dataBarChart["datasets"].push(dataset);

@@ -355,12 +355,20 @@ var Space = function (session){
         }
     },
     this.records = function(project_name, project_id) {
-        document.getElementById("projects-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
+        if(project_name == "all" && project_id == "all"){
+            document.getElementById("records-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
+        }else{
+            document.getElementById("projects-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
+        }
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log("Project name: "+project_name);
         console.log("Project id: "+project_id);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/"+project_id);
+        if(project_name == "all" && project_id == "all"){
+            xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/all");
+        }else{
+            xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/"+project_id);
+        }
         console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
@@ -370,8 +378,13 @@ var Space = function (session){
                     console.log("Cloud returned empty response!");
                 }else{
                     var response = JSON.parse(xmlhttp.responseText);
+                    if(project_name == "all" && project_id == "all"){
+                        document.getElementById("records-list").innerHTML = "";
+                    }else{
+                        document.getElementById("projects-list").innerHTML = "";
+                    }
                     this.dash_content = response;
-                    document.getElementById("projects-list").innerHTML = "";
+                    
                     for(var i = 0; i < response["records"].length; i++){
                         record = response["records"][i];
                         console.log(record);
@@ -396,24 +409,34 @@ var Space = function (session){
                         content += "</div>";                
                         content += "</div>";
                         content += "</div>";
-                        document.getElementById("projects-list").innerHTML += content;
-                    }
-                    document.getElementById("temporal-slider").innerHTML = "<div class=\"slider-date\"><div class=\"lower\"></div><div class=\"upper\"></div></div><span id=\"event-start\" class=\"temporal-val\">Thursday, 30th December 2010</span><span id=\"event-end\" class=\"temporal-val date-right\">Thursday, 1st January 2015</span>";
-                    $('.slider-date').noUiSlider({
-                        animate: true,
-                        connect: true,
-                        start: [ timestamp(response["records"][0]["created"]), timestamp(response["records"][response["records"].length-1]["created"]) ],
-                        step: 1 * 24 * 60 * 60 * 1000,
-                        format: wNumb({
-                            decimals: 0
-                            }),
-                        range: {
-                            min: timestamp(response["records"][0]["created"]),
-                            max: timestamp(response["records"][response["records"].length-1]["created"])
+                        if(project_name == "all" && project_id == "all"){
+                            document.getElementById("records-list").innerHTML += content;
+                        }else{
+                            document.getElementById("projects-list").innerHTML += content;
                         }
-                    });
-                    $(".slider-date").Link('lower').to($("#event-start"), setDate);
-                    $(".slider-date").Link('upper').to($("#event-end"), setDate);
+                    }
+                    if(document.getElementById("temporal-slider") && response["records"].length >0){
+                        document.getElementById("temporal-slider").innerHTML = "<div class=\"slider-date\"><div class=\"lower\"></div><div class=\"upper\"></div></div><span id=\"event-start\" class=\"temporal-val\">Thursday, 30th December 2010</span><span id=\"event-end\" class=\"temporal-val date-right\">Thursday, 1st January 2015</span>";
+                        $('.slider-date').noUiSlider({
+                            animate: true,
+                            connect: true,
+                            start: [ timestamp(response["records"][0]["created"]), timestamp(response["records"][response["records"].length-1]["created"]) ],
+                            step: 1 * 24 * 60 * 60 * 1000,
+                            format: wNumb({
+                                decimals: 0
+                                }),
+                            range: {
+                                min: timestamp(response["records"][0]["created"]),
+                                max: timestamp(response["records"][response["records"].length-1]["created"])
+                            }
+                        });
+                        $(".slider-date").Link('lower').to($("#event-start"), setDate);
+                        $(".slider-date").Link('upper').to($("#event-end"), setDate);
+                    }else{
+                        if(response["records"].length == 0){
+                            document.getElementById("temporal-slider").innerHTML = "<div><span class=\"chart-title cyan-text\">No records found.</span><div>";
+                        }
+                    }
                 }
             } else {
                 console.log("Dashboard failed");

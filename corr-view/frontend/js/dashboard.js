@@ -49,6 +49,9 @@ var dashboard = {
 		user.session = session;
         console.log(user.session);
         user.trusted();
+
+        var space = new Space(user.session);
+        space.records("all", "all");
 	},
 	diffs:function(session, options){
 		dashboard.content.innerHTML = "<div><span class=\"chart-title red-text\">Not designed yet!</span><div>";

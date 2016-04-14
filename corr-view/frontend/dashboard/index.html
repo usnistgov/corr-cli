@@ -61,12 +61,12 @@
                                     <i class="nav-action nav-action mdi-action-home"></i>
                                 </a>
                             </li>
-                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="dashboard"><a href="" id="nav-dashboard" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-dashboard"></i></a></li>
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
                                 <a href="../help" id= "nav-help" class="waves-effect waves-block waves-light">
                                     <i class="nav-action mdi-communication-live-help"></i>
                                 </a>
                             </li>
+                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="dashboard"><a href="" id="nav-dashboard" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-dashboard"></i></a></li>
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="logout"><a onclick="user.logout('dashboard')" class="waves-effect waves-block waves-light"><i class="nav-action mdi-action-exit-to-app"></i></a>
                             </li>
                         </ul>
@@ -82,67 +82,6 @@
             <div class="wrapper">
                 <section id="content">
                     <div class="container" id="dashboard-content">
-                        <!-- <div id="chart-dashboard">
-                            <div class="row">
-                                <div class="card">
-                                    <div class="card-move-up waves-effect waves-block waves-light">
-                                        <div class="move-up cyan darken-1">
-                                            <div>
-                                                <span class="chart-title white-text">Activity</span>
-                                            </div>
-                                            <div class="trending-line-chart-wrapper" id="trending-line-chart-wrapper">
-                                                <div class="preloader-wrapper big active">
-                                                    <div class="spinner-layer spinner-blue-only">
-                                                        <div class="circle-clipper left">
-                                                            <div class="circle"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-content">
-                                        <a class="btn-floating btn-move-up waves-effect waves-light darken-2 left"><i class="mdi-file-cloud-download  activator" onclick="space.exportToJson()"></i></a>
-                                        <div class="col s12 m3 l3">
-                                            <div id="doughnut-chart-wrapper">
-                                                <div class="preloader-wrapper big active">
-                                                    <div class="spinner-layer spinner-red-only">
-                                                        <div class="circle-clipper right">
-                                                            <div class="circle"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col s12 m2 l2">
-                                            <ul class="doughnut-chart-legend">
-                                            </ul>
-                                        </div>
-                                        <div class="col s12 m5 l6">
-                                            <div class="trending-bar-chart-wrapper" id="trending-bar-chart-wrapper">
-                                                <div class="preloader-wrapper big active">
-                                                    <div class="spinner-layer spinner-yellow-only">
-                                                        <div class="circle-clipper right">
-                                                            <div class="circle"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="card-widgets">
-                            <div id="projects-list" class="row" data-distance="100">
-                            <div class="progress">
-                              <div class="indeterminate"></div>
-                            </div>
-                            </div>
-                            <br/>
-                            <div id="temporal-slider">
-                            </div>
-                        </div> -->
                     </div>
                 </section>
             </div>
@@ -166,7 +105,6 @@
         <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>  
         <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>   
         <script type="text/javascript" src="../js/plugins/chartjs/chart.min.js"></script>
-        <script type="text/javascript" src="../js/plugins/chartjs/chart-script.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/jquery.sparkline.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/sparkline-script.js"></script>
         <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
@@ -220,13 +158,14 @@
                 document.getElementById("nav-help").href = "../help/?session="+user.session;
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
-                document.getElementById("float-menu").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-visibility\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"query\"><a href=\"#query-modal\" class=\"modal-trigger btn-floating btn-large orange darken-1\" onclick=\"return view('query');\"><i class=\"large mdi-image-tune\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"diffs\"><a href=\"#diffs-modal\" class=\"modal-trigger btn-floating btn-large green darken-1\" onclick=\"return view('diffs');\"><i class=\"large mdi-editor-vertical-align-center\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"records\"><a href=\"#records-modal\" class=\"modal-trigger btn-floating btn-large blue-grey\" onclick=\"return view('records');\"><i class=\"large mdi-file-cloud-upload\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"projects\"><a href=\"#projects-modal\" class=\"modal-trigger btn-floating btn-large brown darken-1\" onclick=\"return view('projects');\"><i class=\"large mdi-file-folder\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"applications\"><a href=\"#apps-modal\" class=\"modal-trigger btn-floating btn-large purple darken-1\" onclick=\"return view('apps');\"><i class=\"large mdi-navigation-apps\"></i></a></li></ul>";
+                document.getElementById("float-menu").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-visibility\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"query\"><a href=\"#query-modal\" class=\"modal-trigger btn-floating btn-large orange darken-1\" onclick=\"return view('query');\"><i class=\"large mdi-image-tune\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"diffs\"><a href=\"#diffs-modal\" class=\"modal-trigger btn-floating btn-large green darken-1\" onclick=\"return view('diffs');\"><i class=\"large mdi-editor-vertical-align-center\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"applications\"><a href=\"#apps-modal\" class=\"modal-trigger btn-floating btn-large purple darken-1\" onclick=\"return view('apps');\"><i class=\"large mdi-navigation-apps\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"records\"><a href=\"#records-modal\" class=\"modal-trigger btn-floating btn-large blue-grey\" onclick=\"return view('records');\"><i class=\"large mdi-file-cloud-upload\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"projects\"><a href=\"#projects-modal\" class=\"modal-trigger btn-floating btn-large brown darken-1\" onclick=\"return view('projects');\"><i class=\"large mdi-file-folder\"></i></a></li></ul>";
             }
 
             function view(scope){
                 window.location.replace("./?session="+this.session+"&view="+scope);
             }
         </script>
+        <script type="text/javascript" src="../js/plugins/chartjs/chart-script.js"></script>
 
     </body>
 
