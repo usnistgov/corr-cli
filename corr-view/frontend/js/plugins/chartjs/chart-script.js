@@ -42,7 +42,7 @@ var pieData = [];
 var param = window.location.search.substring(1);
 var parts = param.split("=");
 if(parts[0] == "session"){
-    var session = parts[1];
+    var session = parts[1].split("&")[0];
     var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
     console.log(session);
     xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+session+"/user/dashboard");

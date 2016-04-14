@@ -81,8 +81,8 @@
         <div id="main">
             <div class="wrapper">
                 <section id="content">
-                    <div class="container">
-                        <div id="chart-dashboard">
+                    <div class="container" id="dashboard-content">
+                        <!-- <div id="chart-dashboard">
                             <div class="row">
                                 <div class="card">
                                     <div class="card-move-up waves-effect waves-block waves-light">
@@ -102,7 +102,7 @@
                                         </div>
                                     </div>
                                     <div class="card-content">
-                                        <a class="btn-floating btn-move-up waves-effect waves-light darken-2 left"><i class="mdi-file-file-download activator" onclick="space.exportToJson()"></i></a>
+                                        <a class="btn-floating btn-move-up waves-effect waves-light darken-2 left"><i class="mdi-file-cloud-download  activator" onclick="space.exportToJson()"></i></a>
                                         <div class="col s12 m3 l3">
                                             <div id="doughnut-chart-wrapper">
                                                 <div class="preloader-wrapper big active">
@@ -142,7 +142,7 @@
                             <br/>
                             <div id="temporal-slider">
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </section>
             </div>
@@ -157,7 +157,7 @@
             </div>
         </footer>
 
-        <script src="../js/config.js"></script>
+        <script type="text/javascript" src="../js/config.js"></script>
 
         <script type="text/javascript" src="../js/materialize.js"></script>
         <script type="text/javascript" src="../js/prism.js"></script>
@@ -180,47 +180,51 @@
 
         <script type="text/javascript" src="../js/init.js"></script>
         <script type="text/javascript" src="../js/cloud.js"></script>
+        <script type="text/javascript" src="../js/dashboard.js"></script>
 
         <script type="text/javascript">
-            function timestamp(str){
-                return new Date(str).getTime();   
-            }
-            function nth (d) {
-              if(d>3 && d<21) return 'th';
-              switch (d % 10) {
-                case 1:  return "st";
-                case 2:  return "nd";
-                case 3:  return "rd";
-                default: return "th";
+            var param = window.location.search.substring(1);
+            var blocks = param.split("&");
+            var session = "";
+            var view_selected = "";
+            var options = [];
+            for(i=0;i<blocks.length;i++){
+                var parts = blocks[i].split("=");
+                if(parts[0] == "session"){
+                    session = parts[1];
+                }else if(parts[0] == "view"){
+                    view_selected = parts[1];
+                }else{
+                    options.push(blocks[i]);
                 }
             }
-            function formatDate ( date ) {
-                var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-                var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                return weekdays[date.getDay()] + ", " + date.getDate() + nth(date.getDate()) + " " + months[date.getMonth()] + " " + date.getFullYear();
+            if(session != "" && view_selected == ""){
+                dashboard.activity(session);
+            }else if(session != "" && view_selected == "apps"){
+                dashboard.apps(session);
+            }else if(session != "" && view_selected == "projects"){
+                dashboard.projects(session);
+            }else if(session != "" && view_selected == "records"){
+                dashboard.records(session, options);
+            }else if(session != "" && view_selected == "diffs"){
+                dashboard.diffs(session, options);
+            }else if(session != "" && view_selected == "query"){
+                dashboard.query(session, options);
+            }else{
+                window.location.replace("../error-404/");
             }
-            function setDate( value ){
-                $(this).html(formatDate(new Date(+value)));   
-            }
-            var param = window.location.search.substring(1);
-            var parts = param.split("=");
-            if(parts[0] == "session"){
-                var session = parts[1];
-                user.session = parts[1];
-                console.log(user.session);
-                user.trusted();
+
+            if (session != ""){
                 document.getElementById("nav-home-2").href = "../?session="+user.session;
                 document.getElementById("nav-home").href = "../?session="+user.session;
                 document.getElementById("nav-help").href = "../help/?session="+user.session;
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
-                document.getElementById("float-menu").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-visibility\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"query\"><a href=\"#query-modal\" class=\"modal-trigger btn-floating btn-large orange darken-1\"><i class=\"large mdi-image-tune\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"diffs\"><a href=\"#diffs-modal\" class=\"modal-trigger btn-floating btn-large green darken-1\"><i class=\"large mdi-editor-vertical-align-center\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"records\"><a href=\"#records-modal\" class=\"modal-trigger btn-floating btn-large blue-grey\"><i class=\"large mdi-file-cloud-upload\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"projects\"><a href=\"#projects-modal\" class=\"modal-trigger btn-floating btn-large brown darken-1\"><i class=\"large mdi-file-folder\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"applications\"><a href=\"#apps-modal\" class=\"modal-trigger btn-floating btn-large purple darken-1\"><i class=\"large mdi-navigation-apps\"></i></a></li></ul>";
+                document.getElementById("float-menu").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-visibility\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"query\"><a href=\"#query-modal\" class=\"modal-trigger btn-floating btn-large orange darken-1\" onclick=\"return view('query');\"><i class=\"large mdi-image-tune\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"diffs\"><a href=\"#diffs-modal\" class=\"modal-trigger btn-floating btn-large green darken-1\" onclick=\"return view('diffs');\"><i class=\"large mdi-editor-vertical-align-center\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"records\"><a href=\"#records-modal\" class=\"modal-trigger btn-floating btn-large blue-grey\" onclick=\"return view('records');\"><i class=\"large mdi-file-cloud-upload\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"projects\"><a href=\"#projects-modal\" class=\"modal-trigger btn-floating btn-large brown darken-1\" onclick=\"return view('projects');\"><i class=\"large mdi-file-folder\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"applications\"><a href=\"#apps-modal\" class=\"modal-trigger btn-floating btn-large purple darken-1\" onclick=\"return view('apps');\"><i class=\"large mdi-navigation-apps\"></i></a></li></ul>";
+            }
 
-                var space = new Space(user.session);
-                space.dashboard();
-            }else if(parts[0] == "action"){
-                var scope = parts[1];
-                window.location.replace("../error-404/");
+            function view(scope){
+                window.location.replace("./?session="+this.session+"&view="+scope);
             }
         </script>
 

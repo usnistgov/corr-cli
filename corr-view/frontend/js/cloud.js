@@ -321,27 +321,32 @@ var Space = function (session){
                         content += "</div>";
                         document.getElementById("projects-list").innerHTML += content;
                     }
-                    document.getElementById("temporal-slider").innerHTML = "<div class=\"slider-date\"><div class=\"lower\"></div><div class=\"upper\"></div></div><span id=\"event-start\" class=\"temporal-val\">Thursday, 30th December 2010</span><span id=\"event-end\" class=\"temporal-val date-right\">Thursday, 1st January 2015</span>";
-                    if(response["projects"].length >0){
-                        $('.slider-date').noUiSlider({
-                            animate: true,
-                            connect: true,
-                            start: [ timestamp(response["projects"][0]["project"]["created"]), timestamp(response["projects"][response["projects"].length - 1]["project"]["created"]) ],
-                            step: 1 * 24 * 60 * 60 * 1000,
-                            format: wNumb({
-                                decimals: 0
-                                }),
-                            range: {
-                                min: timestamp(response["projects"][0]["project"]["created"]),
-                                max: timestamp(response["projects"][response["projects"].length - 1]["project"]["created"])
-                            }
-                        });
-                        $(".slider-date").Link('lower').to($("#event-start"), setDate);
-                        $(".slider-date").Link('upper').to($("#event-end"), setDate);
+                    if(document.getElementById("temporal-slider") && response["projects"].length >0){
+                        document.getElementById("temporal-slider").innerHTML = "<div class=\"slider-date\"><div class=\"lower\"></div><div class=\"upper\"></div></div><span id=\"event-start\" class=\"temporal-val\">Thursday, 30th December 2010</span><span id=\"event-end\" class=\"temporal-val date-right\">Thursday, 1st January 2015</span>";
+                        if(response["projects"].length >0){
+                            $('.slider-date').noUiSlider({
+                                animate: true,
+                                connect: true,
+                                start: [ timestamp(response["projects"][0]["project"]["created"]), timestamp(response["projects"][response["projects"].length - 1]["project"]["created"]) ],
+                                step: 1 * 24 * 60 * 60 * 1000,
+                                format: wNumb({
+                                    decimals: 0
+                                    }),
+                                range: {
+                                    min: timestamp(response["projects"][0]["project"]["created"]),
+                                    max: timestamp(response["projects"][response["projects"].length - 1]["project"]["created"])
+                                }
+                            });
+                            $(".slider-date").Link('lower').to($("#event-start"), setDate);
+                            $(".slider-date").Link('upper').to($("#event-end"), setDate);
+                        }
+                    }else{
+                        if(response["projects"].length == 0){
+                            document.getElementById("temporal-slider").innerHTML = "<div><span class=\"chart-title cyan-text\">No project found.</span><div>";
+                        }
                     }
                     document.getElementById("footer-version").innerHTML = version;
                 }else{
-                    document.getElementById("temporal-slider").innerHTML = "<div class=\"slider-date\"><div class=\"lower\"></div><div class=\"upper\"></div></div><span id=\"event-start\" class=\"temporal-val\">Thursday, 30th December 2010</span><span id=\"event-end\" class=\"temporal-val date-right\">Thursday, 1st January 2015</span>";
                     console.log("Cloud returned empty response!");
                 }
             } else {
