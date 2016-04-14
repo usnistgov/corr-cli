@@ -75,6 +75,9 @@
             </div>
         </header>
 
+        <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        </div>
+
         <div id="main">
             <div class="wrapper">
                 <section id="content">
@@ -99,7 +102,7 @@
                                         </div>
                                     </div>
                                     <div class="card-content">
-                                        <a class="btn-floating btn-move-up waves-effect waves-light darken-2 right"><i class="mdi-file-file-download activator" onclick="space.exportToJson()"></i></a>
+                                        <a class="btn-floating btn-move-up waves-effect waves-light darken-2 left"><i class="mdi-file-file-download activator" onclick="space.exportToJson()"></i></a>
                                         <div class="col s12 m3 l3">
                                             <div id="doughnut-chart-wrapper">
                                                 <div class="preloader-wrapper big active">
@@ -210,6 +213,9 @@
                 document.getElementById("nav-home").href = "../?session="+user.session;
                 document.getElementById("nav-help").href = "../help/?session="+user.session;
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
+
+                document.getElementById("float-menu").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-visibility\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"query\"><a href=\"#query-modal\" class=\"modal-trigger btn-floating btn-large orange darken-1\"><i class=\"large mdi-image-tune\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"diffs\"><a href=\"#diffs-modal\" class=\"modal-trigger btn-floating btn-large green darken-1\"><i class=\"large mdi-editor-vertical-align-center\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"records\"><a href=\"#records-modal\" class=\"modal-trigger btn-floating btn-large blue-grey\"><i class=\"large mdi-file-cloud-upload\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"projects\"><a href=\"#projects-modal\" class=\"modal-trigger btn-floating btn-large brown darken-1\"><i class=\"large mdi-file-folder\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"applications\"><a href=\"#apps-modal\" class=\"modal-trigger btn-floating btn-large purple darken-1\"><i class=\"large mdi-navigation-apps\"></i></a></li></ul>";
+
                 var space = new Space(user.session);
                 space.dashboard();
             }else if(parts[0] == "action"){
