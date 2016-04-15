@@ -98,9 +98,9 @@
 
         <script type="text/javascript" src="../js/config.js"></script>
 
+        <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="../js/materialize.js"></script>
         <script type="text/javascript" src="../js/prism.js"></script>
-        <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>    
         <script type="text/javascript" src="../js/materialize.min.js"></script>
         <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>  
         <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>   
@@ -144,6 +144,7 @@
                 dashboard.projects(session);
             }else if(session != "" && view_selected == "records"){
                 dashboard.records(session, options);
+                var space = new Space(session);
             }else if(session != "" && view_selected == "diffs"){
                 dashboard.diffs(session, options);
             }else if(session != "" && view_selected == "query"){
@@ -158,7 +159,7 @@
                 document.getElementById("nav-help").href = "../help/?session="+user.session;
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
-                document.getElementById("float-menu").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-visibility\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"query\"><a href=\"#query-modal\" class=\"modal-trigger btn-floating btn-large orange darken-1\" onclick=\"return view('query');\"><i class=\"large mdi-image-tune\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"diffs\"><a href=\"#diffs-modal\" class=\"modal-trigger btn-floating btn-large green darken-1\" onclick=\"return view('diffs');\"><i class=\"large mdi-editor-vertical-align-center\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"applications\"><a href=\"#apps-modal\" class=\"modal-trigger btn-floating btn-large purple darken-1\" onclick=\"return view('apps');\"><i class=\"large mdi-navigation-apps\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"records\"><a href=\"#records-modal\" class=\"modal-trigger btn-floating btn-large blue-grey\" onclick=\"return view('records');\"><i class=\"large mdi-file-cloud-upload\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"projects\"><a href=\"#projects-modal\" class=\"modal-trigger btn-floating btn-large brown darken-1\" onclick=\"return view('projects');\"><i class=\"large mdi-file-folder\"></i></a></li></ul>";
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a href='#query-modal' class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a href='#diffs-modal' class='modal-trigger btn-floating btn-large green darken-1' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a href='#apps-modal' class='modal-trigger btn-floating btn-large purple darken-1' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a href='#records-modal' class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a href='#projects-modal' class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
             }
 
             function view(scope){

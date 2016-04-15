@@ -306,7 +306,7 @@ var Space = function (session){
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
-                        content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'><a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a><span class='card-title activator grey-text text-darken-4'> "+project["project"]["name"]+"</span>";
+                        content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'><a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a><a href=\"\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-action-delete'></i></a><a href=\"\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-editor-mode-edit'></i></a><a href=\"\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-editor-mode-edit'></i></a><span class='card-title activator white-text text-darken-4'> "+project["project"]["name"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
                         content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"]+"</p>";
                         content += "<p><i class='mdi-action-description cyan-text text-darken-2'></i> "+project["project"]["description"]+"</p>";
@@ -324,6 +324,26 @@ var Space = function (session){
                     if(document.getElementById("temporal-slider") && response["projects"].length >0){
                         document.getElementById("temporal-slider").innerHTML = "<div class='slider-date'><div class='lower'></div><div class='upper'></div></div><span id='event-start' class='temporal-val'>Thursday, 30th December 2010</span><span id='event-end' class='temporal-val date-right'>Thursday, 1st January 2015</span>";
                         if(response["projects"].length >0){
+                            function timestamp(str){
+                                return new Date(str).getTime();   
+                            }
+                            function nth (d) {
+                              if(d>3 && d<21) return 'th';
+                              switch (d % 10) {
+                                case 1:  return "st";
+                                case 2:  return "nd";
+                                case 3:  return "rd";
+                                default: return "th";
+                                }
+                            }
+                            function formatDate ( date ) {
+                                var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                                var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                                return weekdays[date.getDay()] + ", " + date.getDate() + nth(date.getDate()) + " " + months[date.getMonth()] + " " + date.getFullYear();
+                            }
+                            function setDate( value ){
+                                $(this).html(formatDate(new Date(+value)));   
+                            }
                             $('.slider-date').noUiSlider({
                                 animate: true,
                                 connect: true,
@@ -387,7 +407,7 @@ var Space = function (session){
                         if(record["container"] == false){
                             disable_download = "disabled";
                         }
-                        content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'><a onclick='space.pull('"+record["head"]["project"]+"','"+record["head"]["id"]+"')' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download'></i></a><span class='card-title activator grey-text text-darken-4'> "+record["head"]["label"]+"</span>";
+                        content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'><a onclick=\"space.pull('"+record["head"]["project"]+"','"+record["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download tooltipped' data-position='top' data-delay='50' data-tooltip='download'></i></a><span class='card-title activator grey-text text-darken-4'> "+record["head"]["label"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+record["head"]["created"]+"</p>";
                         content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+record["head"]["updated"]+"</p>";
                         content += "<p><i class='mdi-notification-event-note cyan-text text-darken-2'></i> "+record["head"]["id"]+"</p>";
@@ -404,21 +424,44 @@ var Space = function (session){
                     }
                     if(document.getElementById("temporal-slider") && response["records"].length >0){
                         document.getElementById("temporal-slider").innerHTML = "<div class='slider-date'><div class='lower'></div><div class='upper'></div></div><span id='event-start' class='temporal-val'>Thursday, 30th December 2010</span><span id='event-end' class='temporal-val date-right'>Thursday, 1st January 2015</span>";
-                        $('.slider-date').noUiSlider({
-                            animate: true,
-                            connect: true,
-                            start: [ timestamp(response["records"][0]["created"]), timestamp(response["records"][response["records"].length-1]["created"]) ],
-                            step: 1 * 24 * 60 * 60 * 1000,
-                            format: wNumb({
-                                decimals: 0
-                                }),
-                            range: {
-                                min: timestamp(response["records"][0]["created"]),
-                                max: timestamp(response["records"][response["records"].length-1]["created"])
+                        if(response["records"].length >0){
+                            function timestamp(str){
+                                return new Date(str).getTime();   
                             }
-                        });
-                        $(".slider-date").Link('lower').to($("#event-start"), setDate);
-                        $(".slider-date").Link('upper').to($("#event-end"), setDate);
+                            function nth (d) {
+                              if(d>3 && d<21) return 'th';
+                              switch (d % 10) {
+                                case 1:  return "st";
+                                case 2:  return "nd";
+                                case 3:  return "rd";
+                                default: return "th";
+                                }
+                            }
+                            function formatDate ( date ) {
+                                var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                                var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                                return weekdays[date.getDay()] + ", " + date.getDate() + nth(date.getDate()) + " " + months[date.getMonth()] + " " + date.getFullYear();
+                            }
+                            function setDate( value ){
+                                $(this).html(formatDate(new Date(+value)));   
+                            }
+                            console.log(response["records"][0]["head"]["created"]);
+                            $('.slider-date').noUiSlider({
+                                animate: true,
+                                connect: true,
+                                start: [ timestamp(response["records"][0]["head"]["created"]), timestamp(response["records"][response["records"].length-1]["head"]["created"]) ],
+                                step: 1 * 24 * 60 * 60 * 1000,
+                                format: wNumb({
+                                    decimals: 0
+                                    }),
+                                range: {
+                                    min: timestamp(response["records"][0]["head"]["created"]),
+                                    max: timestamp(response["records"][response["records"].length-1]["head"]["created"])
+                                }
+                            });
+                            $(".slider-date").Link('lower').to($("#event-start"), setDate);
+                            $(".slider-date").Link('upper').to($("#event-end"), setDate);
+                        }
                     }else{
                         if(response["records"].length == 0){
                             document.getElementById("temporal-slider").innerHTML = "<div><span class='chart-title cyan-text'>No records found.</span><div>";
@@ -429,9 +472,7 @@ var Space = function (session){
                 console.log("Dashboard failed");
             }
         }
-        
-    }
-
+    },
     this.exportToJson = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
@@ -460,9 +501,10 @@ var Space = function (session){
                 console.log("Dashboard download failed");
             }
         }
-    }
-
+    },
     this.pull = function(project_name, record_id) {
+        console.log("Before...");
         window.location.replace(url+"/private/"+this.session+"/record/pull"+"/"+record_id);
+        console.log("...After");
     }
 };
