@@ -302,19 +302,19 @@ var Space = function (session){
                         if(project["project"]["records"] == 0){
                             disable_view = "disabled";
                         }
-                        var content = "<div class=\"col s12 m6 l4\">";
-                        content += "<div id=\"profile-card\" class=\"card\">";
-                        content += "<div class=\"card-image waves-effect waves-block waves-light\"><img class=\"activator\" src=\"../images/user-bg.jpg\" alt=\"user background\"></div>";
-                        content += "<div class=\"card-content\">";
-                        content += "<img src=\"../images/project.png\" alt=\"\" class=\"circle responsive-img activator card-profile-image\"><a onclick=\"space.records('"+project["project"]["name"]+"','"+project["project"]["id"]+"')\" class=\"btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"\"><i class=\"mdi-action-visibility\"></i></a><span class=\"card-title activator grey-text text-darken-4\"> "+project["project"]["name"]+"</span>";
-                        content += "<p class=\"grey-text ultra-small\"><i class=\"mdi-device-access-time cyan-text text-darken-2\"></i> "+project["project"]["created"]+"</p>";
-                        content += "<p><i class=\"mdi-device-access-alarm cyan-text text-darken-2\"></i> "+project["project"]["duration"]+"</p>";
-                        content += "<p><i class=\"mdi-action-description cyan-text text-darken-2\"></i> "+project["project"]["description"]+"</p>";
-                        content += "<p><i class=\"mdi-action-subject cyan-text text-darken-2\"></i> "+project["project"]["goals"]+"</p>";
-                        content += "<div class=\"card-action center-align\">";
-                        content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-file-cloud-done cyan-text text-darken-2\"></i> <span class=\"records badge\">"+project["project"]["records"]+"</span></a>";
-                        content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-image-compare cyan-text text-darken-2\"></i> <span class=\"diffs badge\">"+project["project"]["diffs"]+"</span></a>";
-                        content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-editor-insert-chart cyan-text text-darken-2\"></i> <span class=\"containers badge\">"+project["project"]["environments"]+"</span></a>";
+                        var content = "<div class='col s12 m6 l4'>";
+                        content += "<div id='profile-card' class='card'>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-content'>";
+                        content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'><a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a><span class='card-title activator grey-text text-darken-4'> "+project["project"]["name"]+"</span>";
+                        content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
+                        content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"]+"</p>";
+                        content += "<p><i class='mdi-action-description cyan-text text-darken-2'></i> "+project["project"]["description"]+"</p>";
+                        content += "<p><i class='mdi-action-subject cyan-text text-darken-2'></i> "+project["project"]["goals"]+"</p>";
+                        content += "<div class='card-action center-align'>";
+                        content += "<a href='#' class='valign'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
+                        content += "<a href='#' class='valign'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["project"]["diffs"]+"</span></a>";
+                        content += "<a href='#' class='valign'><i class='mdi-editor-insert-chart cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
                         content += "</div>";
                         content += "</div>";
                         content += "</div>";
@@ -322,7 +322,7 @@ var Space = function (session){
                         document.getElementById("projects-list").innerHTML += content;
                     }
                     if(document.getElementById("temporal-slider") && response["projects"].length >0){
-                        document.getElementById("temporal-slider").innerHTML = "<div class=\"slider-date\"><div class=\"lower\"></div><div class=\"upper\"></div></div><span id=\"event-start\" class=\"temporal-val\">Thursday, 30th December 2010</span><span id=\"event-end\" class=\"temporal-val date-right\">Thursday, 1st January 2015</span>";
+                        document.getElementById("temporal-slider").innerHTML = "<div class='slider-date'><div class='lower'></div><div class='upper'></div></div><span id='event-start' class='temporal-val'>Thursday, 30th December 2010</span><span id='event-end' class='temporal-val date-right'>Thursday, 1st January 2015</span>";
                         if(response["projects"].length >0){
                             $('.slider-date').noUiSlider({
                                 animate: true,
@@ -342,7 +342,7 @@ var Space = function (session){
                         }
                     }else{
                         if(response["projects"].length == 0){
-                            document.getElementById("temporal-slider").innerHTML = "<div><span class=\"chart-title cyan-text\">No project found.</span><div>";
+                            document.getElementById("temporal-slider").innerHTML = "<div><span class='chart-title cyan-text'>No project found.</span><div>";
                         }
                     }
                     document.getElementById("footer-version").innerHTML = version;
@@ -354,17 +354,12 @@ var Space = function (session){
             }
         }
     },
-    this.records = function(project_name, project_id) {
-        if(project_name == "all" && project_id == "all"){
-            document.getElementById("records-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
-        }else{
-            document.getElementById("projects-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
-        }
+    this.records = function(project_id) {
+        document.getElementById("records-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-        console.log("Project name: "+project_name);
         console.log("Project id: "+project_id);
-        if(project_name == "all" && project_id == "all"){
+        if(project_id == "all"){
             xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/all");
         }else{
             xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/"+project_id);
@@ -378,45 +373,37 @@ var Space = function (session){
                     console.log("Cloud returned empty response!");
                 }else{
                     var response = JSON.parse(xmlhttp.responseText);
-                    if(project_name == "all" && project_id == "all"){
-                        document.getElementById("records-list").innerHTML = "";
-                    }else{
-                        document.getElementById("projects-list").innerHTML = "";
-                    }
+                    document.getElementById("records-list").innerHTML = "";
                     this.dash_content = response;
                     
                     for(var i = 0; i < response["records"].length; i++){
                         record = response["records"][i];
                         console.log(record);
-                        var content = "<div class=\"col s12 m6 l4\" id=\"record-"+record["head"]["id"]+"\"> ";
-                        content += "<div id=\"profile-card\" class=\"card\">";
-                        content += "<div class=\"card-image waves-effect waves-block waves-light\"><img class=\"activator\" src=\"../images/user-bg.jpg\" alt=\"user background\"></div>";
-                        content += "<div class=\"card-content\">";
+                        var content = "<div class='col s12 m6 l4' id='record-"+record["head"]["id"]+"'> ";
+                        content += "<div id='profile-card' class='card'>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-content'>";
                         var disable_download = "";
                         if(record["container"] == false){
                             disable_download = "disabled";
                         }
-                        content += "<img src=\"../images/record.png\" alt=\"\" class=\"circle responsive-img activator card-profile-image\"><a onclick=\"space.pull('"+record["head"]["project"]+"','"+record["head"]["id"]+"')\" class=\"btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"\"><i class=\"mdi-file-cloud-download\"></i></a><span class=\"card-title activator grey-text text-darken-4\"> "+record["head"]["label"]+"</span>";
-                        content += "<p class=\"grey-text ultra-small\"><i class=\"mdi-device-access-time cyan-text text-darken-2\"></i> "+record["head"]["created"]+"</p>";
-                        content += "<p><i class=\"mdi-device-access-alarm cyan-text text-darken-2\"></i> "+record["head"]["updated"]+"</p>";
-                        content += "<p><i class=\"mdi-notification-event-note cyan-text text-darken-2\"></i> "+record["head"]["id"]+"</p>";
-                        content += "<p><i class=\"mdi-notification-sync cyan-text text-darken-2\"></i> "+record["head"]["status"]+"</p>";
-                        content += "<div class=\"card-action center-align\">";
-                        content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-action-input cyan-text text-darken-2\"></i> <span class=\"inputs badge\">"+record["head"]["inputs"]+"</span></a>";
-                        content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-action-launch cyan-text text-darken-2\"></i> <span class=\"outputs badge\">"+record["head"]["outputs"]+"</span></a>";
-                        content += "<a href=\"#\" class=\"valign\"><i class=\"mdi-editor-insert-link cyan-text text-darken-2\"></i> <span class=\"dependencies badge\">"+record["head"]["dependencies"]+"</span></a>";
+                        content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'><a onclick='space.pull('"+record["head"]["project"]+"','"+record["head"]["id"]+"')' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download'></i></a><span class='card-title activator grey-text text-darken-4'> "+record["head"]["label"]+"</span>";
+                        content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+record["head"]["created"]+"</p>";
+                        content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+record["head"]["updated"]+"</p>";
+                        content += "<p><i class='mdi-notification-event-note cyan-text text-darken-2'></i> "+record["head"]["id"]+"</p>";
+                        content += "<p><i class='mdi-notification-sync cyan-text text-darken-2'></i> "+record["head"]["status"]+"</p>";
+                        content += "<div class='card-action center-align'>";
+                        content += "<a href='#' class='valign'><i class='mdi-action-input cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
+                        content += "<a href='#' class='valign'><i class='mdi-action-launch cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
+                        content += "<a href='#' class='valign'><i class='mdi-editor-insert-link cyan-text text-darken-2'></i> <span class='dependencies badge'>"+record["head"]["dependencies"]+"</span></a>";
                         content += "</div>";
                         content += "</div>";                
                         content += "</div>";
                         content += "</div>";
-                        if(project_name == "all" && project_id == "all"){
-                            document.getElementById("records-list").innerHTML += content;
-                        }else{
-                            document.getElementById("projects-list").innerHTML += content;
-                        }
+                        document.getElementById("records-list").innerHTML += content;
                     }
                     if(document.getElementById("temporal-slider") && response["records"].length >0){
-                        document.getElementById("temporal-slider").innerHTML = "<div class=\"slider-date\"><div class=\"lower\"></div><div class=\"upper\"></div></div><span id=\"event-start\" class=\"temporal-val\">Thursday, 30th December 2010</span><span id=\"event-end\" class=\"temporal-val date-right\">Thursday, 1st January 2015</span>";
+                        document.getElementById("temporal-slider").innerHTML = "<div class='slider-date'><div class='lower'></div><div class='upper'></div></div><span id='event-start' class='temporal-val'>Thursday, 30th December 2010</span><span id='event-end' class='temporal-val date-right'>Thursday, 1st January 2015</span>";
                         $('.slider-date').noUiSlider({
                             animate: true,
                             connect: true,
@@ -434,7 +421,7 @@ var Space = function (session){
                         $(".slider-date").Link('upper').to($("#event-end"), setDate);
                     }else{
                         if(response["records"].length == 0){
-                            document.getElementById("temporal-slider").innerHTML = "<div><span class=\"chart-title cyan-text\">No records found.</span><div>";
+                            document.getElementById("temporal-slider").innerHTML = "<div><span class='chart-title cyan-text'>No records found.</span><div>";
                         }
                     }
                 }

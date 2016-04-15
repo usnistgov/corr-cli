@@ -59,13 +59,13 @@ if(parts[0] == "session"){
                 var projects = response["projects"];
 
                 if(document.getElementById("trending-line-chart-wrapper"))
-                    document.getElementById("trending-line-chart-wrapper").innerHTML = "<canvas id=\"trending-line-chart\" height=\"70\"></canvas>";
+                    document.getElementById("trending-line-chart-wrapper").innerHTML = "<canvas id='trending-line-chart' height='70'></canvas>";
 
                 if(document.getElementById("doughnut-chart-wrapper"))
-                    document.getElementById("doughnut-chart-wrapper").innerHTML = "<canvas id=\"doughnut-chart\" height=\"200\"></canvas><div class=\"doughnut-chart-status\" id=\"doughnut-chart-status\">"+records_total+"<p class=\"ultra-small center-align\">Records</p></div>";
+                    document.getElementById("doughnut-chart-wrapper").innerHTML = "<canvas id='doughnut-chart' height='200'></canvas><div class='doughnut-chart-status' id='doughnut-chart-status'>"+records_total+"<p class='ultra-small center-align'>Records</p></div>";
 
                 if(document.getElementById("trending-bar-chart-wrapper"))
-                    document.getElementById("trending-bar-chart-wrapper").innerHTML = "<canvas id=\"trending-bar-chart\" height=\"90\"></canvas>";
+                    document.getElementById("trending-bar-chart-wrapper").innerHTML = "<canvas id='trending-bar-chart' height='90'></canvas>";
                 data["datasets"] = [];
                 dataBarChart["datasets"] = [];
                 doughnutData = [];

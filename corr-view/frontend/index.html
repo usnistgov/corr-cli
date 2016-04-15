@@ -221,7 +221,7 @@
                             <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content  green white-text">
-                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Total Users</p>
+                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Users</p>
                                         <h4 class="card-stats-number" id="total-users">N/A</h4>
                                         </p>
                                     </div>
@@ -230,7 +230,7 @@
                             <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content purple white-text">
-                                        <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Total Applications</p>
+                                        <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Applications</p>
                                         <h4 class="card-stats-number" id="total-apps">N/A</h4>
                                     </div>
                                 </div>
@@ -238,7 +238,7 @@
                             <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content brown white-text">
-                                        <p class="card-stats-title"><i class="mdi-file-folder"></i> Total Projects</p>
+                                        <p class="card-stats-title"><i class="mdi-file-folder"></i> Projects</p>
                                         <h4 class="card-stats-number" id="total-projects">N/A</h4>
                                     </div>
                                 </div>
@@ -246,7 +246,7 @@
                             <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content blue-grey white-text">
-                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Total Records</p>
+                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Records</p>
                                         <h4 class="card-stats-number" id="total-records">N/A</h4>
                                     </div>
                                 </div>
@@ -254,7 +254,7 @@
                             <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content red white-text">
-                                        <p class="card-stats-title"><i class="mdi-device-storage"></i> Total Storage</p>
+                                        <p class="card-stats-title"><i class="mdi-device-storage"></i> Storage</p>
                                         <h4 class="card-stats-number" id="total-storage">N/A</h4>
                                     </div>
                                 </div>
@@ -262,7 +262,7 @@
                             <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content orange white-text">
-                                        <p class="card-stats-title"><i class="mdi-av-equalizer"></i> Total Traffic</p>
+                                        <p class="card-stats-title"><i class="mdi-av-equalizer"></i> Traffic</p>
                                         <h4 class="card-stats-number" id="total-traffic">N/A</h4>
                                     </div>
                                 </div>
@@ -477,8 +477,8 @@
                 document.getElementById("nav-home").href = "./?session="+user.session;
                 document.getElementById("nav-help").href = "./help/?session="+user.session;
                 document.getElementById("nav-login").remove();
-                document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"./dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
-                document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-settings\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"account\"><a href=\"#account-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-communication-vpn-key\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"profile\"><a href=\"#profile-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-action-account-circle\"></i></a></li></ul>";
+                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='./dashboard/?session="+user.session+"' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick='user.logout()' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
+                document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li></ul>";
 
                 document.getElementById('account-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
                 document.getElementById('update-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
