@@ -164,37 +164,46 @@ def dashboard_records(hash_session, project_id):
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
-                project = ProjectModel.objects.with_id(project_id)
-                if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
-                    return fk.redirect('{0}:{1}/?action=records_failed'.format(VIEW_HOST, VIEW_PORT))
+                if project_id == "all":
+                    projects = ProjectModel.objects(owner=current_user)
+                    records = {'size':0, 'records':[]}
+                    for project in projects:
+                        for r in project.records:
+                            records['records'].append(json.loads(r.summary_json()))
+                    records['size'] = len(records['records'])
+                    return fk.Response(json.dumps(records, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                 else:
-                    print str(project.activity_json())
-                    return fk.Response(project.activity_json(), mimetype='application/json')
-                # project = {"project":json.loads(p.summary_json())}
-                # records = RecordModel.objects(project=p)
-                # records_object = []
-                # for record in records:
-                #     record_summary = json.loads(record.summary_json())['head']
-                #     record_object = {"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)}
-                #     record_object['inputs'] = record_summary['inputs']
-                #     record_object['outputs'] = record_summary['outputs']
-                #     record_object['dependencies'] = record_summary['dependencies']
-                #     diffs = []
-                #     founds = DiffModel.objects(record_from=record)
-                #     if founds != None:
-                #         for diff in founds:
-                #             diffs.append(diff.info())
-                #     founds = DiffModel.objects(record_to=record)
-                #     if founds != None:
-                #         for diff in founds:
-                #             diffs.append(diff.info()) 
+                    project = ProjectModel.objects.with_id(project_id)
+                    if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
+                        return fk.redirect('{0}:{1}/?action=records_failed'.format(VIEW_HOST, VIEW_PORT))
+                    else:
+                        print str(project.activity_json())
+                        return fk.Response(project.activity_json(), mimetype='application/json')
+                    # project = {"project":json.loads(p.summary_json())}
+                    # records = RecordModel.objects(project=p)
+                    # records_object = []
+                    # for record in records:
+                    #     record_summary = json.loads(record.summary_json())['head']
+                    #     record_object = {"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)}
+                    #     record_object['inputs'] = record_summary['inputs']
+                    #     record_object['outputs'] = record_summary['outputs']
+                    #     record_object['dependencies'] = record_summary['dependencies']
+                    #     diffs = []
+                    #     founds = DiffModel.objects(record_from=record)
+                    #     if founds != None:
+                    #         for diff in founds:
+                    #             diffs.append(diff.info())
+                    #     founds = DiffModel.objects(record_to=record)
+                    #     if founds != None:
+                    #         for diff in founds:
+                    #             diffs.append(diff.info()) 
 
-                #     record_object['diffs'] = len(diffs)
-                #     records_object.append(record_object)
-                #     print str(record_object)
+                    #     record_object['diffs'] = len(diffs)
+                    #     records_object.append(record_object)
+                    #     print str(record_object)
 
-                # project["activity"] = {"number":len(records), "records":records_object}
-                # return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                    # project["activity"] = {"number":len(records), "records":records_object}
+                    # return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.redirect('{0}:{1}/error-401/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
