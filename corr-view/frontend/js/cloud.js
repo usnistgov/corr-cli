@@ -306,7 +306,7 @@ var Space = function (session){
                         content += "<div id=\"profile-card\" class=\"card\">";
                         content += "<div class=\"card-image waves-effect waves-block waves-light\"><img class=\"activator\" src=\"../images/user-bg.jpg\" alt=\"user background\"></div>";
                         content += "<div class=\"card-content\">";
-                        content += "<img src=\"../images/project.png\" alt=\"\" class=\"circle responsive-img activator card-profile-image\"><a onclick=\"space.records('"+project["project"]["name"]+"','"+project["project"]["id"]+"')\" class=\"btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"\"><i class=\"mdi-action-visibility\"></i></a><span class=\"card-title activator grey-text text-darken-4\"> "+project["project"]["name"]+"</span>";
+                        content += "<img src=\"../images/project.png\" alt=\"\" class=\"circle responsive-img activator card-profile-image\"><a href=\"./?session="+session+"&view=records&project="+project["project"]["id"]+"\" class=\"btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"\"><i class=\"mdi-action-visibility\"></i></a><span class=\"card-title activator grey-text text-darken-4\"> "+project["project"]["name"]+"</span>";
                         content += "<p class=\"grey-text ultra-small\"><i class=\"mdi-device-access-time cyan-text text-darken-2\"></i> "+project["project"]["created"]+"</p>";
                         content += "<p><i class=\"mdi-device-access-alarm cyan-text text-darken-2\"></i> "+project["project"]["duration"]+"</p>";
                         content += "<p><i class=\"mdi-action-description cyan-text text-darken-2\"></i> "+project["project"]["description"]+"</p>";
@@ -354,17 +354,12 @@ var Space = function (session){
             }
         }
     },
-    this.records = function(project_name, project_id) {
-        if(project_name == "all" && project_id == "all"){
-            document.getElementById("records-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
-        }else{
-            document.getElementById("projects-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
-        }
+    this.records = function(project_id) {
+        document.getElementById("records-list").innerHTML = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-        console.log("Project name: "+project_name);
         console.log("Project id: "+project_id);
-        if(project_name == "all" && project_id == "all"){
+        if(project_id == "all"){
             xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/all");
         }else{
             xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/"+project_id);
@@ -378,11 +373,7 @@ var Space = function (session){
                     console.log("Cloud returned empty response!");
                 }else{
                     var response = JSON.parse(xmlhttp.responseText);
-                    if(project_name == "all" && project_id == "all"){
-                        document.getElementById("records-list").innerHTML = "";
-                    }else{
-                        document.getElementById("projects-list").innerHTML = "";
-                    }
+                    document.getElementById("records-list").innerHTML = "";
                     this.dash_content = response;
                     
                     for(var i = 0; i < response["records"].length; i++){
@@ -409,11 +400,7 @@ var Space = function (session){
                         content += "</div>";                
                         content += "</div>";
                         content += "</div>";
-                        if(project_name == "all" && project_id == "all"){
-                            document.getElementById("records-list").innerHTML += content;
-                        }else{
-                            document.getElementById("projects-list").innerHTML += content;
-                        }
+                        document.getElementById("records-list").innerHTML += content;
                     }
                     if(document.getElementById("temporal-slider") && response["records"].length >0){
                         document.getElementById("temporal-slider").innerHTML = "<div class=\"slider-date\"><div class=\"lower\"></div><div class=\"upper\"></div></div><span id=\"event-start\" class=\"temporal-val\">Thursday, 30th December 2010</span><span id=\"event-end\" class=\"temporal-val date-right\">Thursday, 1st January 2015</span>";

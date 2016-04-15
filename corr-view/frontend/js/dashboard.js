@@ -49,9 +49,15 @@ var dashboard = {
 		user.session = session;
         console.log(user.session);
         user.trusted();
-
+        var project = "all";
+        for(var i=0;i<options.length;i++){
+            var parts = options[i].split("=");
+            if(parts[0] == "project"){
+                project = parts[1];
+            }
+        }
         var space = new Space(user.session);
-        space.records("all", "all");
+        space.records(project);
 	},
 	diffs:function(session, options){
 		dashboard.content.innerHTML = "<div><span class=\"chart-title red-text\">Not designed yet!</span><div>";
