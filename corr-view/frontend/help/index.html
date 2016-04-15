@@ -609,7 +609,7 @@
 
         <script type="text/javascript">
             $(document).ready(function(){
-                    $('.tooltipped').tooltip({delay: 50});
+                $('.tooltipped').tooltip({delay: 50});
             });
             var param = window.location.search.substring(1);
             var parts = param.split("=");
@@ -625,6 +625,7 @@
             }else if(parts[0] == "action"){
                 var scope = parts[1];
             }
+            config.version();
             function loginKeyPress(e)
             {
                 e = e || window.event;
