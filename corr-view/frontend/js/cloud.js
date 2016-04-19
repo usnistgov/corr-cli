@@ -306,7 +306,12 @@ var Space = function (session){
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
-                        content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'><a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a><a href=\"\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-action-delete'></i></a><a href=\"\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-editor-mode-edit'></i></a><a href=\"\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-editor-mode-edit'></i></a><span class='card-title activator white-text text-darken-4'> "+project["project"]["name"]+"</span>";
+                        content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
+                        content += "<a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a>";
+                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-action-delete'></i></a>";
+                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-editor-mode-edit'></i></a>";
+                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-editor-mode-edit'></i></a>";
+                        content += "<span class='card-title activator white-text text-darken-4'> "+project["project"]["name"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
                         content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"]+"</p>";
                         content += "<p><i class='mdi-action-description cyan-text text-darken-2'></i> "+project["project"]["description"]+"</p>";
