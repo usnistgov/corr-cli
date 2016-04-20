@@ -302,24 +302,29 @@ var Space = function (session){
                         if(project["project"]["records"] == 0){
                             disable_view = "disabled";
                         }
+                        // add tooltip
+                        // update to inputs
+                        // Make records clickable
+                        // Remove the view button since bottom info will be clickage.
+                        // Change the order to: View | Edit | Upload | Remove
                         var content = "<div class='col s12 m6 l4'>";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a>";
-                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-action-delete'></i></a>";
-                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-editor-mode-edit'></i></a>";
-                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right ><i class='mdi-editor-mode-edit'></i></a>";
+                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
+                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-file-cloud-upload'></i></a>";
+                        content += "<a href='' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
                         content += "<span class='card-title activator white-text text-darken-4'> "+project["project"]["name"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
                         content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"]+"</p>";
                         content += "<p><i class='mdi-action-description cyan-text text-darken-2'></i> "+project["project"]["description"]+"</p>";
                         content += "<p><i class='mdi-action-subject cyan-text text-darken-2'></i> "+project["project"]["goals"]+"</p>";
                         content += "<div class='card-action center-align'>";
-                        content += "<a href='#' class='valign'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
+                        content += "<a href='#' class='valign left'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
                         content += "<a href='#' class='valign'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["project"]["diffs"]+"</span></a>";
-                        content += "<a href='#' class='valign'><i class='mdi-editor-insert-chart cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
+                        content += "<a href='#' class='valign right'><i class='mdi-editor-insert-chart cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
                         content += "</div>";
                         content += "</div>";
                         content += "</div>";
