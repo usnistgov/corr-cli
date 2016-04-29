@@ -123,37 +123,37 @@
         <script type="text/javascript">
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
-            var session = "";
+            // var session = "";
             var view_selected = "";
             var options = [];
             for(i=0;i<blocks.length;i++){
                 var parts = blocks[i].split("=");
                 if(parts[0] == "session"){
-                    session = parts[1];
+                    user.session = parts[1];
                 }else if(parts[0] == "view"){
                     view_selected = parts[1];
                 }else{
                     options.push(blocks[i]);
                 }
             }
-            if(session != "" && view_selected == ""){
-                dashboard.activity(session);
-            }else if(session != "" && view_selected == "apps"){
-                dashboard.apps(session);
-            }else if(session != "" && view_selected == "projects"){
-                dashboard.projects(session);
-            }else if(session != "" && view_selected == "records"){
-                dashboard.records(session, options);
-                var space = new Space(session);
-            }else if(session != "" && view_selected == "diffs"){
-                dashboard.diffs(session, options);
-            }else if(session != "" && view_selected == "query"){
-                dashboard.query(session, options);
+            if(user.session != "" && view_selected == ""){
+                dashboard.activity(user.session);
+            }else if(user.session != "" && view_selected == "apps"){
+                dashboard.apps(user.session);
+            }else if(user.session != "" && view_selected == "projects"){
+                dashboard.projects(user.session);
+            }else if(user.session != "" && view_selected == "records"){
+                dashboard.records(user.session, options);
+                var space = new Space(user.session);
+            }else if(user.session != "" && view_selected == "diffs"){
+                dashboard.diffs(user.session, options);
+            }else if(user.session != "" && view_selected == "query"){
+                dashboard.query(user.session, options);
             }else{
                 window.location.replace("../error-404/");
             }
 
-            if (session != ""){
+            if (user.session != ""){
                 document.getElementById("nav-home-2").href = "../?session="+user.session;
                 document.getElementById("nav-home").href = "../?session="+user.session;
                 document.getElementById("nav-help").href = "../help/?session="+user.session;
@@ -163,7 +163,7 @@
             }
 
             function view(scope){
-                window.location.replace("./?session="+this.session+"&view="+scope);
+                window.location.replace("./?session="+user.session+"&view="+scope);
             }
 
             function projectEdit(project_id){

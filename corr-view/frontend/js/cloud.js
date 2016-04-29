@@ -203,9 +203,9 @@ var user = {
                         var version = response["version"];
                         console.log("Version: "+version);
                         document.getElementById("footer-version").innerHTML = version;
+                        // Materialize.toast('<span>Access trusted!</span>', 3000);
                     }
                 }
-                Materialize.toast('<span>Access trusted!</span>', 3000);
                 
             } else {
                 window.location.replace("../error-404/");
