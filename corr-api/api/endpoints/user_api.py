@@ -1539,10 +1539,11 @@ def user_project_create(api_token, app_token):
                             cloned_from = str(clone.id)
                     if (cloned_from == '' and cloned_from_id != ''):
                         return api_response(400, 'Missing references mandatory fields', 'A project should have an existing original record when provided original record.')
-                    project, created = ProjectModel.objects.get_or_create(owner=current_user, name=name)
-                    if not created:
+                    project = ProjectModel.objects(owner=current_user, name=name)
+                    if project:
                         return api_response(200, 'Project already exists', project.info())
                     else:
+                        project, created = ProjectModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), owner=current_user, name=name)
                         # project.application = current_app
                         project.description = description
                         project.goals = goals

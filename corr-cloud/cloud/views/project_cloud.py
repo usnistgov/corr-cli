@@ -196,10 +196,12 @@ def project_edit(hash_session, project_id):
                         description = data.get("description", project.description)
                         goals = data.get("goals", project.goals)
                         group = data.get("group", project.group)
+                        tags = data.get("tags", ','.join(project.tags))
                         environment = data.get("environment", {})
                         project.description = description
                         project.goals = goals
                         project.group = group
+                        project.tags = tags.split(',')
                         if len(environment) != 0:
                             environment_model = EnvironmentModel.objects.with_id(environment['id'])
                             if environment_model is not None:

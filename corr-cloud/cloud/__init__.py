@@ -201,14 +201,15 @@ def cloud_response(code, title, content):
     return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
 
 def delete_record_files(record):
-    s3_files = s3.Bucket('reproforge-pictures')
+    s3_files = s3.Bucket('reproforge-files')
 
     from corrdb.common.models import RecordModel
     from corrdb.common.models import FileModel
 
-    for record in project.records:
-        for _file in record.files:
-            s3_files.delete_key(_file.location)
+    for _file_id in record.resources:
+        _file = FileModel.objects.with_id(_file_id)
+        s3_files.delete_key(_file.location)
+        _file.remove()
 
 def delete_record_file(record_file):
     s3_files = s3.Bucket('reproforge-pictures')

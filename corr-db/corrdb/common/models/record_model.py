@@ -96,7 +96,7 @@ class RecordModel(db.Document):
         data['head'] = {'updated':str(self.updated_at),
          'id': str(self.id), 'project':str(self.project.id), 
          'label': self.label, 'created':str(self.created_at), 'status' : self.status, 'access':self.access}
-        data['head']['tags'] = self.tags
+        data['head']['tags'] = ','.join(self.tags)
         data['head']['comments'] = len(self.comments)
         data['head']['resources'] = len(self.resources)
         data['head']['inputs'] = len(self.inputs)
@@ -184,7 +184,7 @@ class RecordModel(db.Document):
         data['head']['dependencies'] = len(self.dependencies)
         data['head']['comments'] = len(self.comments)
         data['head']['resources'] = len(self.resources)
-        data['head']['rationels'] = len(self.rationels)
+        data['head']['rationels'] = '.'.join(self.rationels)
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
 class RecordBodyModel(db.Document):

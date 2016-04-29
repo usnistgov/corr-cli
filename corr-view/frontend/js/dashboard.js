@@ -10,7 +10,7 @@ var dashboard = {
         space.dashboard();
 	},
 	apps:function(session){
-		dashboard.content.innerHTML = "<div class='center'><span class='chart-title red-text'>Not designed yet!</span><div>";
+		dashboard.content.innerHTML = "<div class='center'><span class='chart-title red-text'>Coming soon!</span><div>";
 		user.session = session;
         console.log(user.session);
         user.trusted();
@@ -40,13 +40,13 @@ var dashboard = {
         space.records(project);
 	},
 	diffs:function(session, options){
-		dashboard.content.innerHTML = "<div class='center'><span class='chart-title red-text'>Not designed yet!</span><div>";
+		dashboard.content.innerHTML = "<div class='center'><span class='chart-title red-text'>Coming soon!</span><div>";
 		user.session = session;
         console.log(user.session);
         user.trusted();
 	},
 	query:function(session, options){
-		dashboard.content.innerHTML = "<div class='center'><span class='chart-title red-text'>Not designed yet!</span><div>";
+		dashboard.content.innerHTML = "<div class='center'><span class='chart-title red-text'>Coming soon!</span><div>";
 		user.session = session;
         console.log(user.session);
         user.trusted();

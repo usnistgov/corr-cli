@@ -169,9 +169,11 @@ def record_edit(hash_session, record_id):
                         if fk.request.data:
                                 data = json.loads(fk.request.data)
                                 try:
-                                    head = data.get("head", {})
-                                    content = data.get("content", {})
-                                    #process the updaye to be made.
+                                    # only tags and rationels
+                                    tags = data.get("tags", ','.join(record.tags))
+                                    rationels = data.get("rationels", record.rationels)
+                                    record.tags = tags.split(',')
+                                    record.rationels = [rationels]
                                     record.save()
                                     return fk.Response('Record edited', status.HTTP_200_OK)
                                 except:
