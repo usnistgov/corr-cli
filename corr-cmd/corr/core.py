@@ -4,6 +4,19 @@ import datetime
 import traceback
 import getpass
 import json
+# Externalize api calls here into the coreLink.
+# It has to be changeable/extendable.
+# Allow the inclusion of the project.json structure.
+# The project related cli parts should be moved to
+# coreLink.
+# It will then handle links from core to the API
+# project/registration handling
+# It will handle the watch/unwatch mechanism.
+# It handles the watcher.
+# Core has to implement extension capabilities.
+# Load the configuration and load the appropriate
+# files.
+# We have to add interperate file.
 from corr import api
 
 

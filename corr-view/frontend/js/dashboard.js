@@ -10,7 +10,7 @@ var dashboard = {
         function failed(){
             window.location.replace(window.location.host+"/error-404/");
         };
-        config.load_xml('coming_soon.xml', succeed, failed);
+        config.load_xml('coming_soon.xml', [], succeed, failed);
     },
 	activity:function(session){
         function succeed(xhttp){
@@ -25,7 +25,7 @@ var dashboard = {
         function failed(){
             window.location.replace(window.location.host+"/error-404/");
         };
-        config.load_xml('dashboard_activity.xml', succeed, failed);
+        config.load_xml('dashboard_activity.xml', [], succeed, failed);
 	},
 	apps:function(session){
         this.coming_soon();
@@ -43,7 +43,7 @@ var dashboard = {
         function failed(){
             window.location.replace(window.location.host+"/error-404/");
         };
-        config.load_xml('dashboard_projects.xml', succeed, failed);
+        config.load_xml('dashboard_projects.xml', [], succeed, failed);
 	},
 	records:function(session, options){
         function succeed(xhttp){
@@ -65,7 +65,7 @@ var dashboard = {
         function failed(){
             window.location.replace(window.location.host+"/error-404/");
         };
-        config.load_xml('dashboard_records.xml', succeed, failed);
+        config.load_xml('dashboard_records.xml', [], succeed, failed);
 	},
 	diffs:function(session, options){
 		this.coming_soon();

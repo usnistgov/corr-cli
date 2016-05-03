@@ -138,10 +138,12 @@
             }
             if(user.session != "" && view_selected == ""){
                 dashboard.activity(user.session);
+                var space = new Space(user.session);
             }else if(user.session != "" && view_selected == "apps"){
                 dashboard.apps(user.session);
             }else if(user.session != "" && view_selected == "projects"){
                 dashboard.projects(user.session);
+                var space = new Space(user.session);
             }else if(user.session != "" && view_selected == "records"){
                 dashboard.records(user.session, options);
                 var space = new Space(user.session);
@@ -159,7 +161,8 @@
                 document.getElementById("nav-help").href = "../help/?session="+user.session;
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
-                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a href='#query-modal' class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a href='#diffs-modal' class='modal-trigger btn-floating btn-large green darken-1' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a href='#apps-modal' class='modal-trigger btn-floating btn-large purple darken-1' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a href='#records-modal' class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a href='#projects-modal' class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
+                // Target.
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query disabled');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
             }
 
             function view(scope){
