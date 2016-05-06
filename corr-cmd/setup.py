@@ -17,12 +17,9 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'corr = corr.cli:handle',
+            'corr = corr.main.cli:handle',
         ],
     },
-    # package_data = {
-    #     'data': ['*.json'],
-    # },
     test_suite='nose.collector',
     tests_require=['nose'],
 )

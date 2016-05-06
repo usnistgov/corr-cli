@@ -3,12 +3,10 @@ import datetime
 from time import sleep
 import daemon
 import click
-from corr import core
-from corr import api
-from corr.execLink import ExecLink
+from corr.main import core
 
 class CoRRTask:
-    def __init__(self, pid=None, name=None, refresh=10, aid=None, origin=None, marker=None):
+    def __init__(self, pid=None, name=None, refresh=10, aid=None, origin=None, tag=None, api_module=None, elnk_module=None):
         self.pid = pid
         self.origin = origin
         self.aid = aid
@@ -16,10 +14,14 @@ class CoRRTask:
         self.refresh = refresh
         self.root = None
         self.history = []
-        self.marker = marker
+        self.tag = tag
         self.record = ''
         self.info = None
-        self.link = ExecLink(tag=marker)
+
+        self.link = elnk_module.ExecLink(tag=tag, watcher='corrTask')
+        extensions = core.read_extend()
+
+        self.api_module = api_module
 
     def run(self):
         found = False
@@ -38,7 +40,7 @@ class CoRRTask:
                 regs = core.find_by(
                     registrations,
                     name=self.name,
-                    marker=self.marker)
+                    tag=self.tag)
                 print "Record: {0}".format(self.record)
                 if len(regs) > 0:
                     project = registrations[regs[0]]['project']
@@ -63,7 +65,8 @@ class CoRRTask:
                         request['extend']['cp_purcentage'] = self.info['cp_purcentage']
                         request['extend']['mem_purcentage'] = self.info['mem_purcentage']
                         request['extend']['threads'] = self.info['threads']
-                        api_response = api.record_update(
+
+                        api_response = self.api_module.record_update(
                             config=config,
                             record=self.record,
                             request=request)
@@ -71,8 +74,8 @@ class CoRRTask:
                             print "Error: Watcher recording create process failed."
                             print api_response[1]
                     else:
-                        request['label'] = self.marker
-                        request['tags'] = [self.marker]
+                        request['label'] = self.tag
+                        request['tags'] = [self.tag]
                         request['system'] = self.info['computer']
                         request['inputs'] = [
                             {
@@ -99,7 +102,7 @@ class CoRRTask:
                         request['extend']['cp_purcentage'] = self.info['cp_purcentage']
                         request['extend']['mem_purcentage'] = self.info['mem_purcentage']
                         request['extend']['threads'] = self.info['threads']
-                        api_response = api.record_create(
+                        api_response = self.api_module.record_create(
                             config=config,
                             project=project,
                             request=request)
@@ -124,33 +127,37 @@ class CoRRTask:
 @click.command()
 
 @click.option('--name', default=None, help="Watched software name.")
-@click.option('--marker', default=None, help="Watched process marker.")
+@click.option('--tag', default=None, help="Watched process tag.")
 @click.option('--delay', default=None, help="Watching delay.")
 @click.option('--aid', default=None, help="Backend api host.")
 @click.option('--origin', default=None, help="Original process")
+@click.option('--api', default=None, help="api client")
+@click.option('--elnk', default=None, help="execution linker")
 
-def handle(name, marker, delay, aid, origin):
+def handle(name, tag, delay, aid, origin, elnk):
     delay_value = 10
     aid_value = None
     origin_value = None
     print "Name: {0}".format(name)
-    print "Marker: {0}".format(marker)
+    print "tag: {0}".format(tag)
 
     stamp = str(datetime.datetime.now())
 
     if delay:
         delay_value = int(delay)
 
-    if name and marker:
-        task = CoRRTask(name=name, marker=marker)
+    if name and tag and api and elnk:
+        elnk_module = core.extend_load(elnk)
+        api_module = core.extend_load(api)
+        task = CoRRTask(name=name, tag=tag, api_module=api_module, elnk_module=elnk_module)
         # task.run()
         try:
-            print "Loading watcher: {0}".format(task.marker)
+            print "Loading watcher: {0}".format(task.tag)
             with daemon.DaemonContext():
                 task.run()
         except:
             pass
 
 
-if __name__ == '__main__':
+if __name__ == '__corr.main__':
     handle()

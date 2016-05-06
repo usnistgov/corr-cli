@@ -4,11 +4,12 @@ import platform
 import psutil
 
 class ExecLink:
-    def __init__(self, tag=None, pid=None):
+    def __init__(self, tag=None, pid=None, watcher=''):
         self.tag = tag
         self.pid = pid
         self.info = {}
         self.updated = False
+        self.watcher = watcher
 
     def record(self):
         pids = psutil.pids()
@@ -23,7 +24,7 @@ class ExecLink:
             for i in xrange(len(pids)):
                 p = psutil.Process(self.pid)
                 if self.tag in ' '.join(
-                        p.cmdline()) and 'corrTask' not in ' '.join(
+                        p.cmdline()) and self.watcher not in ' '.join(
                             p.cmdline()):
                     process = p
                     break

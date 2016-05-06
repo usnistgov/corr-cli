@@ -1772,6 +1772,7 @@ def user_project_update(api_token, app_token, project_id):
                             project.description = description
                             project.goals = goals
                             project.tags.extend(tags)
+                            project.tags = list(set(project.tags))
                             project.access = access
                             project.history.extend(history)
                             project.cloned_from = cloned_from

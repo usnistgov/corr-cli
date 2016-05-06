@@ -42,8 +42,43 @@ def project_create(config=None, name=None, description='', goals='',
     request['group'] = group
     conn.request(
         "POST", 
-    	   "/api/v0.1/private/{0}/no-app/project/create".format(config['api']['key']), 
-    	   json.dumps(request), headers)
+           "/api/v0.1/private/{0}/no-app/project/create".format(config['api']['key']), 
+           json.dumps(request), headers)
+    response = conn.getresponse()
+    data = response.read()
+    conn.close()
+    try:
+        data_json = json.loads(data)
+        if data_json['code'] == 201:
+            return [True, data_json['content']]
+        else:
+            return [False, data_json['content']]
+    except:
+        return [False, str(traceback.print_exc())]
+
+def project_update(config=None, project=None, description=None, goals=None,
+                   tags=None, access=None, group=None):
+    if api_status(config=config):
+        conn = httplib.HTTPConnection(config['api']['host'], int(config['api']['port']))
+    else:
+        return [False, 'No configured api.']
+
+    headers = {"Accept": "application/json"}
+    request = {}
+    if description:
+        request['description'] = description
+    if goals:
+        request['goals'] = goals
+    if tags:
+        request['tags'] = tags
+    if access:
+        request['access'] = access
+    if group:
+        request['group'] = group
+    conn.request(
+        "POST", 
+           "/api/v0.1/private/{0}/no-app/project/update/{1}".format(config['api']['key'], project), 
+           json.dumps(request), headers)
     response = conn.getresponse()
     data = response.read()
     conn.close()
