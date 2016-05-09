@@ -44,34 +44,44 @@ def pretty_json(json_data=None):
     else:
         return None
 def ensure_root():
-    if not os.path.exists(corr_path):
-        os.makedirs(corr_path)
+    try:
+        if not os.path.exists(corr_path):
+            os.makedirs(corr_path)
 
-    if not os.path.exists(repos_path):
-        os.makedirs(repos_path)
+        if not os.path.exists(repos_path):
+            os.makedirs(repos_path)
 
-    if not os.path.exists(tasks_path):
-        os.makedirs(tasks_path)
+        if not os.path.exists(tasks_path):
+            os.makedirs(tasks_path)
 
-    if not os.path.isfile(reg_path):
-        with open(reg_path, "w") as reg_file:
-            reg_file.write(pretty_json({'default':[]}))
+        if not os.path.isfile(reg_path):
+            with open(reg_path, "w") as reg_file:
+                reg_file.write(pretty_json({'default':[]}))
 
-    if not os.path.isfile(extend_path):
-        with open(extend_path, "w") as reg_file:
-            reg_file.write(pretty_json({'coreLink':{'default':{}}, 'api':{'default':{}}, 'execLink':{'default':{}},  'corrTask':{'default':{}}}))
+        if not os.path.isfile(extend_path):
+            with open(extend_path, "w") as reg_file:
+                reg_file.write(pretty_json({'coreLink':{'default':{}}, 'api':{'default':{}}, 'execLink':{'default':{}},  'corrTask':{'default':{}}}))
 
-    if not os.path.isfile(config_path):
-        with open(config_path, "w") as config_file:
-            config_file.write(pretty_json({'default':{'api':{}}}))
+        if not os.path.isfile(config_path):
+            with open(config_path, "w") as config_file:
+                config_file.write(pretty_json({'default':{'api':{}}}))
+        return True
+    except:
+        return False
 
 def ensure_repo(name=None):
     ensure_root()
     if name != None:
         repo_path = "{0}/{1}.corr".format(repos_path, name)
-        if not os.path.isfile(repo_path):
-            with open(repo_path, "w") as repo_json:
-                repo_json.write(pretty_json({}))
+        try:
+            if not os.path.isfile(repo_path):
+                with open(repo_path, "w") as repo_json:
+                    repo_json.write(pretty_json({}))
+            return True
+        except:
+            return False
+    else:
+        return False
 
 def read_repo(name=None):
     ensure_repo()
@@ -141,12 +151,18 @@ def write_reg(extend=None, reg=[]):
             regs[extend] = reg
             with open(reg_path, "w") as reg_json:
                 reg_json.write(pretty_json(regs))
+            return True
         except:
-            pass
+            return False
     else:
-        regs['default'] = reg
-        with open(reg_path, "w") as reg_json:
-            reg_json.write(pretty_json(regs))
+        try:
+            regs['default'] = reg
+            with open(reg_path, "w") as reg_json:
+                reg_json.write(pretty_json(regs))
+            return True
+        except:
+            return False
+
 
 def read_reg(extend=None):
     ensure_root()
@@ -163,8 +179,12 @@ def read_reg(extend=None):
 
 def write_extend(extends=[]):
     ensure_root()
-    with open(extend_path, "w") as extend_json:
-        reg_json.write(pretty_json(extends))
+    try:
+        with open(extend_path, "w") as extend_json:
+            reg_json.write(pretty_json(extends))
+        return True
+    except:
+        return False
 
 def read_extend():
     ensure_root()
@@ -181,10 +201,12 @@ def extension_add(extensions=[], group='', impl=''):
     except:
         existing = None
     if existing:
-        print "A {0} with this alias already exists.".format(group)
+        # # print "A {0} with this alias already exists.".format(group)
+        return existing
     else:
         clnks[alias] = {'path':impl}
-    core.write_extend(clnks)
+        core.write_extend(clnks)
+        return clnks[alias]
 
 def extension_delete(extensions=[], group='', alias=''):
     clnks = extensions[group]
@@ -195,9 +217,11 @@ def extension_delete(extensions=[], group='', alias=''):
     if existing:
         del clnks[alias]
     else:
-        print "No {0} with this alias found.".format(group)
+        # # print "No {0} with this alias found.".format(group)
+        pass
     core.write_extend(clnks)
 
 def extension_all(extensions=[]):
-    print pretty_json(extensions)
+    # # print pretty_json(extensions)
+    return pretty_json(extensions)
 

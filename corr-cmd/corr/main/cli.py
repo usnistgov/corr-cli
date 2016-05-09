@@ -55,7 +55,7 @@ from corr.main import core
 @click.option('--clnk/--no-clnk', default=None,
               help="A CoreLink extension.")
 @click.option('--api/--no-api', default=None,
-              help="A CoreLink extension.")
+              help="API extension.")
 @click.option('--elnk/--no-elnk', default=None,
               help="A ExecLink extension.")
 @click.option('--ctsk/--no-ctsk', default=None,
@@ -118,7 +118,8 @@ def handle(config, conx, register, sync, align, unregister,
         elif ctsk:
           core.extension_add(extensions, 'corrTask')
         else:
-          print "Unknown extension group -- interoerate not supported yet."
+          # # print "Unknown extension group -- interoerate not supported yet."
+          pass
       if delete:
         if clnk:
           core.extension_delete(extensions, 'coreLink', alias)

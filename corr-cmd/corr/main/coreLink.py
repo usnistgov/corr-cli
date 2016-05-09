@@ -60,11 +60,14 @@ def handle(config, conx, name, host, port, key, tag,
           api_path = 'corr.main.api'
         api_module = core.extend_load(api_path)
         if api_module.api_status(config=config):
-            print "OK --- CoRR backend api[{0}:{1}] reached.".format(
-                config['api']['host'], config['api']['port'])
+            ## print "OK --- CoRR backend api[{0}:{1}] reached.".format(
+            #    config['api']['host'], config['api']['port'])
+            pass
+            return "OK"
         else:
-            print "KO --- could not reach CoRR backend api[{0}:{1}].".format(
-                config['api']['host'], config['api']['port'])
+            ## print "KO --- could not reach CoRR backend api[{0}:{1}].".format(
+            #    config['api']['host'], config['api']['port'])
+            return "KO"
 
     if upload and file:
         push_file(path=path, obj=obj, group=group)
@@ -82,7 +85,7 @@ def configure(host=None, port=None, key=None):
     config = core.read_config('default')
     if host is None and port is None and key is None:
         return core.pretty_json(core.read_config())
-        print core.pretty_json(core.read_config())
+        # # print core.pretty_json(core.read_config())
     else:
         if host:
             config['api']['host'] = host
@@ -91,7 +94,7 @@ def configure(host=None, port=None, key=None):
         if key:
             config['api']['key'] = key
         core.write_config('default', config)
-        return core.pretty_json(config)
+        return core.pretty_json({'default':config})
 
 # Change the way you access registrations.
 def find_by(regs=[], name=None, tag=None):
@@ -99,22 +102,27 @@ def find_by(regs=[], name=None, tag=None):
     reg_fs = []
     index = 0
     for reg in regs:
-        if name != None and name in reg['name']:
-            reg_fs.append(index)
-        if tag != None and tag in reg['tags']:
-            reg_fs.append(index)
+        try:
+            if name != None and name in reg['name']:
+                reg_fs.append(index)
+            if tag != None and tag in reg['tags']:
+                reg_fs.append(index)
+        except:
+            # # print reg
+            pass
         index += 1
     return reg_fs
 
 # Change the way you want to display the registration.
 def list(api=None, elnk=None, ctsk=None):
-    print "# corr registrations"
-    print "#"
+    ## print "# corr registrations"
+    ## print "#"
     registrations = core.read_reg('default')
     for reg in registrations:
         print "{0}\t{1}\t{2}\t{3}".format(
             reg['name'], str(reg['tags']), reg['status']['stamp'],
             reg['status']['value'])
+    return registrations
 
 # Change the way you want to show a registration
 def show(name=None, tag=None, api=None, elnk=None, ctsk=None):
@@ -125,7 +133,7 @@ def show(name=None, tag=None, api=None, elnk=None, ctsk=None):
             print core.pretty_json(registrations[investigation])
             return core.pretty_json(registrations[investigation])
     else:
-        print "Could not found name/tag registered."
+        # print "Could not found name/tag registered."
         return None
 
 # Change the way to controll our watcher processes.
@@ -141,21 +149,21 @@ def subprocess_cmd(command=[]):
 def align(api=None, elnk=None, ctsk=None):
     config = core.read_config('default')
     registrations = core.read_reg('default')
-    # print core.read_reg()
-    # print registrations
+    # # print core.read_reg()
+    # # print registrations
     api_module = core.extend_load(api)
     api_response = api_module.project_all(config=config)
     if api_response[0] == True:
         projects_json = api_response[1]
-        print "--> Backend has {0} projects".format(
-            projects_json['total_projects'])
+        # # print "--> Backend has {0} projects".format(
+            # projects_json['total_projects'])
         projects = projects_json['projects']
         for project in projects:
             name = project['name']
-            tags = project['tags']
+            tags = project['tags'].split(',')
             investigations = find_by(regs=registrations, name=name)
             if len(investigations) == 0:
-                print "--> Aligning with remote project [{0}]...".format(name)
+                # # print "--> Aligning with remote project [{0}]...".format(name)
                 investigation = {}
                 stamp = core.formated_stamp()
                 investigation['name'] = name
@@ -167,23 +175,26 @@ def align(api=None, elnk=None, ctsk=None):
                 investigation['watcher'] = None
                 registrations.append(investigation)
                 core.ensure_repo(investigation['name'])
-                # print registrations
+                # # print registrations
                 core.write_reg('default', registrations)
-                print "--> Done."
-        # print core.read_reg()
+                # # print "--> Done."
+                return True
+        # # print core.read_reg()
     else:
-        print "Registrations alignment failed."
-        print api_response[1]
+        ## print "Registrations alignment failed."
+        # # print api_response[1]
+        return False
 
 # Change the way we register an investigation.
 def register(name=None, api=None, elnk=None, ctsk=None):
-    print "Registering the investigation..."
+    ## print ""
+    ## print "Registering the investigation..."
     config = core.read_config('default')
     registrations = core.read_reg('default')
     investigations = find_by(regs=registrations, name=name)
     if len(investigations) > 0 and registrations[investigations[0]]['status']['value'] != 'unregistered':
-        print "An investigation with this name/tag has already been registered."
-        print "Its name and tag are: [{0}|{1}]".format(registrations[investigations[0]]['name'], registrations[investigations[0]]['tags'])
+        ## print "An investigation with this name/tag has already been registered."
+        ## print "Its name and tag are: [{0}|{1}]".format(registrations[investigations[0]]['name'], registrations[investigations[0]]['tags'])
         return registrations[investigations[0]]
     else:
         if len(investigations) > 0 and registrations[investigations[0]]['status']['value'] == 'unregistered':
@@ -193,8 +204,8 @@ def register(name=None, api=None, elnk=None, ctsk=None):
             registrations[investigations[0]]['consistency'] = False
             core.ensure_repo(registrations[investigations[0]]['name'])
             core.write_reg('default', registrations)
-            print "An investigation with this name/tag was\
-             unregistered and is now registered back again."
+            ## print "An investigation with this name/tag was\
+            # unregistered and is now registered back again."
             if not registrations[investigations[0]]['consistency']:
                 api_module = core.extend_load(api)
                 api_response = api_module.project_create(config=config,
@@ -207,19 +218,19 @@ def register(name=None, api=None, elnk=None, ctsk=None):
                     registrations[investigations[0]]['project'] = api_response[1]['id']
                     core.core.ensure_repo(registrations[investigations[0]]['name'])
                     core.write_reg('default', registrations)
-                    print "The associated project metadata is now consistent."
+                    ## print "The associated project metadata is now consistent."
                     return registrations[investigations[0]]
                 else:
-                    print "Consistency alignment between registration and project metadat failed. \
-                    Please check connectivity and try to sync the investigation again later."
-                    print api_response[1]
+                    ## print "Consistency alignment between registration and project metadat failed. \
+                    #Please check connectivity and try to sync the investigation again later."
+                    ## print api_response[1]
                     return registrations[investigations[0]]
             else:
                 return None
         else:
             investigation = {}
             stamp = core.formated_stamp()
-            investigation['tags'].append("tag_%s"%stamp)
+            investigation['tags'] = ["tag_%s"%stamp]
             if name != None:
                 investigation['name'] = name
             else:
@@ -230,7 +241,7 @@ def register(name=None, api=None, elnk=None, ctsk=None):
             investigation['watcher'] = None
             exists = False
             if not investigation['name'].isalnum():
-                print "Registration failed. name has to be alphanumberial."
+                ## print "Registration failed. name has to be alphanumberial."
                 return None
             else:
                 for reg in registrations:
@@ -241,7 +252,7 @@ def register(name=None, api=None, elnk=None, ctsk=None):
                     registrations.append(investigation)
                     core.ensure_repo(investigation['name'])
                     core.write_reg('default', registrations)
-                    print "Registration produced tag: {0}".format(investigation['tags'])
+                    ## print "Registration produced tag: {0}".format(investigation['tags'])
                     api_module = core.extend_load(api)
                     api_response = api_module.project_create(
                         config=config,
@@ -254,29 +265,30 @@ def register(name=None, api=None, elnk=None, ctsk=None):
                         investigation['project'] = api_response[1]['id']
                         core.ensure_repo(investigation['name'])
                         core.write_reg('default', registrations)
-                        print "The associated project metadata is now\
-                        consistent with the registration."
+                        ## print "The associated project metadata is now\
+                        #consistent with the registration."
                         return "Consistent"
                     else:
-                        print "Consistency alignment between registration\
-                        and project metadat failed. Please check connectivity\
-                        and try to sync the investigation later."
-                        print api_response[1]
+                        ## print "Consistency alignment between registration\
+                        #and project metadat failed. Please check connectivity\
+                        #and try to sync the investigation later."
+                        ## print api_response[1]
                         return investigation
                 else:
-                    print "Registration failed. A registration already exists\
-                    with the name: {0}".format(investigation['name'])
+                    ## print "Registration failed. A registration already exists\
+                    #with the name: {0}".format(investigation['name'])
                     return investigation
 
 # Change the way tag an investigation.
 def tag(name=None, api=None, elnk=None, ctsk=None):
-    print "Registering the investigation..."
-    config = core.read_config()
+    ## print ""
+    ## print "Taging the investigation..."
+    config = core.read_config('default')
     registrations = core.read_reg('default')
     investigations = find_by(regs=registrations, name=name)
     if len(investigations) > 0 and registrations[investigations[0]]['status']['value'] != 'unregistered':
-        print "An investigation with this name/tag has already been registered."
-        print "Its name and tag are: [{0}|{1}]".format(registrations[investigations[0]]['name'], registrations[investigations[0]]['tags'])
+        ## print "An investigation with this name/tag has already been registered."
+        ## print "Its name and tag are: [{0}|{1}]".format(registrations[investigations[0]]['name'], registrations[investigations[0]]['tags'])
         stamp = core.formated_stamp()
         tag = "{0}-tag-{1}".format(name, stamp)
         registrations[investigations[0]]['tags'].append(tag)
@@ -285,14 +297,14 @@ def tag(name=None, api=None, elnk=None, ctsk=None):
         api_module = core.extend_load(api)
         api_response = api_module.project_update(
             config=config,
-            id=registrations[investigations[0]]['project'],
+            project=registrations[investigations[0]]['project'],
             description=None,
             goals=None,
             tags=registrations[investigations[0]]['tags'])
-        print api_response[1]
-        return tag
+        # # print api_response[1]
+        return [tag, api_response[1]]
     else:
-       print "No investigation with this name/tag has been registered."
+       ## print "No investigation with this name/tag has been registered."
        return None
 
 # Change the way we sync our local copy with the API.
@@ -301,10 +313,10 @@ def sync(name=None, tag=None, force=False, api=None, elnk=None, ctsk=None):
     config = core.read_config()
     registrations = core.read_reg('default')
     if name is None and tag is None:
-        print "Syncing all inconsistent registrations..."
+        ## print "Syncing all inconsistent registrations..."
         for idx, reg in enumerate(registrations):
             if not reg['consistency'] or force:
-                print "Syncing the registration [{0}]...".format(reg['name'])
+                ## print "Syncing the registration [{0}]...".format(reg['name'])
                 api_module = core.extend_load(api)
                 api_response = api_module.project_create(
                     config=config,
@@ -318,16 +330,19 @@ def sync(name=None, tag=None, force=False, api=None, elnk=None, ctsk=None):
                     core.ensure_repo(reg['name'])
                     registrations[idx] = reg
                     core.write_reg('default', registrations)
-                    print "--> This associated project metadata is now consistent."
-                else:
-                    print "--> Consistency alignment between registration\
-                    and project metada failed. Please check connectivity\
-                    and try to sync the investigation again later."
-                    print api_response[1]
-            else:
-                print "Registration [{0}] is already consistent.".format(reg['name'])
+                    ## print "--> This associated project metadata is now consistent."
+                    # return api_response[1]
+                # else:
+                    ## print "--> Consistency alignment between registration\
+                    #and project metada failed. Please check connectivity\
+                    #and try to sync the investigation again later."
+                    ## print api_response[1]
+                    # return api_response[1]
+            # else:
+                ## print "Registration [{0}] is already consistent.".format(reg['name'])
+        return registrations
     else:
-        print "Syncing the registration..."
+        ## print "Syncing the registration..."
         investigations = find_by(regs=registrations, name=name, tag=tag)
         if len(investigations) > 0 and (not registrations[investigations[0]]['consistency'] or force):
             api_module = core.extend_load(api)
@@ -336,28 +351,31 @@ def sync(name=None, tag=None, force=False, api=None, elnk=None, ctsk=None):
                 name=registrations[investigations[0]]['name'],
                 description='no description provided.',
                 goals='no goals set.',
-                tags=[registrations[investigations[0]]['tag']])
+                tags=[registrations[investigations[0]]['tags']])
             if api_response[0] == True:
                 registrations[investigations[0]]['consistency'] = True
                 registrations[investigations[0]]['project'] = api_response[1]['id']
                 core.ensure_repo(registrations[investigations[0]]['name'])
                 core.write_reg('default', registrations)
-                print "The associated project metadata is now consistent."
+                ## print "The associated project metadata is now consistent."
+                return api_response[1]
             else:
-                print "--> Consistency alignment between registration\
-                    and project metada failed. Please check connectivity\
-                    and try to sync the investigation again later."
-                print api_response[1]
+                ## print "--> Consistency alignment between registration\
+                #    and project metada failed. Please check connectivity\
+                #    and try to sync the investigation again later."
+                ## print api_response[1]
+                return None
         else:
             if len(investigations) > 0:
-                print "The associated project metadata is already consistent."
-
+                ## print "The associated project metadata is already consistent."
+                return registrations[investigations[0]]
             else:
-                print "Error: No registration with this name."
+                ## print "Error: No registration with this name."
+                return None
 
 # Change the way you unregister an investigation.
 def unregister(name=None, tag=None, api=None, elnk=None, ctsk=None):
-    print "Unregistering the investigation..."
+    ## print "Unregistering the investigation..."
     registrations = core.read_reg('default')
     investigations = find_by(regs=registrations, name=name, tag=tag)
     if len(investigations) > 0 and registrations[investigations[0]]['status']['value'] != 'unregistered':
@@ -368,10 +386,12 @@ def unregister(name=None, tag=None, api=None, elnk=None, ctsk=None):
         core.write_reg('default', registrations)
         # Delete the .source
         # Delete investigation repo and section from registrations.
-        print "investigation unregistered."
+        ## print "investigation unregistered."
+        return True
     else:
-        print "Could not found a investigation with\
-        this name/tag to unregister."
+        ## print "Could not found a investigation with\
+        # this name/tag to unregister."
+        return False
 
 # Change the way you launch a watcher.
 def watcher_launch(name=None, tag=None, api=None, elnk=None, ctsk=None):
@@ -398,7 +418,7 @@ def watcher_launch(name=None, tag=None, api=None, elnk=None, ctsk=None):
     try:
         import subprocess
         process = subprocess.Popen(task_cmd)
-        # print process.stdout
+        # # print process.stdout
         return process
     except:
         return None
@@ -411,7 +431,7 @@ def watcher_stop(reg=None, api=None, elnk=None, ctsk=None):
     task_cmd.append("kill")
     task_cmd.append("-9")
     task_cmd.append(str(reg['watcher']))
-    print "Unwatching on task-[{0}]...".format(str(reg['watcher']))
+    ## print "Unwatching on task-[{0}]...".format(str(reg['watcher']))
     sudo_password = ''
     try:
         import subprocess
@@ -420,17 +440,18 @@ def watcher_stop(reg=None, api=None, elnk=None, ctsk=None):
         process.communicate(sudo_password + '\n')
         return process
     except:
-        print traceback.print_exc(file=sys.stdout)
+        # # print traceback.# print_exc(file=sys.stdout)
         return None
 
 # Change the way you watch an investigation.
 def watch(name=None, tag=None, api=None, elnk=None, ctsk=None):
     registrations = core.read_reg('default')
     investigations = find_by(regs=registrations, name=name, tag=tag)
-    # print str(registrations[investigations[0]])
+    # # print str(registrations[investigations[0]])
     if len(investigations) > 0 and registrations[investigations[0]]['status']['value'] != 'unregistered':
         if registrations[investigations[0]]['status']['value'] == 'watching':
-            print "Already watching this entry."
+            ## print "Already watching this entry."
+            return [True, None]
         else:
             registrations[investigations[0]]['history'].append(registrations[investigations[0]]['status'])
             stamp = core.formated_stamp()
@@ -438,17 +459,20 @@ def watch(name=None, tag=None, api=None, elnk=None, ctsk=None):
             registrations[investigations[0]]['status'] = {'value':'watching', 'stamp':stamp}
             task_process = watcher_launch(
                 name=registrations[investigations[0]]['name'],
-                tag=registrations[investigations[0]]['tag'],
+                tag=registrations[investigations[0]]['tags'],
                 api=api, elnk=elnk, ctsk=ctsk)
             if task_process:
-                print "Watching on task-[{0}]...".format(int(task_process.pid))
+                ## print "Watching on task-[{0}]...".format(int(task_process.pid))
                 registrations[investigations[0]]['watcher'] = int(task_process.pid) + 4
                 core.write_reg('default', registrations)
-                print "Watching the investigation..."
+                ## print "Watching the investigation..."
+                return [True, task_process]
             else:
-                print "Error: Could not stop this watcher."
+                ## print "Error: Could not start this watcher."
+                return [False, None]
     else:
-        print "Could not found this investigation to watch."
+        ## print "Could not found this investigation to watch."
+        return [False, None]
 
 # Change the way you unwatch an investigation.
 def unwatch(name=None, tag=None, api=None, elnk=None, ctsk=None):
@@ -464,13 +488,17 @@ def unwatch(name=None, tag=None, api=None, elnk=None, ctsk=None):
             if stop_process:
                 registrations[investigations[0]]['watcher'] = None
                 core.write_reg('default', registrations)
-                print "investigation unwatched"
+                ## print "investigation unwatched"
+                return [True, task_process]
             else:
-                print "Error: Could not stop this watcher."
+                ## print "Error: Could not stop this watcher."
+                return [False, None]
         elif registrations[investigations[0]]['status']['value'] == 'unwatched':
-            print "Already unwatched this entry."
+            ## print "Already unwatched this entry."
+            return [True, None]
     else:
-        print "Could not found this investigation to unwatch."
+        ## print "Could not found this investigation to unwatch."
+        return [False, None]
 
 # Change the way you upload a file.
 def push_file(path=None, obj=None, group=None):
@@ -478,10 +506,12 @@ def push_file(path=None, obj=None, group=None):
     api_module = core.extend_load(api)
     api_response = api_module.upload_file(config=config, path=path, obj=obj, group=group)
     if api_response[0]:
-        print "File uploaded."
+        ## print "File uploaded."
+        return api_response[1]
     else:
-        print "File upload failed."
-        print api_response[1]
+        ## print "File upload failed."
+        # # print api_response[1]
+        return api_response[1]
 
 # Change the way you upload an environment.
 def push_env(name=None, tag=None, path=None):
@@ -490,7 +520,8 @@ def push_env(name=None, tag=None, path=None):
     investigations = find_by(regs=registrations, name=name, tag=tag)
     if len(investigations) > 0 and registrations[investigations[0]]['status']['value'] != 'unregistered':
         if registrations[investigations[0]]['status']['value'] == 'watching':
-            print "Error: Uploading new environment while watching is not possible. Unwatch first."
+            ## print "Error: Uploading new environment while watching is not possible. Unwatch first."
+            return registrations[investigations[0]]
         else:
             api_module = core.extend_load(api)
             api_response = api_module.project_env_next(
@@ -498,7 +529,9 @@ def push_env(name=None, tag=None, path=None):
                 project=registrations[investigations[0]]['project'],
                 path=path)
             if api_response[0]:
-                print "Environment successfully pushed."
+                ## print "Environment successfully pushed."
+                return api_response[1]
             else:
-                print "Error: Environment push failed."
-                print api_response[1]
+                ## print "Error: Environment push failed."
+                # # print api_response[1]
+                return api_response[1]

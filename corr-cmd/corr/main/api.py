@@ -51,6 +51,8 @@ def project_create(config=None, name=None, description='', goals='',
         data_json = json.loads(data)
         if data_json['code'] == 201:
             return [True, data_json['content']]
+        elif data_json['code'] == 200:
+            return [True, data_json['content']]
         else:
             return [False, data_json['content']]
     except:
@@ -62,7 +64,7 @@ def project_update(config=None, project=None, description=None, goals=None,
         conn = httplib.HTTPConnection(config['api']['host'], int(config['api']['port']))
     else:
         return [False, 'No configured api.']
-
+        
     headers = {"Accept": "application/json"}
     request = {}
     if description:

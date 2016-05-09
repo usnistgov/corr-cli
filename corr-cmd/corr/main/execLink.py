@@ -4,12 +4,15 @@ import platform
 import psutil
 
 class ExecLink:
-    def __init__(self, tag=None, pid=None, watcher=''):
+    def __init__(self, tag=None, pid=None, origin=None, aid=None, watcher='NoTask'):
         self.tag = tag
         self.pid = pid
+        self.origin = origin
+        self.aid = aid
         self.info = {}
         self.updated = False
         self.watcher = watcher
+        # # print tag
 
     def record(self):
         pids = psutil.pids()
@@ -22,13 +25,14 @@ class ExecLink:
             process = psutil.Process(self.pid)
         else:
             for i in xrange(len(pids)):
-                p = psutil.Process(self.pid)
+                p = psutil.Process(pids[i])
                 if self.tag in ' '.join(
-                        p.cmdline()) and self.watcher not in ' '.join(
-                            p.cmdline()):
+                        p.cmdline()) and self.watcher not in ' '.join(p.cmdline()):
+                    # # print p.cmdline()
                     process = p
                     break
         if process is None:
+            # # print "Process is None"
             return None
         else:
             try:
@@ -37,7 +41,7 @@ class ExecLink:
                     self.info['stamp'] = stamp
                     self.info['aid'] = self.aid
                     self.info['origin'] = self.origin
-                    self.info['marker'] = self.marker
+                    # self.info['marker'] = self.marker
                     try:
                         self.info['computer'] = {
                             'machine':platform.machine(),
@@ -115,7 +119,7 @@ class ExecLink:
                     try:
                         self.info['network'] = process.get_connections()
                     except:
-                        traceback.print_exc(file=sys.stdout)
+                        # # print traceback.# print_exc(file=sys.stdout)
                         self.info['network'] = 'unknown'
                     try:
                         self.info['io_files'] = process.open_files()
@@ -161,10 +165,10 @@ class ExecLink:
                         self.info['io_files'] = map(dict, set(tuple(sorted(d.items())) for d in self.info['io_files']))
                     except:
                         pass
-                return info
+                return self.info
             except:
+                # # print traceback.# print_exc(file=sys.stdout)
                 return None
-                print traceback.print_exc(file=sys.stdout)
 
     def wrap_child(self, pid):
         process = psutil.Process(pid)
