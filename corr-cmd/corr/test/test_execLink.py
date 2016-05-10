@@ -30,5 +30,15 @@ class TestExecLink:
             except:
                 pass
         assert record != None
+        record_again = None
+        for trial in range(10):
+            try:
+                record_again = elnk.record()
+                sleep(2)
+                if record_again != None:
+                    break
+            except:
+                pass
+        assert record_again != None
 
 

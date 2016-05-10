@@ -193,9 +193,14 @@
             }
 
             function projectRemove(project_name, project_id){
-                Materialize.toast('<span>Confirmation box</span>', 3000);
-                // var project = new Project(user.session, project_id);
-                // project.remove();
+                Materialize.toast("<span>Delete "+project_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/project/remove/"+project_id+"\">Confirm</a>", 5000);
+            }
+
+            function projectRemoveAgree(session, project_id){
+                console.log("in projectRemoveAgree!");
+                var project = new Project(session, project_id);
+                project.trash();
+                window.location.reload();
             }
 
             function uploadRecord(project_name, project_id){
@@ -223,9 +228,7 @@
             }
 
             function recordRemove(record_id){
-                Materialize.toast('<span>Confirmation box</span>', 3000);
-                // var record = new Record(user.session, record_id);
-                // record.remove();
+                Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
             }
         </script>
         <script type="text/javascript" src="../js/plugins/chartjs/chart-script.js"></script>

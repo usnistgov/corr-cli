@@ -130,7 +130,7 @@ def show(name=None, tag=None, api=None, elnk=None, ctsk=None):
     investigations = find_by(regs=registrations, name=name, tag=tag)
     if len(investigations) > 0:
         for investigation in investigations:
-            print core.pretty_json(registrations[investigation])
+            # print core.pretty_json(registrations[investigation])
             return core.pretty_json(registrations[investigation])
     else:
         # print "Could not found name/tag registered."
@@ -160,7 +160,7 @@ def align(api=None, elnk=None, ctsk=None):
         projects = projects_json['projects']
         for project in projects:
             name = project['name']
-            tags = project['tags'].split(',')
+            tags = project['tags']
             investigations = find_by(regs=registrations, name=name)
             if len(investigations) == 0:
                 # # print "--> Aligning with remote project [{0}]...".format(name)
@@ -178,11 +178,11 @@ def align(api=None, elnk=None, ctsk=None):
                 # # print registrations
                 core.write_reg('default', registrations)
                 # # print "--> Done."
-                return True
         # # print core.read_reg()
+        return True 
     else:
         ## print "Registrations alignment failed."
-        # # print api_response[1]
+        # print api_response[1]
         return False
 
 # Change the way we register an investigation.
@@ -216,7 +216,7 @@ def register(name=None, api=None, elnk=None, ctsk=None):
                 if api_response[0] == True:
                     registrations[investigations[0]]['consistency'] = True
                     registrations[investigations[0]]['project'] = api_response[1]['id']
-                    core.core.ensure_repo(registrations[investigations[0]]['name'])
+                    core.ensure_repo(registrations[investigations[0]]['name'])
                     core.write_reg('default', registrations)
                     ## print "The associated project metadata is now consistent."
                     return registrations[investigations[0]]
@@ -230,7 +230,7 @@ def register(name=None, api=None, elnk=None, ctsk=None):
         else:
             investigation = {}
             stamp = core.formated_stamp()
-            investigation['tags'] = ["tag_%s"%stamp]
+            investigation['tags'] = ["%s-tag-%s"%(name, stamp)]
             if name != None:
                 investigation['name'] = name
             else:
@@ -259,7 +259,7 @@ def register(name=None, api=None, elnk=None, ctsk=None):
                         name=investigation['name'],
                         description='no description provided.',
                         goals='no goals set.',
-                        tags=[investigation['tags']])
+                        tags=investigation['tags'])
                     if api_response[0] == True:
                         investigation['consistency'] = True
                         investigation['project'] = api_response[1]['id']
@@ -397,9 +397,14 @@ def unregister(name=None, tag=None, api=None, elnk=None, ctsk=None):
 def watcher_launch(name=None, tag=None, api=None, elnk=None, ctsk=None):
     # from subprocess import call
     task_cmd = []
-    if '.py' in ctsk:
-        task_cmd.append("python")
-        task_cmd.append(ctsk)
+    if ctsk:
+        if '.py' in ctsk:
+            task_cmd.append("python")
+            task_cmd.append(ctsk)
+        else:
+            task_cmd.append("python")
+            task_cmd.append("-m")
+            task_cmd.append(ctsk)
     else:
         task_cmd.append("python")
         task_cmd.append("-m")
@@ -418,9 +423,9 @@ def watcher_launch(name=None, tag=None, api=None, elnk=None, ctsk=None):
     try:
         import subprocess
         process = subprocess.Popen(task_cmd)
-        # # print process.stdout
         return process
     except:
+        print traceback.print_exc(file=sys.stdout)
         return None
 
 # Change the way you stop a watcher.
@@ -440,7 +445,7 @@ def watcher_stop(reg=None, api=None, elnk=None, ctsk=None):
         process.communicate(sudo_password + '\n')
         return process
     except:
-        # # print traceback.# print_exc(file=sys.stdout)
+        print traceback.print_exc(file=sys.stdout)
         return None
 
 # Change the way you watch an investigation.
@@ -459,7 +464,7 @@ def watch(name=None, tag=None, api=None, elnk=None, ctsk=None):
             registrations[investigations[0]]['status'] = {'value':'watching', 'stamp':stamp}
             task_process = watcher_launch(
                 name=registrations[investigations[0]]['name'],
-                tag=registrations[investigations[0]]['tags'],
+                tag=tag,
                 api=api, elnk=elnk, ctsk=ctsk)
             if task_process:
                 ## print "Watching on task-[{0}]...".format(int(task_process.pid))
@@ -489,7 +494,7 @@ def unwatch(name=None, tag=None, api=None, elnk=None, ctsk=None):
                 registrations[investigations[0]]['watcher'] = None
                 core.write_reg('default', registrations)
                 ## print "investigation unwatched"
-                return [True, task_process]
+                return [True, stop_process]
             else:
                 ## print "Error: Could not stop this watcher."
                 return [False, None]

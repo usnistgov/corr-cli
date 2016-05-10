@@ -21,11 +21,7 @@ class TestCorrTask:
         tag_resp = coreLink.tag(name='execution', api='corr.main.api', elnk='corr.main.coreLink')
         assert tag_resp != None
         tag = tag_resp[0]
-        shw_resp = coreLink.show(name='execution', tag=tag, api='corr.main.api', elnk='corr.main.coreLink')
-        assert shw_resp != None
-
         # check what is the latest record now
-
         corr_path = imp.find_module('corr')[1]
         task_cmd = []
         task_cmd.append('python')

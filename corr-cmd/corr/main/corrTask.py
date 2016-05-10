@@ -85,7 +85,7 @@ class CoRRTask:
                             pass
                     else:
                         request['label'] = self.tag
-                        request['tag'] = [self.tag]
+                        request['tags'] = [self.tag]
                         request['system'] = self.info['computer']
                         request['inputs'] = [
                             {

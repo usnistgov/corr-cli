@@ -358,6 +358,7 @@ var Space = function (session){
                         content += "</div>";
                         content += "</div>";
                         content += "</div>";
+                        content += "<div id='project-"+project["project"]["id"]+"-confirm' class='modal'></div>";
                         content += "</div>";
                         document.getElementById("projects-list").innerHTML += content;
                     }
@@ -497,7 +498,7 @@ var Record = function (session, _id){
         }
     },
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
-    this.remove = function () {
+    this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/record/remove/"+self._id);
@@ -548,9 +549,10 @@ var Project = function (session, _id){
         }
     },
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
-    this.remove = function () {
+    this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
+        
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/project/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()

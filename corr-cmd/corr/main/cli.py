@@ -136,10 +136,10 @@ def handle(config, conx, register, sync, align, unregister,
         extends[0].tag(name=name, api=extends[1], elnk=extends[2], ctsk=extends[3])
     elif list:
         extends = paths(clnk=clnk, api=api, elnk=elnk, ctsk=ctsk)
-        extends[0].list(api=extends[1], elnk=extends[2], ctsk=extends[3])
+        print extends[0].list(api=extends[1], elnk=extends[2], ctsk=extends[3])
     elif show and (name or tag):
         extends = paths(clnk=clnk, api=api, elnk=elnk, ctsk=ctsk)
-        extends[0].show(name=name, tag=tag, api=extends[1], elnk=extends[2], ctsk=extends[3])
+        print extends[0].show(name=name, tag=tag, api=extends[1], elnk=extends[2], ctsk=extends[3])
     elif align:
         extends = paths(clnk=clnk, api=api, elnk=elnk, ctsk=ctsk)
         extends[0].align(api=extends[1], elnk=extends[2], ctsk=extends[3])

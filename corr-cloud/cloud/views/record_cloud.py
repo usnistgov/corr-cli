@@ -30,12 +30,12 @@ import mimetypes
 #meaning having the same actions and same sequence and same calls. In this case only one profile will
 # be linked to many experiment untill a change happens in that sense.
 
-@app.route(CLOUD_URL + '/private/<hash_session>/record/remove/<record_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/remove/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_remove(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/record/remove/<record_id>')
         
-    if fk.request.method == 'DELETE':
+    if fk.request.method in ['GET', 'DELETE']:
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
@@ -50,7 +50,8 @@ def record_remove(hash_session, record_id):
                 if record.project.owner == current_user:
                     delete_record_files(record)
                     record.delete()
-                    return fk.Response('Record removed', status.HTTP_200_OK)
+                    logStat(deleted=True, record=record)
+                    return fk.redirect('{0}:{1}/dashboard/?session={2}&view=records&project={3}'.format(VIEW_HOST, VIEW_PORT, hash_session, str(record.project.id)))
                 else:
                     return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -58,7 +59,7 @@ def record_remove(hash_session, record_id):
     else:
        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT)) 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/record/comment/<record_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/comment/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_comment(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/record/comment/<record_id>')
@@ -94,7 +95,7 @@ def record_comment(hash_session, record_id):
     else:
        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT)) 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/record/comments/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/comments/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_comments(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/record/comments/<record_id>')
@@ -117,7 +118,7 @@ def record_comments(hash_session, record_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT)) 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/record/view/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/view/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_view(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/record/view/<record_id>')
@@ -143,7 +144,7 @@ def record_view(hash_session, record_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))      
 
-@app.route(CLOUD_URL + '/private/<hash_session>/record/edit/<record_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/edit/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_edit(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/record/edit/<record_id>')
@@ -188,7 +189,7 @@ def record_edit(hash_session, record_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/record/pull/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def pull_record(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/record/pull/<record_id>')
@@ -223,7 +224,7 @@ def pull_record(hash_session, record_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/record/comments/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/record/comments/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_comments(record_id):
     logTraffic(endpoint='/public/record/comments/<record_id>')
@@ -240,7 +241,7 @@ def public_record_comments(record_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT)) 
 
-@app.route(CLOUD_URL + '/public/record/view/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/record/view/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_view(record_id):
     logTraffic(endpoint='/public/record/view/<record_id>')
@@ -260,7 +261,7 @@ def public_record_view(record_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))   
 
-@app.route(CLOUD_URL + '/public/record/pull/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_pull_record(record_id):
     logTraffic(endpoint='/public/record/pull/<record_id>')
@@ -299,7 +300,7 @@ def public_pull_record(record_id):
 
 #To be fixed.
 #Implement the quotas here image_obj.tell()
-@app.route(CLOUD_URL + '/private/<hash_session>/record/file/upload/<record_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/file/upload/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def file_add(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/record/file/upload/<record_id>')
@@ -361,7 +362,7 @@ def file_add(hash_session, record_id):
         else:
             return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/record/file/download/<file_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def file_download(hash_session, file_id):
     logTraffic(endpoint='/private/<hash_session>/record/file/download/<file_id>')
@@ -393,7 +394,7 @@ def file_download(hash_session, file_id):
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/record/file/remove/<file_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/file/remove/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def file_remove(hash_session, file_id):
     logTraffic(endpoint='/private/<hash_session>/record/file/remove/<file_id>')
