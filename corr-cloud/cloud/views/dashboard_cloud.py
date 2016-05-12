@@ -17,7 +17,7 @@ import traceback
 #The API will return some json response at all times. 
 #I will handle my own status and head and content and stamp
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/search', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def private_search(hash_session):
     logTraffic(endpoint='/private/<hash_session>/dashboard/search')
@@ -115,7 +115,7 @@ def private_search(hash_session):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/projects', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_dashboard(hash_session):
     logTraffic(endpoint='/private/<hash_session>/dashboard/projects')
@@ -149,7 +149,7 @@ def project_dashboard(hash_session):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/records/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def dashboard_records(hash_session, project_id):
     logTraffic(endpoint='/private/<hash_session>/dashboard/records/<project_id>')
@@ -210,7 +210,7 @@ def dashboard_records(hash_session, project_id):
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))  
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_diff(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/dashboard/record/diff/<record_id>')
@@ -252,7 +252,7 @@ def record_diff(hash_session, record_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def reproducibility_assess(hash_session, record_id):
     logTraffic(endpoint='/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
@@ -319,7 +319,7 @@ def reproducibility_assess(hash_session, record_id):
 
 ### Public access
 
-@app.route(CLOUD_URL + '/public/dashboard/search', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_search():
     logTraffic(endpoint='/public/dashboard/search')
@@ -408,7 +408,7 @@ def public_search():
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
 
-@app.route(CLOUD_URL + '/public/dashboard/projects', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_dashboard():
     logTraffic(endpoint='/public/dashboard/projects')
@@ -429,7 +429,7 @@ def public_project_dashboard():
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/records/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_dashboard_records(project_id):
     logTraffic(endpoint='/public/dashboard/records/<project_id>')
@@ -464,7 +464,7 @@ def public_dashboard_records(project_id):
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))  
 
 
-@app.route(CLOUD_URL + '/public/dashboard/record/diff/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_diff(record_id):
     logTraffic(endpoint='/public/dashboard/record/diff/<record_id>')
@@ -495,7 +495,7 @@ def public_record_diff(record_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/traffic/api', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/traffic/api', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def traffic_api():
     if fk.request.method == 'GET':
@@ -504,7 +504,7 @@ def traffic_api():
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/traffic/cloud', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/traffic/cloud', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def traffic_cloud():
     if fk.request.method == 'GET':

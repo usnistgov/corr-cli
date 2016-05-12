@@ -29,7 +29,7 @@ class ProjectModel(db.Document):
     extend = db.DictField()
 
     def save(self, *args, **kwargs):
-        self.created_at = str(datetime.datetime.utcnow())
+        # self.created_at = str(datetime.datetime.utcnow())
         return super(ProjectModel, self).save(*args, **kwargs)
 
     def _history(self):
@@ -65,7 +65,7 @@ class ProjectModel(db.Document):
 
     def info(self):
         data = {'created':str(self.created_at), 'updated':str(self.last_updated), 'id': str(self.id), 
-        'owner':str(self.owner.id), 'name': self.name, 'access':self.access, 'tags':len(self.tags), 
+        'owner':str(self.owner.id), 'name': self.name, 'access':self.access, 'tags':','.join(self.tags), 
         'duration': str(self.duration), 'records':self.record_count, 'environments':len(self.history),
         'diffs':self.diff_count, 'comments':len(self.comments), 'resources':len(self.resources)}
         # if self.application != None:
@@ -84,7 +84,7 @@ class ProjectModel(db.Document):
         #     data['application'] = self.application.info()
         # else:
         #     data['application'] = {}
-        data['tags'] = self.tags
+        # data['tags'] = self.tags
         data['goals'] = self.goals
         data['history'] = [env.extended() for env in self._history()]
         data['description'] = self.description
@@ -99,7 +99,6 @@ class ProjectModel(db.Document):
     
     def summary_json(self):
         data = self.info()
-        data['tags'] = len(self.tags)
         if self.goals != None:
             data['goals'] = self.goals[0:96]+"..." if len(self.goals) >=100 else self.goals
         else:

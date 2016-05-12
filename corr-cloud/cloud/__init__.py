@@ -184,15 +184,30 @@ def delete_project_files(project):
     from corrdb.common.models import EnvironmentModel
     from corrdb.common.models import FileModel
 
+    # project resources
+    for _file in project.resources:
+        file_ = FileModel.objects.with_id(_file)
+        if file_:
+            s3_files.delete_key(file_.storage)
+            file_.delete()
+            logStat(deleted=True, file=_file)
+
+    # project records resources
     for record in project.records:
-        for _file in record.files:
-            s3_files.delete_key(_file.location)
+        for _file in record.resources:
+            file_ = FileModel.objects.with_id(_file)
+            if file_:
+                s3_files.delete_key(file_.storage)
+                file_.delete()
+                logStat(deleted=True, file=_file)
+        logStat(deleted=True, record=record)
 
     for environment_id in project.history:
         _environment = EnvironmentModel.objects.with_id(environment_id)
         if _environment.bundle["scope"] == "local":
-            s3_bundles.delete_key(_environment.bundle["location"])
-        del _environment
+            s3_bundles.delete_key(_environment.bundle.location)
+        _environment.delete()
+        logStat(deleted=True, environment=_environment)
 
 def cloud_response(code, title, content):
     import flask as fk
@@ -201,14 +216,16 @@ def cloud_response(code, title, content):
     return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
 
 def delete_record_files(record):
-    s3_files = s3.Bucket('reproforge-pictures')
+    s3_files = s3.Bucket('reproforge-files')
 
     from corrdb.common.models import RecordModel
     from corrdb.common.models import FileModel
 
-    for record in project.records:
-        for _file in record.files:
-            s3_files.delete_key(_file.location)
+    for _file_id in record.resources:
+        _file = FileModel.objects.with_id(_file_id)
+        s3_files.delete_key(_file.location)
+        _file.remove()
+        logStat(deleted=True, file=_file)
 
 def delete_record_file(record_file):
     s3_files = s3.Bucket('reproforge-pictures')

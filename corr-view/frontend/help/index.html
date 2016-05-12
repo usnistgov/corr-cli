@@ -198,12 +198,9 @@
         <script type="text/javascript" src="../js/plugins.js"></script>
 
         <script type="text/javascript" src="../js/init.js"></script>
-        <script src="../js/cloud.js"></script>
+        <script type="text/javascript" src="../js/cloud.js"></script>
 
         <script type="text/javascript">
-            $(document).ready(function(){
-                $('.tooltipped').tooltip({delay: 50});
-            });
             var param = window.location.search.substring(1);
             var parts = param.split("=");
             if(parts[0] == "session"){
@@ -214,7 +211,7 @@
                 document.getElementById("nav-home").href = "../?session="+user.session;
                 document.getElementById("nav-help").href = "./?session="+user.session;
                 document.getElementById("nav-login").remove();
-                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='../dashboard/?session="+user.session+"' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick='user.logout()' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
+                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='../dashboard/?session="+user.session+"' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
             }else if(parts[0] == "action"){
                 var scope = parts[1];
             }

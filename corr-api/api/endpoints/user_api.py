@@ -1539,10 +1539,11 @@ def user_project_create(api_token, app_token):
                             cloned_from = str(clone.id)
                     if (cloned_from == '' and cloned_from_id != ''):
                         return api_response(400, 'Missing references mandatory fields', 'A project should have an existing original record when provided original record.')
-                    project, created = ProjectModel.objects.get_or_create(owner=current_user, name=name)
-                    if not created:
+                    project = ProjectModel.objects(owner=current_user, name=name).first()
+                    if project:
                         return api_response(200, 'Project already exists', project.info())
                     else:
+                        project, created = ProjectModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), owner=current_user, name=name)
                         # project.application = current_app
                         project.description = description
                         project.goals = goals
@@ -1771,6 +1772,7 @@ def user_project_update(api_token, app_token, project_id):
                             project.description = description
                             project.goals = goals
                             project.tags.extend(tags)
+                            project.tags = list(set(project.tags))
                             project.access = access
                             project.history.extend(history)
                             project.cloned_from = cloned_from
@@ -2369,11 +2371,25 @@ def user_record_update(api_token, app_token, record_id):
                             record.label = label
                             record.system = system
                             record.status = status
-                            record.tags.extend(tags)
+                            # print record.tags
+                            for tag in tags:
+                                if str(tag) not in str(record.tags):
+                                    record.tags.append(tag)
+                            # record.tags.extend(tags)
+                            # print record.tags
                             record.access = access
-                            record.inputs.extend(inputs)
-                            record.outputs.extend(outputs)
-                            record.dependencies.extend(dependencies)
+                            # record.inputs.extend(inputs)
+                            for inp in inputs:
+                                if str(inp) not in str(record.inputs):
+                                    record.inputs.append(inp)
+                            # record.outputs.extend(outputs)
+                            for out in outputs:
+                                if str(out) not in str(record.outputs):
+                                    record.outputs.append(out)
+                            # record.dependencies.extend(dependencies)
+                            for dep in dependencies:
+                                if str(dep) not in str(record.dependencies):
+                                    record.dependencies.append(dep)
                             record.rationels.extend(rationels)
                             record.cloned_from = cloned_from
                             record.environment = environment

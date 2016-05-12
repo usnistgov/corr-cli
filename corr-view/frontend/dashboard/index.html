@@ -98,9 +98,9 @@
 
         <script type="text/javascript" src="../js/config.js"></script>
 
+        <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="../js/materialize.js"></script>
         <script type="text/javascript" src="../js/prism.js"></script>
-        <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>    
         <script type="text/javascript" src="../js/materialize.min.js"></script>
         <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>  
         <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>   
@@ -123,46 +123,112 @@
         <script type="text/javascript">
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
-            var session = "";
+            // var session = "";
             var view_selected = "";
             var options = [];
             for(i=0;i<blocks.length;i++){
                 var parts = blocks[i].split("=");
                 if(parts[0] == "session"){
-                    session = parts[1];
+                    user.session = parts[1];
                 }else if(parts[0] == "view"){
                     view_selected = parts[1];
                 }else{
                     options.push(blocks[i]);
                 }
             }
-            if(session != "" && view_selected == ""){
-                dashboard.activity(session);
-            }else if(session != "" && view_selected == "apps"){
-                dashboard.apps(session);
-            }else if(session != "" && view_selected == "projects"){
-                dashboard.projects(session);
-            }else if(session != "" && view_selected == "records"){
-                dashboard.records(session, options);
-            }else if(session != "" && view_selected == "diffs"){
-                dashboard.diffs(session, options);
-            }else if(session != "" && view_selected == "query"){
-                dashboard.query(session, options);
+            if(user.session != "" && view_selected == ""){
+                dashboard.activity(user.session);
+                var space = new Space(user.session);
+            }else if(user.session != "" && view_selected == "apps"){
+                dashboard.apps(user.session);
+            }else if(user.session != "" && view_selected == "projects"){
+                dashboard.projects(user.session);
+                var space = new Space(user.session);
+            }else if(user.session != "" && view_selected == "records"){
+                dashboard.records(user.session, options);
+                var space = new Space(user.session);
+            }else if(user.session != "" && view_selected == "diffs"){
+                dashboard.diffs(user.session, options);
+            }else if(user.session != "" && view_selected == "query"){
+                dashboard.query(user.session, options);
             }else{
                 window.location.replace("../error-404/");
             }
 
-            if (session != ""){
+            if (user.session != ""){
                 document.getElementById("nav-home-2").href = "../?session="+user.session;
                 document.getElementById("nav-home").href = "../?session="+user.session;
                 document.getElementById("nav-help").href = "../help/?session="+user.session;
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
-                document.getElementById("float-menu").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-visibility\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"query\"><a href=\"#query-modal\" class=\"modal-trigger btn-floating btn-large orange darken-1\" onclick=\"return view('query');\"><i class=\"large mdi-image-tune\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"diffs\"><a href=\"#diffs-modal\" class=\"modal-trigger btn-floating btn-large green darken-1\" onclick=\"return view('diffs');\"><i class=\"large mdi-editor-vertical-align-center\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"applications\"><a href=\"#apps-modal\" class=\"modal-trigger btn-floating btn-large purple darken-1\" onclick=\"return view('apps');\"><i class=\"large mdi-navigation-apps\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"records\"><a href=\"#records-modal\" class=\"modal-trigger btn-floating btn-large blue-grey\" onclick=\"return view('records');\"><i class=\"large mdi-file-cloud-upload\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"projects\"><a href=\"#projects-modal\" class=\"modal-trigger btn-floating btn-large brown darken-1\" onclick=\"return view('projects');\"><i class=\"large mdi-file-folder\"></i></a></li></ul>";
+                // Target.
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query disabled');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
             }
 
             function view(scope){
-                window.location.replace("./?session="+this.session+"&view="+scope);
+                window.location.replace("./?session="+user.session+"&view="+scope);
+            }
+
+            function projectEdit(project_id){
+                var project_update = document.getElementById('update-project-'+project_id);
+                project_update.innerHTML = "<a id='update-action' onclick='projectSave(\""+project_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
+                var tags = document.getElementById('project-tags-'+project_id);
+                var description = document.getElementById('project-desc-'+project_id);
+                var goals = document.getElementById('project-goals-'+project_id);
+                tags.removeAttribute("readonly");
+                description.removeAttribute("readonly");
+                goals.removeAttribute("readonly");
+            }
+
+            function projectSave(project_id){
+                var project_update = document.getElementById('update-project-'+project_id);
+                project_update.innerHTML = "<a id='update-action' onclick='projectEdit(\""+project_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
+                var tags = document.getElementById('project-tags-'+project_id);
+                var description = document.getElementById('project-desc-'+project_id);
+                var goals = document.getElementById('project-goals-'+project_id);
+                // description.setAttribute("readonly", null);
+                // goals.setAttribute("readonly", null);
+                var project = new Project(user.session, project_id);
+                project.save(tags.value, description.value, goals.value);
+            }
+
+            function projectRemove(project_name, project_id){
+                Materialize.toast("<span>Delete "+project_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/project/remove/"+project_id+"\">Confirm</a>", 5000);
+            }
+
+            function projectRemoveAgree(session, project_id){
+                console.log("in projectRemoveAgree!");
+                var project = new Project(session, project_id);
+                project.trash();
+                window.location.reload();
+            }
+
+            function uploadRecord(project_name, project_id){
+                Materialize.toast('<span>Uploading a new record to Project ['+project_name+']...</span>', 3000);
+            }
+
+            function recordEdit(record_id){
+                var project_update = document.getElementById('update-record-'+record_id);
+                project_update.innerHTML = "<a id='update-action' onclick='recordSave(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
+                var tags = document.getElementById('record-tags-'+record_id);
+                var rationels = document.getElementById('record-rationels-'+record_id);
+                tags.removeAttribute("readonly");
+                rationels.removeAttribute("readonly");
+            }
+
+            function recordSave(record_id){
+                var project_update = document.getElementById('update-record-'+record_id);
+                project_update.innerHTML = "<a id='update-action' onclick='recordEdit(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
+                var tags = document.getElementById('record-tags-'+record_id);
+                var rationels = document.getElementById('record-rationels-'+record_id);
+                // tags.setAttribute("readonly", null);
+                // rationels.setAttribute("readonly", null);
+                var record = new Record(user.session, record_id);
+                record.save(tags.value, rationels.value);
+            }
+
+            function recordRemove(record_id){
+                Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
             }
         </script>
         <script type="text/javascript" src="../js/plugins/chartjs/chart-script.js"></script>

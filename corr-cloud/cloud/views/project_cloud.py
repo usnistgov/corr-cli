@@ -31,7 +31,7 @@ import mimetypes
 
 # Web project, record creation.
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/sync/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_sync(hash_session, project_id):
     logTraffic(endpoint='/private/<hash_session>/project/sync/<project_id>')
@@ -59,7 +59,7 @@ def project_sync(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/view/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_view(hash_session, project_id):
     logTraffic(endpoint='/private/<hash_session>/project/view/<project_id>')
@@ -87,12 +87,12 @@ def project_view(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))           
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/remove/<project_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/remove/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_remove(hash_session, project_id):
     logTraffic(endpoint='/private/<hash_session>/project/remove/<project_id>')
         
-    if fk.request.method == 'DELETE':
+    if fk.request.method in ['GET', 'DELETE']:
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
@@ -105,7 +105,8 @@ def project_remove(hash_session, project_id):
             else:
                 delete_project_files(project)
                 project.delete()
-                return fk.Response('Project deleted', status.HTTP_200_OK)
+                logStat(deleted=True, project=project)
+                return fk.redirect('{0}:{1}/dashboard/?session={2}'.format(VIEW_HOST, VIEW_PORT, hash_session))
             # else:
             #     projects = ProjectModel.objects(owner=current_user)
             #     for project in projects:
@@ -117,7 +118,7 @@ def project_remove(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/comment/<project_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/comment/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_comment(hash_session, project_id):
     logTraffic(endpoint='/private/<hash_session>/project/comment/<project_id>')
@@ -149,7 +150,7 @@ def project_comment(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/comments/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_comments(hash_session, project_id):
     logTraffic(endpoint='/private/<hash_session>/project/comments/<project_id>')
@@ -175,7 +176,7 @@ def project_comments(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/edit/<project_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/edit/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_edit(hash_session, project_id):
     logTraffic(endpoint='/private/<hash_session>/project/edit/<project_id>')
@@ -196,10 +197,12 @@ def project_edit(hash_session, project_id):
                         description = data.get("description", project.description)
                         goals = data.get("goals", project.goals)
                         group = data.get("group", project.group)
+                        tags = data.get("tags", ','.join(project.tags))
                         environment = data.get("environment", {})
                         project.description = description
                         project.goals = goals
                         project.group = group
+                        project.tags = tags.split(',')
                         if len(environment) != 0:
                             environment_model = EnvironmentModel.objects.with_id(environment['id'])
                             if environment_model is not None:
@@ -228,7 +231,7 @@ def project_edit(hash_session, project_id):
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))       
 
 #project_name or project_id
-@app.route(CLOUD_URL + '/private/<hash_session>/project/record/<project_name>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/record/<project_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_records(hash_session, project_name):
     logTraffic(endpoint='/private/<hash_session>/project/record/<project_name>')
@@ -256,7 +259,7 @@ def project_records(hash_session, project_name):
 
 
 # Public access
-@app.route(CLOUD_URL + '/public/project/sync/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_sync(project_id):
     logTraffic(endpoint='/public/project/sync/<project_id>')
@@ -277,7 +280,7 @@ def public_project_sync(project_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))        
 
-@app.route(CLOUD_URL + '/public/project/record/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/project/record/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_records(hash_session, project_id):
     logTraffic(endpoint='/public/project/record/<project_id>')
@@ -291,7 +294,7 @@ def public_project_records(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/project/comments/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_comments(hash_session, project_id):
     logTraffic(endpoint='/public/project/comments/<project_id>')
@@ -305,7 +308,7 @@ def public_project_comments(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/project/view/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_view(project_id):
     logTraffic(endpoint='/public/project/view/<project_id>')

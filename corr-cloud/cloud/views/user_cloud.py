@@ -34,7 +34,7 @@ import mimetypes
 #Allow admins to do everything they want. Developers will be able to do specific things with the API
 #that normal users can't
 
-@app.route(CLOUD_URL + '/public/user/register', methods=['POST'])
+@app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_register():
     logTraffic(endpoint='/public/user/register')
@@ -221,7 +221,7 @@ def user_register():
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/public/user/password/reset', methods=['POST'])
+@app.route(CLOUD_URL + '/public/user/password/reset', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_password_reset():
     logTraffic(endpoint='/public/user/password/reset')
@@ -244,7 +244,7 @@ def user_password_reset():
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/public/user/password/renew', methods=['POST'])
+@app.route(CLOUD_URL + '/public/user/password/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_password_renew():
     logTraffic(endpoint='/public/user/password/renew')
@@ -270,7 +270,7 @@ def user_password_renew():
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/password/change', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/password/change', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_password_change():
     logTraffic(endpoint='/private/<hash_session>/user/password/change')
@@ -311,7 +311,7 @@ def user_password_change():
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/public/user/login', methods=['POST'])
+@app.route(CLOUD_URL + '/public/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_login():
     logTraffic(endpoint='/public/user/login')
@@ -394,7 +394,7 @@ def user_login():
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/sync', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/sync', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_sync(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/sync')
@@ -412,7 +412,7 @@ def user_sync(hash_session):
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/logout', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/logout', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_logout(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/logout')
@@ -440,7 +440,7 @@ def user_logout(hash_session):
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/unregister', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/unregister', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_unregister(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/unregister')
@@ -465,7 +465,7 @@ def user_unregister(hash_session):
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/dashboard', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/dashboard', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_dashboard(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/dashboard')
@@ -562,7 +562,7 @@ def user_dashboard(hash_session):
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/update', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/update', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_update(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/update')
@@ -621,7 +621,7 @@ def user_update(hash_session):
         else:
             return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/file/upload/<group>/<item_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_file_upload(hash_session, group, item_id):
     logTraffic(endpoint='/private/<hash_session>/file/upload/<group>/<item_id>')
@@ -841,7 +841,7 @@ def user_file_upload(hash_session, group, item_id):
 
 
 # Figure this out when all the updates are done.
-@app.route(CLOUD_URL + '/public/user/contactus', methods=['POST'])
+@app.route(CLOUD_URL + '/public/user/contactus', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_contactus(): #Setup and start smtp server on the instance
     logTraffic(endpoint='/public/user/contactus')
@@ -869,7 +869,7 @@ def user_contactus(): #Setup and start smtp server on the instance
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/public/version', methods=['GET'])
+@app.route(CLOUD_URL + '/public/version', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_version(): #Setup and start smtp server on the instance
     logTraffic(endpoint='/public/version')
@@ -885,7 +885,7 @@ def public_version(): #Setup and start smtp server on the instance
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_picture(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/picture')
@@ -953,7 +953,7 @@ def user_picture(hash_session):
         else:
             return cloud_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/trusted', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/trusted', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_truested(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/trusted')
@@ -980,7 +980,7 @@ def user_truested(hash_session):
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/public/user/home', methods=['GET'])
+@app.route(CLOUD_URL + '/public/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_home():
     logTraffic(endpoint='/public/user/home')
@@ -1032,7 +1032,7 @@ def user_home():
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/profile', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/profile', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_profile(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/profile')
@@ -1060,7 +1060,7 @@ def user_profile(hash_session):
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/renew', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_renew(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/renew')
@@ -1080,7 +1080,7 @@ def user_renew(hash_session):
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/public/user/recover', methods=['POST'])
+@app.route(CLOUD_URL + '/public/user/recover', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def cloud_public_user_recover():
     logTraffic(endpoint='/public/user/recover')
@@ -1118,7 +1118,7 @@ def cloud_public_user_recover():
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def cloud_public_user_picture(user_id):
     logTraffic(endpoint='/public/user/picture/<user_id>')

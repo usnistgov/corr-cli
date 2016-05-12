@@ -203,9 +203,9 @@ var user = {
                         var version = response["version"];
                         console.log("Version: "+version);
                         document.getElementById("footer-version").innerHTML = version;
+                        // Materialize.toast('<span>Access trusted!</span>', 3000);
                     }
                 }
-                Materialize.toast('<span>Access trusted!</span>', 3000);
                 
             } else {
                 window.location.replace("../error-404/");
@@ -275,7 +275,7 @@ var user = {
         console.log("Username: "+this.username);
         console.log("Session: "+this.session);
     }
-}
+};
 
 var Space = function (session){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
@@ -302,48 +302,65 @@ var Space = function (session){
                         if(project["project"]["records"] == 0){
                             disable_view = "disabled";
                         }
+                        // add tooltip
+                        // update to inputs
+                        // Make records clickable
+                        // Remove the view button since bottom info will be clickage.
+                        // Change the order to: View | Edit | Upload | Remove
+
+                        function succeed(xhttp, params){
+                            var content = xhttp.responseText;
+                            if(document.getElementById("update-project"+params[1]) == null){
+                                // console.log(content);
+                                content = content.replace(/session/g, params[0]); 
+                                content = content.replace(/project_id/g, params[1]);
+                                content = content.replace(/project_name/g, params[2]);
+                                content = content.replace(/project_created/g, params[3]);
+                                content = content.replace(/project_duration/g, params[4]);
+                                content = content.replace(/project_description/g, params[5]);
+                                content = content.replace(/project_goals/g, params[6]);
+                                content = content.replace(/project_records/g, params[7]);
+                                content = content.replace(/project_diffs/g, params[8]);
+                                content = content.replace(/project_envs/g, params[9]);
+                                // document.getElementById("projects-list").innerHTML += content;
+                                // console.log(content);
+                            }
+                        };
+                        function failed(){
+                            window.location.replace(window.location.host+"/error-404");
+                        };
+
+                        var params = [session, project["project"]["id"], project["project"]["name"], project["project"]["created"], project["project"]["duration"], project["project"]["description"], project["project"]["goals"], project["project"]["records"], project["project"]["diffs"], project["project"]["environments"]];
+                        config.load_xml('project_content.xml', params, succeed, failed);
+
                         var content = "<div class='col s12 m6 l4'>";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
-                        content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'><a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a><span class='card-title activator grey-text text-darken-4'> "+project["project"]["name"]+"</span>";
+                        content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
+                        content += "<a onclick='projectRemove(\""+project["project"]["name"]+"\",\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Project record upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-upload'></i></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Project environment upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-maps-layers'></i></a>";
+                        content += "<div id='update-project-"+project["project"]["id"]+"'><a id='update-action' onclick='projectEdit(\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
+                        // content += "<a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a>";
+                        content += "<span class='card-title activator black-text text-darken-4'> "+project["project"]["name"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
                         content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"]+"</p>";
-                        content += "<p><i class='mdi-action-description cyan-text text-darken-2'></i> "+project["project"]["description"]+"</p>";
-                        content += "<p><i class='mdi-action-subject cyan-text text-darken-2'></i> "+project["project"]["goals"]+"</p>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='project-tags-"+project["project"]["id"]+"' type='text' value='"+project["project"]["tags"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+project["project"]["id"]+"' type='text' value='"+project["project"]["description"]+"'></div></div>";
+                        // content += "<p><i class='mdi-action-description cyan-text text-darken-2'></i> "+project["project"]["description"]+"</p>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly id='project-goals-"+project["project"]["id"]+"' type='text' value='"+project["project"]["goals"]+"'></div></div>";
+                        // content += "<p><i class='mdi-action-subject cyan-text text-darken-2'></i> "+project["project"]["goals"]+"</p>";
                         content += "<div class='card-action center-align'>";
-                        content += "<a href='#' class='valign'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
-                        content += "<a href='#' class='valign'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["project"]["diffs"]+"</span></a>";
-                        content += "<a href='#' class='valign'><i class='mdi-editor-insert-chart cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
+                        content += "<a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Project diffs view not implemented yet!</span>\", 3000);' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='diffs'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["project"]["diffs"]+"</span></a>";
+                        content += "<a onclick='Materialize.toast(\"<span> Project environments view not implemented yet!</span>\", 3000);' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environments'><i class='mdi-maps-layers cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
                         content += "</div>";
                         content += "</div>";
                         content += "</div>";
+                        content += "<div id='project-"+project["project"]["id"]+"-confirm' class='modal'></div>";
                         content += "</div>";
                         document.getElementById("projects-list").innerHTML += content;
-                    }
-                    if(document.getElementById("temporal-slider") && response["projects"].length >0){
-                        document.getElementById("temporal-slider").innerHTML = "<div class='slider-date'><div class='lower'></div><div class='upper'></div></div><span id='event-start' class='temporal-val'>Thursday, 30th December 2010</span><span id='event-end' class='temporal-val date-right'>Thursday, 1st January 2015</span>";
-                        if(response["projects"].length >0){
-                            $('.slider-date').noUiSlider({
-                                animate: true,
-                                connect: true,
-                                start: [ timestamp(response["projects"][0]["project"]["created"]), timestamp(response["projects"][response["projects"].length - 1]["project"]["created"]) ],
-                                step: 1 * 24 * 60 * 60 * 1000,
-                                format: wNumb({
-                                    decimals: 0
-                                    }),
-                                range: {
-                                    min: timestamp(response["projects"][0]["project"]["created"]),
-                                    max: timestamp(response["projects"][response["projects"].length - 1]["project"]["created"])
-                                }
-                            });
-                            $(".slider-date").Link('lower').to($("#event-start"), setDate);
-                            $(".slider-date").Link('upper').to($("#event-end"), setDate);
-                        }
-                    }else{
-                        if(response["projects"].length == 0){
-                            document.getElementById("temporal-slider").innerHTML = "<div><span class='chart-title cyan-text'>No project found.</span><div>";
-                        }
                     }
                     document.getElementById("footer-version").innerHTML = version;
                 }else{
@@ -379,7 +396,7 @@ var Space = function (session){
                     for(var i = 0; i < response["records"].length; i++){
                         record = response["records"][i];
                         console.log(record);
-                        var content = "<div class='col s12 m6 l4' id='record-"+record["head"]["id"]+"'> ";
+                        var content = "<div class='col s12 m6 l4' id='"+record["head"]["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
@@ -387,51 +404,35 @@ var Space = function (session){
                         if(record["container"] == false){
                             disable_download = "disabled";
                         }
-                        content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'><a onclick='space.pull('"+record["head"]["project"]+"','"+record["head"]["id"]+"')' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download'></i></a><span class='card-title activator grey-text text-darken-4'> "+record["head"]["label"]+"</span>";
+                        content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
+                        content += "<a onclick='recordRemove(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
+                        content += "<a onclick=\"space.pull('"+record["head"]["project"]+"','"+record["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download tooltipped' data-position='top' data-delay='50' data-tooltip='download'></i></a>";
+                        content += "<div id='update-record-"+record["head"]["id"]+"'><a id='update-action' onclick='recordEdit(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
+                        content += "<span class='card-title activator grey-text text-darken-4'>"+record["head"]["id"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+record["head"]["created"]+"</p>";
+                        if(project_id == "all"){
+                            content += "<p class='grey-text ultra-small'><i class='mdi-file-folder cyan-text text-darken-2'></i> "+record["head"]["project-name"]+"</p>";
+                        }
                         content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+record["head"]["updated"]+"</p>";
-                        content += "<p><i class='mdi-notification-event-note cyan-text text-darken-2'></i> "+record["head"]["id"]+"</p>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='record-tags-"+record["head"]["id"]+"' type='text' value='"+record["head"]["tags"]+"'></div></div>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='record-rationels-"+record["head"]["id"]+"' type='text' value='"+record["head"]["rationels"]+"'></div></div>";
                         content += "<p><i class='mdi-notification-sync cyan-text text-darken-2'></i> "+record["head"]["status"]+"</p>";
                         content += "<div class='card-action center-align'>";
-                        content += "<a href='#' class='valign'><i class='mdi-action-input cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
-                        content += "<a href='#' class='valign'><i class='mdi-action-launch cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
-                        content += "<a href='#' class='valign'><i class='mdi-editor-insert-link cyan-text text-darken-2'></i> <span class='dependencies badge'>"+record["head"]["dependencies"]+"</span></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Record inputs view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-communication-call-received cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Record outputs view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-communication-call-made cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Record dependencies view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-link cyan-text text-darken-2'></i> <span class='dependencies badge'>"+record["head"]["dependencies"]+"</span></a>";
                         content += "</div>";
                         content += "</div>";                
                         content += "</div>";
                         content += "</div>";
                         document.getElementById("records-list").innerHTML += content;
                     }
-                    if(document.getElementById("temporal-slider") && response["records"].length >0){
-                        document.getElementById("temporal-slider").innerHTML = "<div class='slider-date'><div class='lower'></div><div class='upper'></div></div><span id='event-start' class='temporal-val'>Thursday, 30th December 2010</span><span id='event-end' class='temporal-val date-right'>Thursday, 1st January 2015</span>";
-                        $('.slider-date').noUiSlider({
-                            animate: true,
-                            connect: true,
-                            start: [ timestamp(response["records"][0]["created"]), timestamp(response["records"][response["records"].length-1]["created"]) ],
-                            step: 1 * 24 * 60 * 60 * 1000,
-                            format: wNumb({
-                                decimals: 0
-                                }),
-                            range: {
-                                min: timestamp(response["records"][0]["created"]),
-                                max: timestamp(response["records"][response["records"].length-1]["created"])
-                            }
-                        });
-                        $(".slider-date").Link('lower').to($("#event-start"), setDate);
-                        $(".slider-date").Link('upper').to($("#event-end"), setDate);
-                    }else{
-                        if(response["records"].length == 0){
-                            document.getElementById("temporal-slider").innerHTML = "<div><span class='chart-title cyan-text'>No records found.</span><div>";
-                        }
-                    }
                 }
             } else {
                 console.log("Dashboard failed");
             }
         }
-        
-    }
-
+    },
     this.exportToJson = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
@@ -460,9 +461,113 @@ var Space = function (session){
                 console.log("Dashboard download failed");
             }
         }
-    }
-
+    },
     this.pull = function(project_name, record_id) {
+        console.log("Before...");
         window.location.replace(url+"/private/"+this.session+"/record/pull"+"/"+record_id);
+        console.log("...After");
+    }
+};
+
+var Record = function (session, _id){
+    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    this.session = session;
+    self._id = _id;
+    // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
+    this.save = function(tags, rationels) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", url+"/private/"+this.session+"/record/edit/"+self._id);
+        // console.log("Tags: "+cache['tags']);
+        // console.log("Rationels: "+cache['rationels']);
+        var request = { 'tags': tags, 'rationels': rationels};
+        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Update succeeded</span>', 3000);
+                } else {
+                    // tags.value = cache['tags'];
+                    // rationels.value = cache['rationels'];
+                    Materialize.toast('<span>Update failed</span>', 5000);
+                }
+                window.location.reload();
+            }
+        }
+    },
+    // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
+    this.trash = function () {
+        var xmlhttp = new XMLHttpRequest();
+        console.log(this.session);
+        xmlhttp.open("DELETE", url+"/private/"+this.session+"/record/remove/"+self._id);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Record removal succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    Materialize.toast('<span>Record removal failed</span>', 3000);
+                    console.log("Dashboard download failed");
+                }
+            }
+        }
+    }
+};
+
+var Project = function (session, _id){
+    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    this.session = session;
+    self._id = _id;
+    // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
+    this.save = function(tags, description, goals) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", url+"/private/"+this.session+"/project/edit/"+self._id);
+        // console.log("Tags: "+cache['tags']);
+        // console.log("Rationels: "+cache['rationels']);
+        var request = { 'tags':tags, 'description': description, 'goals': goals};
+        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Update succeeded</span>', 3000);
+                } else {
+                    // tags.value = cache['tags'];
+                    // rationels.value = cache['rationels'];
+                    Materialize.toast('<span>Update failed</span>', 5000);
+                }
+                window.location.reload();
+            }
+        }
+    },
+    // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
+    this.trash = function () {
+        var xmlhttp = new XMLHttpRequest();
+        console.log(this.session);
+        
+        xmlhttp.open("DELETE", url+"/private/"+this.session+"/project/remove/"+self._id);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Record removal succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    Materialize.toast('<span>Record removal failed</span>', 3000);
+                    console.log("Dashboard download failed");
+                }
+            }
+        }
     }
 };

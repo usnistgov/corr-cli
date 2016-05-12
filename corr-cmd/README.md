@@ -39,3 +39,6 @@ CoRR-Cmd will allow the scientist to register/unregister execution to record and
 * Manage watchers
 * `corr --watch --name software_name --marker software_marker` Will initiate a watcher deamon that will listen for an instance and 
 * `corr --unwatch --name software_name --marker software_marker` Will list the users.
+
+# Test coverage
+* nosetests -sv --with-coverage --cover-erase --cover-html --cover-package=corr
