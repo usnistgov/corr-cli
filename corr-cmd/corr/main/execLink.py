@@ -30,9 +30,10 @@ class ExecLink:
                         p.cmdline()) and self.watcher not in ' '.join(p.cmdline()):
                     # # print p.cmdline()
                     process = p
+                    self.pid = pids[i]
                     break
         if process is None:
-            # # print "Process is None"
+            # print "Process is None"
             return None
         else:
             try:
@@ -115,16 +116,17 @@ class ExecLink:
                     try:
                         self.info['libraries'] = process.memory_maps()
                     except:
-                        self.info['libraries'] = 'unknown'
+                        self.info['libraries'] = []
                     try:
                         self.info['network'] = process.get_connections()
                     except:
                         # # print traceback.# print_exc(file=sys.stdout)
-                        self.info['network'] = 'unknown'
+                        self.info['network'] = []
                     try:
                         self.info['io_files'] = process.open_files()
+                        # print self.info['io_files'][0]
                     except:
-                        self.info['io_files'] = 'unknown'
+                        self.info['io_files'] = []
                 else:
                     try:
                         threads = process.threads()
@@ -151,20 +153,18 @@ class ExecLink:
                     except:
                         self.info['mem_purcentage'].append('unknown')
                     try:
-                        self.info['libraries'].append(process.memory_maps())
-                        self.info['libraries'] = map(dict, set(tuple(sorted(d.items())) for d in self.info['libraries']))
+                        self.info['libraries'] = process.memory_maps()
                     except:
-                        pass
+                        self.info['libraries'] = []
                     try:
-                        self.info['network'].append(process.get_connections())
-                        self.info['network'] = map(dict, set(tuple(sorted(d.items())) for d in self.info['network']))
+                        self.info['network'] = process.get_connections()
                     except:
-                        pass
+                        self.info['network'] = []
                     try:
-                        self.info['io_files'].append(process.open_files())
-                        self.info['io_files'] = map(dict, set(tuple(sorted(d.items())) for d in self.info['io_files']))
+                        self.info['io_files'] = process.open_files()
+                        # print self.info['io_files'][0]
                     except:
-                        pass
+                        self.info['io_files'] = []
                 return self.info
             except:
                 # # print traceback.# print_exc(file=sys.stdout)

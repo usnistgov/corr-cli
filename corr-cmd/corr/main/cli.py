@@ -136,7 +136,11 @@ def handle(config, conx, register, sync, align, unregister,
         extends[0].tag(name=name, api=extends[1], elnk=extends[2], ctsk=extends[3])
     elif list:
         extends = paths(clnk=clnk, api=api, elnk=elnk, ctsk=ctsk)
-        print extends[0].list(api=extends[1], elnk=extends[2], ctsk=extends[3])
+        regs = extends[0].list(api=extends[1], elnk=extends[2], ctsk=extends[3])
+        for reg in regs:
+          print "{0}\t{1}\t{2}\t{3}".format(
+              reg['name'], str(reg['tags']), reg['status']['stamp'],
+              reg['status']['value'])
     elif show and (name or tag):
         extends = paths(clnk=clnk, api=api, elnk=elnk, ctsk=ctsk)
         print extends[0].show(name=name, tag=tag, api=extends[1], elnk=extends[2], ctsk=extends[3])

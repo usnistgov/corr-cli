@@ -2371,11 +2371,25 @@ def user_record_update(api_token, app_token, record_id):
                             record.label = label
                             record.system = system
                             record.status = status
-                            record.tags.extend(tags)
+                            # print record.tags
+                            for tag in tags:
+                                if str(tag) not in str(record.tags):
+                                    record.tags.append(tag)
+                            # record.tags.extend(tags)
+                            # print record.tags
                             record.access = access
-                            record.inputs.extend(inputs)
-                            record.outputs.extend(outputs)
-                            record.dependencies.extend(dependencies)
+                            # record.inputs.extend(inputs)
+                            for inp in inputs:
+                                if str(inp) not in str(record.inputs):
+                                    record.inputs.append(inp)
+                            # record.outputs.extend(outputs)
+                            for out in outputs:
+                                if str(out) not in str(record.outputs):
+                                    record.outputs.append(out)
+                            # record.dependencies.extend(dependencies)
+                            for dep in dependencies:
+                                if str(dep) not in str(record.dependencies):
+                                    record.dependencies.append(dep)
                             record.rationels.extend(rationels)
                             record.cloned_from = cloned_from
                             record.environment = environment

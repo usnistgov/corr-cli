@@ -25,11 +25,28 @@ class CoRRTask:
 
         self.api_module = api_module
         self.records = []
+        self.request = {}
+        self.ios = {'inputs':[], 'outputs':[]}
+
+    def sync_io(self, config):
+        for _input in self.ios['inputs']:
+            api_response = self.api_module.upload_file(
+                config=config,
+                path=_input,
+                group='input',
+                obj=self.record)
+        for _output in self.ios['outputs']:
+            api_response = self.api_module.upload_file(
+                config=config,
+                path=_output,
+                group='output',
+                obj=self.record)
 
     def run(self):
         found = False
         duration = 0
         project = None
+        config  = None
         while True:
             running = False
             self.info = self.link.record()
@@ -37,7 +54,6 @@ class CoRRTask:
                 found = True
                 running = True
                 core.write_repo(self.name, self.info)
-                request = {}
                 config = core.read_config('default')
                 registrations = core.read_reg('default')
                 # # print self.name
@@ -53,79 +69,110 @@ class CoRRTask:
                     project = registrations[regs[0]]['project']
                 if project:
                     if self.link.updated:
-                        request['inputs'] = [
-                            {
-                                'library':data[0]
-                            } for data in self.info['io_files']]
-                        request['outputs'] = [
-                            {
-                                'library':data[0]
-                            } for data in self.info['io_files']]
-                        request['dependencies'] = [
-                            {
-                                'library':data[0]
-                            } for data in self.info['libraries']]
-                        request['status'] = self.info['status']
-                        request['extend'] = {}
-                        request['extend']['children'] = self.info['children']
-                        request['extend']['network'] = self.info['network']
-                        request['extend']['cp_purcentage'] = self.info['cp_purcentage']
-                        request['extend']['mem_purcentage'] = self.info['mem_purcentage']
-                        request['extend']['threads'] = self.info['threads']
+                        # print self.tag
+                        for data in self.info['io_files']:
+                            if data[3] in ['r', 'r+', 'a+'] and data[0] not in self.ios['inputs']:
+                                self.ios['inputs'].append(data[0])
+                            if data[3] in ['w', 'w+', 'a', 'a+'] and data[0] not in self.ios['outputs']:
+                                self.ios['outputs'].append(data[0])
+                        try:
+                            self.request['inputs'] = [
+                                {
+                                    'input':data
+                                } for data in self.info['io_files'] if data[3] in ['r', 'r+', 'a+']]
+                        except:
+                            self.request['inputs'] = []
+                        try:
+                            self.request['outputs'] = [
+                                {
+                                    'output':data
+                                } for data in self.info['io_files'] if data[3] in ['w', 'w+', 'a', 'a+']]
+                        except:
+                            self.request['outputs'] = []
+                        try:
+                            self.request['dependencies'] = [
+                                {
+                                    'dependency':data
+                                } for data in self.info['libraries']]
+                        except:
+                            self.request['dependencies'] = []
+                        self.request['status'] = self.info['status']
+                        self.request['extend'] = {}
+                        self.request['extend']['children'] = self.info['children']
+                        self.request['extend']['network'] = self.info['network']
+                        self.request['extend']['cp_purcentage'] = self.info['cp_purcentage']
+                        self.request['extend']['mem_purcentage'] = self.info['mem_purcentage']
+                        self.request['extend']['threads'] = self.info['threads']
 
                         api_response = self.api_module.record_update(
                             config=config,
                             record=self.record,
-                            request=request)
-                        self.records.append(request)
+                            request=self.request)
+                        self.records.append(self.request)
                         # print "Record updated"
                         if not api_response[0]:
                             # # print "Error: Watcher recording create process failed."
                             # # print api_response[1]
                             pass
                     else:
-                        request['label'] = self.tag
-                        request['tags'] = [self.tag]
-                        request['system'] = self.info['computer']
-                        request['inputs'] = [
-                            {
-                                'library':data[0]
-                            } for data in self.info['io_files']]
-                        request['outputs'] = [
-                            {
-                                'library':data[0]
-                            } for data in self.info['io_files']]
-                        request['dependencies'] = [
-                            {
-                                'library':data[0]
-                            } for data in self.info['libraries']]
-                        request['status'] = self.info['status']
-                        request['access'] = 'private'
-                        request['execution'] = {
+                        self.request['label'] = self.tag
+                        self.request['tags'] = [self.tag]
+                        # print self.tag
+                        self.request['system'] = self.info['computer']
+                        for data in self.info['io_files']:
+                            if data[3] in ['r', 'r+', 'a+'] and data[0] not in self.ios['inputs']:
+                                self.ios['inputs'].append(data[0])
+                            if data[3] in ['w', 'w+', 'a', 'a+'] and data[0] not in self.ios['outputs']:
+                                self.ios['outputs'].append(data[0])
+                        try:
+                            self.request['inputs'] = [
+                                {
+                                    'input':data
+                                } for data in self.info['io_files'] if data[3] in ['r', 'r+', 'a+']]
+                        except:
+                            self.request['inputs'] = []
+                        try:
+                            self.request['outputs'] = [
+                                {
+                                    'output':data
+                                } for data in self.info['io_files'] if data[3] in ['w', 'w+', 'a', 'a+']]
+                        except:
+                            self.request['outputs'] = []
+                        try:
+                            self.request['dependencies'] = [
+                                {
+                                    'dependency':data
+                                } for data in self.info['libraries']]
+                        except:
+                            self.request['dependencies'] = []
+                        self.request['status'] = self.info['status']
+                        self.request['access'] = 'private'
+                        self.request['execution'] = {
                             'cmdline':self.info['cmdline'],
                             'executable':self.info['executable'],
                             'path':self.info['path'],
                             'name':self.info['name']}
-                        request['extend'] = {}
-                        request['extend']['children'] = self.info['children']
-                        request['extend']['network'] = self.info['network']
-                        request['extend']['cp_purcentage'] = self.info['cp_purcentage']
-                        request['extend']['mem_purcentage'] = self.info['mem_purcentage']
-                        request['extend']['threads'] = self.info['threads']
+                        self.request['extend'] = {}
+                        self.request['extend']['children'] = self.info['children']
+                        self.request['extend']['network'] = self.info['network']
+                        self.request['extend']['cp_purcentage'] = self.info['cp_purcentage']
+                        self.request['extend']['mem_purcentage'] = self.info['mem_purcentage']
+                        self.request['extend']['threads'] = self.info['threads']
                         api_response = self.api_module.record_create(
                             config=config,
                             project=project,
-                            request=request)
+                            request=self.request)
                         # print "Record created"
-                        self.records.append(request)
+                        self.records.append(self.request)
                         if api_response[0]:
                             self.record = api_response[1]['head']['id']
                         else:
                             # # print "Error: Watcher recording create process failed."
-                            # # print api_response[1]
+                            # print api_response[1]
+                            # pass
                             pass
 
-                        if self.info['status'] in ['sleeping', 'killed', 'terminated', 'stoped']:
+                        if self.info['status'] in ['killed', 'terminated', 'stoped']: #'sleeping', 
                             running = False 
                 else:
                     # print "Error: Unable to find the project."
@@ -137,8 +184,9 @@ class CoRRTask:
                 break
             sleep(self.refresh)
             duration += self.refresh
-            if not found and duration >= self.timeout:
+            if duration >= self.timeout:
                 break
+        self.sync_io(config)
         return self.records
 
 @click.command()

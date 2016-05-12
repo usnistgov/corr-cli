@@ -169,6 +169,8 @@ def upload_file(config=None, path=None, obj=None, group=None):
     else:
         return [False, 'No configured api.']
 
+    
+    # print path
     files = {'file': open('{0}'.format(path))}
     response = requests.post(url, files=files)
     data = response.content

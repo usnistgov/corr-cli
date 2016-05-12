@@ -118,10 +118,10 @@ def list(api=None, elnk=None, ctsk=None):
     ## print "# corr registrations"
     ## print "#"
     registrations = core.read_reg('default')
-    for reg in registrations:
-        print "{0}\t{1}\t{2}\t{3}".format(
-            reg['name'], str(reg['tags']), reg['status']['stamp'],
-            reg['status']['value'])
+    # for reg in registrations:
+        # print "{0}\t{1}\t{2}\t{3}".format(
+        #     reg['name'], str(reg['tags']), reg['status']['stamp'],
+        #     reg['status']['value'])
     return registrations
 
 # Change the way you want to show a registration

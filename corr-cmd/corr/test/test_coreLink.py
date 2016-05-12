@@ -60,8 +60,8 @@ class TestCoreLink:
         task_cmd.append('{0}/data/execution.py'.format(corr_path))
         task_cmd.append(self.tag)
         watch_resp = coreLink.watch(name='execution', tag=self.tag, api='corr.main.api', elnk='corr.main.coreLink', ctsk='corr.main.corrTask')
-        print watch_resp[1]
+        # print watch_resp[1]
         assert watch_resp[0] == True
         unwatch_resp = coreLink.unwatch(name='execution', tag=self.tag, api='corr.main.api', elnk='corr.main.coreLink', ctsk='corr.main.corrTask')
-        print unwatch_resp[1]
+        # print unwatch_resp[1]
         assert unwatch_resp[0] == True

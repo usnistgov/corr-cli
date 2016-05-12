@@ -28,7 +28,7 @@ class TestCorrTask:
         task_cmd.append('{0}/data/execution.py'.format(corr_path))
         task_cmd.append(tag)
         process = subprocess.Popen(task_cmd)
-        tsk = CoRRTask(name='execution', tag=tag, clnk_module=clnk_module, api_module=api_module, elnk_module=elnk_module, timeout=30)
+        tsk = CoRRTask(name='execution', tag=tag, clnk_module=clnk_module, api_module=api_module, elnk_module=elnk_module, timeout=60)
         records = tsk.run()
         assert len(records) > 0
         
