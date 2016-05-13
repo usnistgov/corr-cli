@@ -269,6 +269,9 @@ var user = {
             }
         }
     },
+    config: function() {
+        window.location.replace(this.url+"/private/"+this.session+"/user/config");
+    },
     copy_api: function() {
         console.log("Api: "+this.api);
         console.log("Email: "+this.email);

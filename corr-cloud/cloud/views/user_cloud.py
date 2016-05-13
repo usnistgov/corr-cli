@@ -12,7 +12,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, cloud_response, upload_picture, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, s3_upload_file, s3_delete_file, logStat, logTraffic, logAccess
+from cloud import app, stormpath_manager, crossdomain, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, s3_get_file, s3_upload_file, s3_delete_file, logStat, logTraffic, logAccess
 import datetime
 import json
 import traceback
@@ -23,6 +23,7 @@ import hashlib
 from stormpath.error import Error
 import os
 import mimetypes
+from StringIO import StringIO
 
 # CLOUD_VERSION = 1
 # CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
@@ -884,6 +885,25 @@ def public_version(): #Setup and start smtp server on the instance
         return fk.Response(version, status.HTTP_200_OK)
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@app.route(CLOUD_URL + '/private/<hash_session>/user/config', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def user_config(hash_session):
+    logTraffic(endpoint='/private/<hash_session>/user/config')
+        
+    user_model = UserModel.objects(session=hash_session).first()
+    if user_model ==None:
+        return cloud_response(401, 'Unauthorized access', 'The user credential is not authorized.')
+    else:
+        logAccess('cloud', '/private/<hash_session>/user/config')
+        if fk.request.method == 'GET':
+            config_buffer = StringIO()
+            config_content = {'default':{'api':{'host':API_HOST, 'port':API_PORT, 'key':user_model.api_token}}}
+            config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')))
+            config_buffer.seek(0)
+            return fk.send_file(config_buffer, as_attachment=True, attachment_filename='config.json', mimetype='application/json')
+        else:
+            return cloud_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')

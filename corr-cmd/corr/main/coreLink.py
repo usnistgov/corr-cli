@@ -62,12 +62,11 @@ def handle(config, conx, name, host, port, key, tag,
         if api_module.api_status(config=config):
             ## print "OK --- CoRR backend api[{0}:{1}] reached.".format(
             #    config['api']['host'], config['api']['port'])
-            pass
-            return "OK"
+            print "OK"
         else:
             ## print "KO --- could not reach CoRR backend api[{0}:{1}].".format(
             #    config['api']['host'], config['api']['port'])
-            return "KO"
+            print "KO"
 
     if upload and file:
         push_file(path=path, obj=obj, group=group)

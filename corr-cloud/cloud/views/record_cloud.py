@@ -8,7 +8,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, load_bundle, prepare_record, crossdomain, delete_record_files, delete_record_file, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
+from cloud import app, stormpath_manager, prepare_record, crossdomain, delete_record_files, delete_record_file, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
 import datetime
 import json
 import traceback
@@ -48,9 +48,10 @@ def record_remove(hash_session, record_id):
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record.project.owner == current_user:
-                    delete_record_files(record)
-                    record.delete()
-                    logStat(deleted=True, record=record)
+                    result = delete_record_files(record)
+                    if result:
+                        logStat(deleted=True, record=record)
+                        record.delete()
                     return fk.redirect('{0}:{1}/dashboard/?session={2}&view=records&project={3}'.format(VIEW_HOST, VIEW_PORT, hash_session, str(record.project.id)))
                 else:
                     return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
@@ -412,7 +413,7 @@ def file_remove(hash_session, file_id):
             else:
                 if record_file.record.project.owner == current_user:
                     delete_record_file(record_file)
-                    record_file.delete()
+                    # record_file.delete()
                     return fk.Response('Record file removed', status.HTTP_200_OK)
                 else:
                     return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))

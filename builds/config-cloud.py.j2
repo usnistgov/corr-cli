@@ -13,6 +13,11 @@ VIEW_SETTINGS = {
     'port': {{hostvars['frontendhost']['mapped_port']}}
 }
 
+API_SETTINGS = {
+    'host': '{{ hostvars['apihost']['ansible_ssh_host'] }}',
+    'port': {{hostvars['apihost']['mapped_port']}}
+}
+
 STORMPATH_API_KEY_FILE = 'apiKey.properties'
 STORMPATH_APPLICATION = '{{ stormpath_app }}'
 STORMPATH_REDIRECT_URL = '/cloud'

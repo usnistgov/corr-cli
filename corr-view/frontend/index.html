@@ -297,7 +297,8 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <button data-clipboard-action="copy" data-clipboard-target="#view-api" class="btn waves-effect waves-light col s12">Copy Token</button>
+                    <!-- <button data-clipboard-action="copy" data-clipboard-target="#view-api" class="btn waves-effect waves-light col s12">Copy Token</button> -->
+                    <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
                   </div>
                 </div>
                 <div class="row margin">
@@ -415,7 +416,7 @@
         <script type="text/javascript">
             $(document).ready(function(){
                 $('.tooltipped').tooltip({delay: 50});
-                new Clipboard('.btn');
+                // new Clipboard('.btn');
             });
             var xmlhttp = new XMLHttpRequest();
             console.log(this.session);
