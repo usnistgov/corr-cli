@@ -30,6 +30,16 @@ import string
 import os
 import thread
 
+@app.route(API_URL + '/public/api/status', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def public_api_status():
+    logTraffic(endpoint='/public/api/status')
+    if fk.request.method == 'GET':
+        # Maybe perform some sanity checks
+        return api_response(200, 'API reached', 'This CoRR API instance is up and running')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
 @app.route(API_URL + '/public/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_app_show(app_id):
@@ -154,7 +164,13 @@ def public_user_picture(user_id):
                     return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
             else:
                 picture = profile.picture
-                if picture.location == 'local' and 'http://' not in picture.storage:
+                if picture == None:
+                    picture_buffer = s3_get_file('picture', 'default-picture.png')
+                    if picture_buffer == None:
+                        return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                    else:
+                        return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                elif picture.location == 'local' and 'http://' not in picture.storage:
                     picture_buffer = s3_get_file('picture', picture.storage)
                     if picture_buffer == None:
                         return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)

@@ -9,7 +9,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, CLOUD_URL
+from cloud import app, stormpath_manager, crossdomain, CLOUD_URL, VIEW_HOST, VIEW_PORT
 import datetime
 import json
 import traceback
@@ -24,7 +24,7 @@ import mimetypes
 #The API will return some json response at all times. 
 #I will handle my own status and head and content and stamp
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/create', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def diff_create(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/create")
@@ -36,7 +36,7 @@ def diff_create(hash_session, diff_id):
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=edit_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=edit_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
@@ -53,7 +53,7 @@ def diff_create(hash_session, diff_id):
                     comments = data.get("comments", [])
 
                     if targeted_id == "" or record_from_id == "" or record_to_id == "":
-                        return fk.redirect('http://0.0.0.0:5000/error-400/')
+                        return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         try:
                             targeted = UserModel.objects.with_id(targeted_id)
@@ -68,19 +68,19 @@ def diff_create(hash_session, diff_id):
                                     diff.save()
                                     return fk.Response('Diff created', status.HTTP_200_OK)
                                 else:
-                                    return fk.redirect('http://0.0.0.0:5000/error-409/')
+                                    return fk.redirect('{0}:{1}/error-409/'.format(VIEW_HOST, VIEW_PORT))
                             else:
-                                return fk.redirect('http://0.0.0.0:5000/error-400/')
+                                return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                         except:
-                            return fk.redirect('http://0.0.0.0:5000/error-400/')
+                            return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('http://0.0.0.0:5000/error-415/')
+                    return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
             else:
-                return fk.redirect('http://0.0.0.0:5000/error-404/')
+                return fk.redirect('{0}:{1}/error-404/'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/remove/<diff_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/remove/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def diff_remove(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/remove/<diff_id>")
@@ -97,19 +97,19 @@ def diff_remove(hash_session, diff_id):
             except:
                 print str(traceback.print_exc())
             if diff is None:
-                return fk.redirect('http://0.0.0.0:5000/error-204/')
+                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if diff.sender == current_user or diff.targeted == current_user:
                     diff.delete()
                     return fk.Response('Diff request removed', status.HTTP_200_OK)
                 else:
-                    return fk.redirect('http://0.0.0.0:5000/error-401/?action=remove_failed')
+                    return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=remove_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=remove_denied'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('http://0.0.0.0:5000/error-405/')
+       return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/comment/<diff_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/comment/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def diff_comment(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/comment/<diff_id>")
@@ -126,7 +126,7 @@ def diff_comment(hash_session, diff_id):
             except:
                 print str(traceback.print_exc())
             if diff is None:
-                return fk.redirect('http://0.0.0.0:5000/error-204/')
+                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 # if diff.project.owner == current_user: # Allow any user to be able to comment on a diff.
                 # Because based on a discussion a user that can't see the two records can ask
@@ -139,17 +139,17 @@ def diff_comment(hash_session, diff_id):
                         diff.save()
                         return fk.Response('Diff comment posted', status.HTTP_200_OK)
                     else:
-                        return fk.redirect('http://0.0.0.0:5000/error-400/')
+                        return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('http://0.0.0.0:5000/error-415/')
+                    return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
                 # else:
-                #     return fk.redirect('http://0.0.0.0:5000/error-401/?action=comment_failed')
+                #     return fk.redirect('{0}:{1}/error-401/?action=comment_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=comment_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=comment_denied'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('http://0.0.0.0:5000/error-405/')  
+       return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))  
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/view/<diff_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def diff_view(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/view/<diff_id>")
@@ -166,19 +166,19 @@ def diff_view(hash_session, diff_id):
             except:
                 print str(traceback.print_exc())
             if diff is None:
-                return fk.redirect('http://0.0.0.0:5000/error-204/')
+                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 # Let's allow anybody to be able to see a diff from a search or other.
                 # if diff.creator == current_user or diff.target == current_user:
                 return fk.Response(diff.to_json(), mimetype='application/json')
                 # else:
-                #     return fk.redirect('http://0.0.0.0:5000/error-401/?action=view_failed')
+                #     return fk.redirect('{0}:{1}/error-401/?action=view_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=view_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=view_denied'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')      
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))      
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/edit/<diff_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/edit/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def diff_edit(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/edit/<diff_id>")
@@ -190,7 +190,7 @@ def diff_edit(hash_session, diff_id):
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=edit_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=edit_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
@@ -200,7 +200,7 @@ def diff_edit(hash_session, diff_id):
                 except:
                     print str(traceback.print_exc())
                 if diff is None:
-                    return fk.redirect('http://0.0.0.0:5000/error-204/')
+                    return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     if fk.request.data:
                         data = json.loads(fk.request.data)
@@ -216,7 +216,7 @@ def diff_edit(hash_session, diff_id):
                                 return fk.Response('Diff edited', status.HTTP_200_OK)
                             except:
                                 print str(traceback.print_exc())
-                                return fk.redirect('http://0.0.0.0:5000/error-400/')
+                                return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                         elif diff.target == current_user:
                             try:
                                 status = data.get("status", diff.status)
@@ -225,17 +225,17 @@ def diff_edit(hash_session, diff_id):
                                 return fk.Response('Diff edited', status.HTTP_200_OK)
                             except:
                                 print str(traceback.print_exc())
-                                return fk.redirect('http://0.0.0.0:5000/error-400/')
+                                return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                         else:
-                            return fk.redirect('http://0.0.0.0:5000/error-401/?action=edit_failed')
+                            return fk.redirect('{0}:{1}/error-401/?action=edit_failed'.format(VIEW_HOST, VIEW_PORT))
                     else:
-                        return fk.redirect('http://0.0.0.0:5000/error-415/')
+                        return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
             else:
-                return fk.redirect('http://0.0.0.0:5000/error-404/')
+                return fk.redirect('{0}:{1}/error-404/'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/diff/view/<diff_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_diff_view(diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/diff/view/<diff_id>")
@@ -249,13 +249,13 @@ def public_diff_view(diff_id):
         except:
             print str(traceback.print_exc())
         if diff is None:
-            return fk.redirect('http://0.0.0.0:5000/error-204/')
+            return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
         else:
             #Full disclosure on diffs.
             #It is one of the means of communication in the platform also.
             # if not diff.source.private and not diff.destination.private:
             return fk.Response(diff.to_json(), mimetype='application/json')
             # else:
-            #     return fk.redirect('http://0.0.0.0:5000/error-401/?action=view_failed')
+            #     return fk.redirect('{0}:{1}/error-401/?action=view_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')      
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))      

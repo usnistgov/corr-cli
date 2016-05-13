@@ -8,7 +8,7 @@ from corrdb.common.models import StatModel
 from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, CLOUD_URL
+from cloud import app, stormpath_manager, crossdomain, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
 import datetime
 import json
 import traceback
@@ -17,20 +17,18 @@ import traceback
 #The API will return some json response at all times. 
 #I will handle my own status and head and content and stamp
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/search', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def private_search(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/search")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/dashboard/search')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
+            logAccess('cloud', '/private/<hash_session>/dashboard/search')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
@@ -111,98 +109,117 @@ def private_search(hash_session):
                                 diffs.append({"id":str(diff.id), "from":str(diff.record_from.id), "to":str(diff.record_to.id), "sender":str(diff.sender.id), "targeted":str(diff.targeted.id), "proposition":diff.proposition, "status":diff.status})
                         
                     return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
-                    # return fk.redirect('http://0.0.0.0:5000/error-400/')
+                    # return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
             else:
-                return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_failed')
+                return fk.redirect('{0}:{1}/error-401/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/projects', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_dashboard(hash_session):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/projects")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/dashboard/projects')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
+            logAccess('cloud', '/private/<hash_session>/dashboard/projects')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
                 projects = ProjectModel.objects(owner=current_user).order_by('+created_at')
+                version = 'N/A'
+                try:
+                    from corrdb import __version__
+                    version = __version__
+                except:
+                    pass
                 summaries = []
                 for p in projects:
-                    project = {"project":json.loads(p.summary_json())}
-                    records = RecordModel.objects(project=p)
-                    project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
-                    summaries.append(project)
-                return fk.Response(json.dumps({'number':len(summaries), 'projects':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                    # project = {"project":json.loads(p.summary_json())}
+                    # records = RecordModel.objects(project=p)
+                    # project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
+                    summaries.append(json.loads(p.activity_json()))
+                return fk.Response(json.dumps({'version':version, 'number':len(summaries), 'projects':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
-                return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_failed')
+                return fk.redirect('{0}:{1}/error-401/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/records/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def dashboard_records(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/records/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/dashboard/records/<project_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
+            logAccess('cloud', '/private/<hash_session>/dashboard/records/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
-                p = ProjectModel.objects.with_id(project_id)
-                project = {"project":json.loads(p.summary_json())}
-                records = RecordModel.objects(project=p)
-                records_object = []
-                for record in records:
-                    record_object = {"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)}
-                    diffs = []
-                    founds = DiffModel.objects(record_from=record)
-                    if founds != None:
-                        for diff in founds:
-                            diffs.append(diff.info())
-                    founds = DiffModel.objects(record_to=record)
-                    if founds != None:
-                        for diff in founds:
-                            diffs.append(diff.info()) 
+                if project_id == "all":
+                    projects = ProjectModel.objects(owner=current_user)
+                    records = {'size':0, 'records':[]}
+                    for project in projects:
+                        for r in project.records:
+                            records['records'].append(json.loads(r.summary_json()))
+                    records['size'] = len(records['records'])
+                    return fk.Response(json.dumps(records, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                else:
+                    project = ProjectModel.objects.with_id(project_id)
+                    if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
+                        return fk.redirect('{0}:{1}/?action=records_failed'.format(VIEW_HOST, VIEW_PORT))
+                    else:
+                        print str(project.activity_json())
+                        return fk.Response(project.activity_json(), mimetype='application/json')
+                    # project = {"project":json.loads(p.summary_json())}
+                    # records = RecordModel.objects(project=p)
+                    # records_object = []
+                    # for record in records:
+                    #     record_summary = json.loads(record.summary_json())['head']
+                    #     record_object = {"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)}
+                    #     record_object['inputs'] = record_summary['inputs']
+                    #     record_object['outputs'] = record_summary['outputs']
+                    #     record_object['dependencies'] = record_summary['dependencies']
+                    #     diffs = []
+                    #     founds = DiffModel.objects(record_from=record)
+                    #     if founds != None:
+                    #         for diff in founds:
+                    #             diffs.append(diff.info())
+                    #     founds = DiffModel.objects(record_to=record)
+                    #     if founds != None:
+                    #         for diff in founds:
+                    #             diffs.append(diff.info()) 
 
-                    record_object['diffs'] = len(diffs)
-                    records_object.append(record_object)
+                    #     record_object['diffs'] = len(diffs)
+                    #     records_object.append(record_object)
+                    #     print str(record_object)
 
-                project["activity"] = {"number":len(records), "records":records_object}
-                return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                    # project["activity"] = {"number":len(records), "records":records_object}
+                    # return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
-                return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_failed')
+                return fk.redirect('{0}:{1}/error-401/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')  
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))  
 
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_diff(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/record/diff/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/dashboard/record/diff/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
+            logAccess('cloud', '/private/<hash_session>/dashboard/record/diff/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
@@ -211,7 +228,7 @@ def record_diff(hash_session, record_id):
                 except:
                     print str(traceback.print_exc())
                 if record is None:
-                    return fk.redirect('http://0.0.0.0:5000/error-204/')
+                    return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     if (record.project.owner == current_user) or record.access == 'public':
                         diffs = []
@@ -227,32 +244,30 @@ def record_diff(hash_session, record_id):
                         record_info['diffs'] = diffs          
                         return fk.Response(json.dumps(record_info, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                     else:
-                        return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_failed')
+                        return fk.redirect('{0}:{1}/error-401/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
             else:
-                return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_failed')
+                return fk.redirect('{0}:{1}/error-401/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/dashboard/reproducibility/assess/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def reproducibility_assess(hash_session, record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/dashboard/reproducibility/assess/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
             try:
+                logAccess('cloud', '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print str(traceback.print_exc())
             if record is None:
-                return fk.redirect('http://0.0.0.0:5000/error-204/')
+                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if request.args:
                     if record.project.owner == current_user or record.access == 'public':
@@ -293,24 +308,21 @@ def reproducibility_assess(hash_session, record_id):
 
                         return fk.Response(json.dumps(results, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                     else:
-                        return fk.redirect('http://0.0.0.0:5000/error-401/?action=repeats_failed')
+                        return fk.redirect('{0}:{1}/error-401/?action=repeats_failed'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('http://0.0.0.0:5000/error-415/')
+                    return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=view_denied')
+            return fk.redirect('{0}:{1}/error-401/?action=view_denied'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')      
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))      
 
 
 ### Public access
 
-@app.route(CLOUD_URL + '/public/dashboard/search', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_search():
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/dashboard/search")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/dashboard/search')
         
     if fk.request.method == 'GET':
         if fk.request.args:
@@ -391,18 +403,15 @@ def public_search():
                 
             return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
-            return fk.redirect('http://0.0.0.0:5000/error-400/')
+            return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
 
-@app.route(CLOUD_URL + '/public/dashboard/projects', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_dashboard():
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/dashboard/projects")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/dashboard/projects')
         
     if fk.request.method == 'GET':
         projects = ProjectModel.objects.order_by('+created_at')
@@ -418,15 +427,12 @@ def public_project_dashboard():
                 summaries.append(project)
         return fk.Response(json.dumps({'number':len(summaries), 'projects':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/records/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_dashboard_records(project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/dashboard/records/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/dashboard/records/<project_id>')
         
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)
@@ -453,18 +459,15 @@ def public_dashboard_records(project_id):
             project["activity"] = {"number":len(records), "records":records_object}
             return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
-            return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_failed')
+            return fk.redirect('{0}:{1}/error-401/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')  
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))  
 
 
-@app.route(CLOUD_URL + '/public/dashboard/record/diff/<record_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_diff(record_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/dashboard/record/diff/<record_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/dashboard/record/diff/<record_id>')
         
     if fk.request.method == 'GET':
         try:
@@ -472,7 +475,7 @@ def public_record_diff(record_id):
         except:
             print str(traceback.print_exc())
         if record is None:
-            return fk.redirect('http://0.0.0.0:5000/error-204/')
+            return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
         else:
             if record.access == 'public':
                 diffs = []
@@ -488,24 +491,24 @@ def public_record_diff(record_id):
                 record_info['diffs'] = diffs          
                 return fk.Response(json.dumps(record_info, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
-                return fk.redirect('http://0.0.0.0:5000/error-401/?action=dashboard_failed')
+                return fk.redirect('{0}:{1}/error-401/?action=dashboard_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/traffic/api', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/traffic/api', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def traffic_api():
     if fk.request.method == 'GET':
         api_traffics = TrafficModel.objects(service="api")
         return fk.Response(json.dumps([json.loads(traffic.to_json()) for traffic in api_traffics], sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/traffic/cloud', methods=['GET'])
+@app.route(CLOUD_URL + '/public/dashboard/traffic/cloud', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def traffic_cloud():
     if fk.request.method == 'GET':
         api_traffics = TrafficModel.objects(service="cloud")
         return fk.Response(json.dumps([json.loads(traffic.to_json()) for traffic in api_traffics], sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))

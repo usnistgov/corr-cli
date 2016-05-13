@@ -8,7 +8,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, delete_project_files, CLOUD_URL
+from cloud import app, stormpath_manager, crossdomain, delete_project_files, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
 import datetime
 import json
 import traceback
@@ -29,87 +29,84 @@ import mimetypes
 
 #Make a diff_cloud route. to create, update, remove and view diff.
 
-@app.route(CLOUD_URL + '/<hash_session>/project/sync/<project_id>', methods=['GET'])
+# Web project, record creation.
+
+@app.route(CLOUD_URL + '/private/<hash_session>/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_sync(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/sync/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/project/sync/<project_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/?action=sync_denied')
+            return fk.redirect('{0}:{1}/?action=sync_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
+            logAccess('cloud', '/private/<hash_session>/project/sync/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
                 p = ProjectModel.objects.with_id(project_id)
                 if p ==  None or (p != None and p.owner != current_user and p.access != 'public'):
-                    return fk.redirect('http://0.0.0.0:5000/?action=sync_failed')
+                    return fk.redirect('{0}:{1}/?action=sync_failed'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     project = {"project":json.loads(p.summary_json())}
                     records = RecordModel.objects(project=p)
                     project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
                     return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
-                return fk.redirect('http://0.0.0.0:5000/?action=sync_failed')
+                return fk.redirect('{0}:{1}/?action=sync_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/project/view/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_view(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/view/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/project/view/<project_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/?action=sync_denied')
+            return fk.redirect('{0}:{1}/?action=sync_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
+            logAccess('cloud', '/private/<hash_session>/project/view/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
                 p = ProjectModel.objects.with_id(project_id)
                 if p ==  None or (p != None and p.owner != current_user and p.access != 'public'):
-                    return fk.redirect('http://0.0.0.0:5000/?action=sync_failed')
+                    return fk.redirect('{0}:{1}/?action=sync_failed'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     project = {"project":json.loads(p.to_json())}
                     records = RecordModel.objects(project=p)
                     project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
                     return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
-                return fk.redirect('http://0.0.0.0:5000/?action=sync_failed')
+                return fk.redirect('{0}:{1}/?action=sync_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')           
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))           
 
-@app.route(CLOUD_URL + '/<hash_session>/project/remove/<project_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/remove/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_remove(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/remove/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/project/remove/<project_id>')
         
-    if fk.request.method == 'DELETE':
+    if fk.request.method in ['GET', 'DELETE']:
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
+            logAccess('cloud', '/private/<hash_session>/project/remove/<project_id>')
             # if project_name is not None:
             project = ProjectModel.objects.with_id(project_id)
             # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
             if project ==  None or (project != None and project.owner != current_user):
-                return fk.redirect('http://0.0.0.0:5000/?action=remove_failed')
+                return fk.redirect('{0}:{1}/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
             else:
                 delete_project_files(project)
                 project.delete()
-                return fk.Response('Project deleted', status.HTTP_200_OK)
+                logStat(deleted=True, project=project)
+                return fk.redirect('{0}:{1}/dashboard/?session={2}'.format(VIEW_HOST, VIEW_PORT, hash_session))
             # else:
             #     projects = ProjectModel.objects(owner=current_user)
             #     for project in projects:
@@ -117,27 +114,25 @@ def project_remove(hash_session, project_id):
             #         project.delete()
             #     return fk.Response('All projects deleted', status.HTTP_200_OK)
         else:
-            return fk.redirect('http://0.0.0.0:5000/?action=remove_failed')
+            return fk.redirect('{0}:{1}/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/project/comment/<project_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/comment/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_comment(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/comment/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/project/comment/<project_id>')
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
+            logAccess('cloud', '/private/<hash_session>/project/comment/<project_id>')
             # if project_name is not None:
             project = ProjectModel.objects.with_id(project_id)
             # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
             if project ==  None or (project != None and project.access != 'public'):
-                return fk.redirect('http://0.0.0.0:5000/?action=comment_failed')
+                return fk.redirect('{0}:{1}/?action=comment_failed'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -147,58 +142,54 @@ def project_comment(hash_session, project_id):
                         project.save()
                         return fk.Response('Projject comment posted', status.HTTP_200_OK)
                     else:
-                        return fk.redirect('http://0.0.0.0:5000/error-400/')
+                        return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('http://0.0.0.0:5000/error-415/')
+                    return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('http://0.0.0.0:5000/?action=comment_failed')
+            return fk.redirect('{0}:{1}/?action=comment_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/project/comments/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_comments(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/comments/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/project/comments/<project_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/?action=comments_denied')
+            return fk.redirect('{0}:{1}/?action=comments_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
+            logAccess('cloud', '/private/<hash_session>/project/comments/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
                 project = ProjectModel.objects.with_id(project_id)
                 # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
                 if project ==  None or (project != None and project.access != 'public'):
-                    return fk.redirect('http://0.0.0.0:5000/?action=comments_failed')
+                    return fk.redirect('{0}:{1}/?action=comments_failed'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     return fk.Response(json.dumps(project.comments, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
-                return fk.redirect('http://0.0.0.0:5000/?action=comments_failed')
+                return fk.redirect('{0}:{1}/?action=comments_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/<hash_session>/project/edit/<project_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/edit/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_edit(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/edit/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/project/edit/<project_id>')
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is not None:
+            logAccess('cloud', '/private/<hash_session>/project/edit/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
             if project ==  None or (project != None and project.owner != current_user):
-                return fk.redirect('http://0.0.0.0:5000/?action=edit_failed')
+                return fk.redirect('{0}:{1}/?action=edit_failed'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -206,10 +197,12 @@ def project_edit(hash_session, project_id):
                         description = data.get("description", project.description)
                         goals = data.get("goals", project.goals)
                         group = data.get("group", project.group)
+                        tags = data.get("tags", ','.join(project.tags))
                         environment = data.get("environment", {})
                         project.description = description
                         project.goals = goals
                         project.group = group
+                        project.tags = tags.split(',')
                         if len(environment) != 0:
                             environment_model = EnvironmentModel.objects.with_id(environment['id'])
                             if environment_model is not None:
@@ -233,53 +226,48 @@ def project_edit(hash_session, project_id):
                 else:
                     return fk.Response('Nothing to update', status.HTTP_200_OK)
         else:
-            return fk.redirect('http://0.0.0.0:5000/?action=edit_failed')
+            return fk.redirect('{0}:{1}/?action=edit_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')       
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))       
 
 #project_name or project_id
-@app.route(CLOUD_URL + '/<hash_session>/project/record/<project_name>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/project/record/<project_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_records(hash_session, project_name):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/project/record/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/private/<hash_session>/project/record/<project_name>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print fk.request.path
         if current_user is None:
-            return fk.redirect('http://0.0.0.0:5000/?action=records_denied')
+            return fk.redirect('{0}:{1}/?action=records_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
+            logAccess('cloud', '/private/<hash_session>/project/record/<project_name>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print "Allowance: "+allowance
             if allowance == hash_session:
                 project = ProjectModel.objects(name=project_name).first()
                 # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
                 if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
-                    return fk.redirect('http://0.0.0.0:5000/?action=records_failed')
+                    return fk.redirect('{0}:{1}/?action=records_failed'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     return fk.Response(project.activity_json(), mimetype='application/json')
             else:
-                return fk.redirect('http://0.0.0.0:5000/?action=records_failed')
+                return fk.redirect('{0}:{1}/?action=records_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
 
 # Public access
-@app.route(CLOUD_URL + '/public/project/sync/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_sync(project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/project/sync/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/project/sync/<project_id>')
         
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)
         if p ==  None or (p != None and p.access != 'public'):
-            return fk.redirect('http://0.0.0.0:5000/?action=sync_failed')
+            return fk.redirect('{0}:{1}/?action=sync_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
             # if not p.private:
             project = {"project":json.loads(p.summary_json())}
@@ -290,58 +278,49 @@ def public_project_sync(project_id):
             project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
             return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')        
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))        
 
-@app.route(CLOUD_URL + '/public/project/record/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/project/record/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_records(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/project/record/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/project/record/<project_id>')
         
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)
         if p ==  None or (p != None and p.access != 'public'):
-            return fk.redirect('http://0.0.0.0:5000/?action=sync_failed')
+            return fk.redirect('{0}:{1}/?action=sync_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
             return fk.Response(p.activity_json(True), mimetype='application/json')
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/project/comments/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_comments(hash_session, project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/project/comments/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/project/comments/<project_id>')
         
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project ==  None or (project != None and project.access != 'public'):
-            return fk.redirect('http://0.0.0.0:5000/?action=comments_failed')
+            return fk.redirect('{0}:{1}/?action=comments_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
             return fk.Response(json.dumps(project.comments, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/project/view/<project_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/public/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_view(project_id):
-    (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/public/project/view/<project_id>")
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
+    logTraffic(endpoint='/public/project/view/<project_id>')
         
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)
         if p ==  None or (p != None and p.access != 'public'):
-            return fk.redirect('http://0.0.0.0:5000/?action=sync_failed')
+            return fk.redirect('{0}:{1}/?action=sync_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
             project = {"project":json.loads(p.to_json())}
             records = RecordModel.objects(project=p)
             project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
             return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('http://0.0.0.0:5000/error-405/')    
+        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))    

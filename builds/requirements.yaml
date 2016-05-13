@@ -8,6 +8,7 @@ dependencies:
   - docopt
   - boto3
   - node
+  - gunicorn
   - pip:
     - mongoengine==0.8.7
     - flask-mongoengine==0.7.1
@@ -18,3 +19,4 @@ dependencies:
     - flask-api
     - flask-stormpath
     - hurry.filesize
+    - uwsgi
