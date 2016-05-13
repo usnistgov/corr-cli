@@ -8,7 +8,7 @@ var dashboard = {
             user.trusted();
         };
         function failed(){
-            window.location.replace(window.location.host+"/error-404/");
+            window.location.replace("/error-404/");
         };
         config.load_xml('coming_soon.xml', [], succeed, failed);
     },
@@ -21,9 +21,11 @@ var dashboard = {
 
             var space = new Space(user.session);
             space.dashboard();
+
         };
         function failed(){
-            window.location.replace(window.location.host+"/error-404/");
+            console.log(window.location.host);
+            window.location.replace("/error-404/");
         };
         config.load_xml('dashboard_activity.xml', [], succeed, failed);
 	},
@@ -41,7 +43,7 @@ var dashboard = {
             space.dashboard();
         };
         function failed(){
-            window.location.replace(window.location.host+"/error-404/");
+            window.location.replace("/error-404/");
         };
         config.load_xml('dashboard_projects.xml', [], succeed, failed);
 	},
@@ -63,7 +65,7 @@ var dashboard = {
             space.records(project);
         };
         function failed(){
-            window.location.replace(window.location.host+"/error-404/");
+            window.location.replace("/error-404/");
         };
         config.load_xml('dashboard_records.xml', [], succeed, failed);
 	},

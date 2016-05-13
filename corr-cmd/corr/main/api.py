@@ -49,6 +49,7 @@ def project_create(config=None, name=None, description='', goals='',
     conn.close()
     try:
         data_json = json.loads(data)
+        print data_json
         if data_json['code'] == 201:
             return [True, data_json['content']]
         elif data_json['code'] == 200:
@@ -86,6 +87,7 @@ def project_update(config=None, project=None, description=None, goals=None,
     conn.close()
     try:
         data_json = json.loads(data)
+        print data_json
         if data_json['code'] == 201:
             return [True, data_json['content']]
         else:
@@ -105,6 +107,7 @@ def project_all(config=None):
     conn.close()
     try:
         data_json = json.loads(data)
+        print data_json
         if data_json['code'] == 200:
             return [True, data_json['content']]
         else:
