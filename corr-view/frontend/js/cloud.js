@@ -269,6 +269,9 @@ var user = {
             }
         }
     },
+    config: function() {
+        window.location.replace(this.url+"/private/"+this.session+"/user/config");
+    },
     copy_api: function() {
         console.log("Api: "+this.api);
         console.log("Email: "+this.email);
@@ -327,7 +330,7 @@ var Space = function (session){
                             }
                         };
                         function failed(){
-                            window.location.replace(window.location.host+"/error-404");
+                            window.location.replace("/error-404");
                         };
 
                         var params = [session, project["project"]["id"], project["project"]["name"], project["project"]["created"], project["project"]["duration"], project["project"]["description"], project["project"]["goals"], project["project"]["records"], project["project"]["diffs"], project["project"]["environments"]];

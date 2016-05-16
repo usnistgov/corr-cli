@@ -4,6 +4,7 @@ import pkg_resources
 import subprocess
 import imp
 import json
+from ..test import api_key
 
 class TestCoreLink:
     def __init__(self):
@@ -13,7 +14,7 @@ class TestCoreLink:
         config = {'default':{'api':{}}}
         config['default']['api']['host'] = '0.0.0.0'
         config['default']['api']['port'] = 5100
-        config['default']['api']['key'] = '8c27a5c8d508cc10da0ea91412d726479996bdcad05421a6fc815d974ae22ade'
+        config['default']['api']['key'] = api_key
         coreLink.configure(host=config['default']['api']['host'], port=config['default']['api']['port'], key=config['default']['api']['key'])
         assert core.pretty_json(config) == coreLink.configure()
 
@@ -24,6 +25,7 @@ class TestCoreLink:
 
     def test_register(self):
         reg_resp = coreLink.register(name='execution', api='corr.main.api', elnk='corr.main.coreLink')
+        print reg_resp
         assert reg_resp != None
 
     def test_tag(self):

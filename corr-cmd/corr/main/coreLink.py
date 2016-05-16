@@ -50,7 +50,7 @@ from corr.main import core
 def handle(config, conx, name, host, port, key, tag,
            upload, file, env, path, obj, group, api):
     if config:
-        configure(host=host, port=port, key=key)
+        print configure(host=host, port=port, key=key)
 
     if conx:
         config = core.read_config('default')
@@ -62,12 +62,11 @@ def handle(config, conx, name, host, port, key, tag,
         if api_module.api_status(config=config):
             ## print "OK --- CoRR backend api[{0}:{1}] reached.".format(
             #    config['api']['host'], config['api']['port'])
-            pass
-            return "OK"
+            print "OK"
         else:
             ## print "KO --- could not reach CoRR backend api[{0}:{1}].".format(
             #    config['api']['host'], config['api']['port'])
-            return "KO"
+            print "KO"
 
     if upload and file:
         push_file(path=path, obj=obj, group=group)
@@ -223,7 +222,7 @@ def register(name=None, api=None, elnk=None, ctsk=None):
                 else:
                     ## print "Consistency alignment between registration and project metadat failed. \
                     #Please check connectivity and try to sync the investigation again later."
-                    ## print api_response[1]
+                    # print api_response[1]
                     return registrations[investigations[0]]
             else:
                 return None
@@ -272,7 +271,7 @@ def register(name=None, api=None, elnk=None, ctsk=None):
                         ## print "Consistency alignment between registration\
                         #and project metadat failed. Please check connectivity\
                         #and try to sync the investigation later."
-                        ## print api_response[1]
+                        # print api_response[1]
                         return investigation
                 else:
                     ## print "Registration failed. A registration already exists\

@@ -14,7 +14,6 @@ import json
 import traceback
 import smtplib
 from email.mime.text import MIMEText
-from cloud import load_bundle
 import mimetypes
 
 # CLOUD_VERSION = 1
