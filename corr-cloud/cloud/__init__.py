@@ -192,7 +192,7 @@ def delete_project_files(project):
             # print file_.to_json()
             result = s3_delete_file(file_.group, file_.storage)
             if result:
-                logStat(deleted=True, file=file_)
+                logStat(deleted=True, file_obj=file_)
                 file_.delete()
 
     # project records resources
@@ -238,7 +238,7 @@ def delete_record_files(record):
 def delete_record_file(record_file):
     result = s3_delete_file(record_file.group, record_file.storage)
     if result:
-        logStat(deleted=True, file=record_file)
+        logStat(deleted=True, file_obj=record_file)
         record_file.delete()
     return result
 
