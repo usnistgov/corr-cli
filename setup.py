@@ -80,7 +80,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'corrcli = corrcli.main.cli:handle',
+            'corrcli = corrcli:cli'
         ],
     },
     test_suite='nose.collector',

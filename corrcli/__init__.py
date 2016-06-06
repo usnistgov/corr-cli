@@ -1,13 +1,14 @@
 import os
+import click
 
 
 def test():
     r"""
     Run all the doctests available.
     """
+    import pytest
     path = os.path.split(__file__)[0]
-    print "Path: "+path
-    nose.main(argv=['-w', path, '--with-doctest'])
+    pytest.main(args=[path, '--doctest-modules', '-r s'])
 
 
 def get_version():
@@ -26,6 +27,17 @@ def get_version():
     return version
 
 __version__ = get_version()
+
+@click.group(invoke_without_command=True)
+@click.version_option(__version__)
+# @click.option('--version', '-v', is_flag=True, help="Print the version number.")
+def cli():
+    """Base command for simple meta query options.
+
+    $ corrcli --version
+
+    """
+    click.echo("Use --help to show usage.")
 
 __all__ = ['__version__',
            'test']
