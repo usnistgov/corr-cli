@@ -21,10 +21,11 @@ record simulations, use
     [MARKER]
 
 The `--register` command returns a marker that can be used to record
+simulations.
 
 To remove a software project from being recorded by CoRR-cmd, use
 
-    $ corr --unregister --name software_name --marker software_marker
+    $ corr --unregister --name=[SOFTWARE_NAME] --marker=[MARKER]
 
 To view all the software projects currently being watched by Corr, use
 
@@ -40,4 +41,12 @@ cloud store. To do this, use
 
 ## Start recording simulations
 
-Once the software project is registerd
+Once the software project is registeed and a marker (`MARKER`) has
+been obtained, a deamon is started that watches for when the software
+(`SOFTWARE_NAME`) is run,
+
+    $ corr --watch --name=[SOFTWARE_NAME] --marker=[MARKER]
+
+Now to stop watching the simulations use
+
+    $ corr --unwatch --name=[SOFTWARE_NAME] --maker=[MARKER]
