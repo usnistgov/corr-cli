@@ -25,4 +25,4 @@ collaboration.
 * **[LICENSE](LICENSE)** – the license
 * **[USAGE](USAGE)** - use CoRR-cli
 
-CoRR: https://github.com/usnistgov/corr
+[CoRR]: https://github.com/usnistgov/corr
