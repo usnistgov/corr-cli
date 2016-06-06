@@ -8,7 +8,8 @@ setup(
     version="0.1",
     packages=["corrcli"],
     include_package_data=True,
-    maintainer='Faical Yannick P. Congo',
+    maintainer='Faical Yannick P. Congo, Daniel Wheeler',
+    author_email='yannick.congo@gmail.com',
     description=('The command line client to the CoRR platform.'),
     url='https://github.com/wd15/corr-cli',
     classifiers=[
