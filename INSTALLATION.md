@@ -1,11 +1,11 @@
-# Installing CoRR-cmd
+# Installing CoRR-cli
 
 To install CoRR-cmd, clone the repository and install:
 
-    $ git clone git@github.com:wd15/corr-cmd.git
-    $ cd corr-cmd
+    $ git clone git@github.com:wd15/corr-cli.git
+    $ cd corr-cli
     $ python setup.py install
 
 and test with
 
-    $ python -c "import corr; corr.test()"
+    $ python -c "import corrcli; corrcli.test()"

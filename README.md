@@ -21,9 +21,8 @@ collaboration.
 
 [![Gitter Chat](https://img.shields.io/gitter/room/gitterHQ/gitter.svg)](https://gitter.im/usnistgov/corr)
 
-* **[INSTALL](INSTALLATION.md)** – installation instructions.
-* **[LICENSE](LICENSE)** – the license.
-* **[USAGE](USAGE)** - usage examples.
+* **[INSTALL](INSTALLATION.md)** – install CoRR-cli
+* **[LICENSE](LICENSE)** – the license
+* **[USAGE](USAGE)** - use CoRR-cli
 
-
-[CoRR](https://github.com/usnistgov/corr)
+CoRR: https://github.com/usnistgov/corr
