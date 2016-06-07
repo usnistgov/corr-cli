@@ -26,18 +26,16 @@ def get_version():
 
     return version
 
+
 __version__ = get_version()
 
-@click.group(invoke_without_command=True)
+
+@click.group()
 @click.version_option(__version__)
-# @click.option('--version', '-v', is_flag=True, help="Print the version number.")
 def cli():
-    """Base command for simple meta query options.
-
-    $ corrcli --version
-
+    """The CoRR command line tool.
     """
-    click.echo("Use --help to show usage.")
+
 
 __all__ = ['__version__',
            'test']
