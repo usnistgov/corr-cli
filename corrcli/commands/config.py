@@ -1,30 +1,50 @@
 import inspect
 import corrcli
+from corrcli import __version__
 import os
+from configparser import ConfigParser
+import click
 
 
-@corrcli.cli.command()
-@corrcli.cli.option('--email', default=None, help="Add email address.", type=str)
-@corrcli.cli.option('--port', '-p', default=None, help="Add API port number", type=int)
-@corrcli.cli.option('--key', '-k', default=None, help="Add API key", type=str)
-def config():
+@click.group()
+@click.version_option(__version__)
+def cli():
+    """The CoRR command line tool.
+    """
+
+
+@cli.command()
+@click.option('--email', default=None, help="Add email address.", type=str)
+@click.option('--name', default=None, help="Add email address.", type=str)
+@click.option('--url', default=None, help="Set the remote API url", type=str)
+@click.option('--port', default=None, help="Set the remote API port", type=str)
+def config(email, name, url, port):
+    entries = [('default', 'email', email),
+               ('default', 'name', name),
+               ('api', 'url', url),
+               ('api', 'port', port)]
+
+    for section, key, value in entries:
+        if value:
+            write_item(section, key, value)
+
+
+def get_config_path():
     app_name = dict(inspect.getmembers(corrcli))['__name__']
+    config_dir = click.get_app_dir(app_name)
+    if not os.path.exists(config_dir):
+        os.makedirs(config_dir)
+    config_path = os.path.join(config_dir, 'config.ini')
+    return config_path
 
 
-
-    import os
-
-    import click
-    import ConfigParser
-
-    APP_NAME = 'My Application'
-
-def read_config():
-    cfg = os.path.join(click.get_app_dir(APP_NAME), 'config.ini')
-    parser = ConfigParser.RawConfigParser()
-    parser.read([cfg])
-    rv = {}
-    for section in parser.sections():
-        for key, value in parser.items(section):
-            rv['%s.%s' % (section, key)] = value
-    return rv
+def write_item(section, key, value):
+    parser = ConfigParser()
+    config_path = get_config_path()
+    parser.read(config_path)
+    if not parser.has_section(section):
+        parser.add_section(section)
+    parser.set(section, key, str(value))
+    click.echo("Write '{key} = {value}' to config.ini.".format(key=key, value=value))
+    with open(config_path, 'w') as fp:
+        parser.write(fp)

@@ -30,11 +30,7 @@ def get_version():
 __version__ = get_version()
 
 
-@click.group()
-@click.version_option(__version__)
-def cli():
-    """The CoRR command line tool.
-    """
+
 
 
 __all__ = ['__version__',
