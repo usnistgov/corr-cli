@@ -1,6 +1,23 @@
+"""`corrcli` -- the CoRR comand line tool.
+
+Use
+
+    $ corrcli --help
+
+for usage details or
+
+    $ python setup.py install
+
+to install and
+
+    $ python -c "import corrcli; corrcli.test()"
+
+to test.
+
+"""
+
 import os
 import click
-
 
 
 def test():
@@ -21,7 +38,7 @@ def get_version():
     from pkg_resources import get_distribution, DistributionNotFound
 
     try:
-        version = get_distribution(__name__).version
+        version = get_distribution(__name__).version # pylint: disable=no-member
     except DistributionNotFound:
         version = "unknown, try running `python setup.py egg_info`"
 
@@ -36,8 +53,9 @@ def cli():
     """The CoRR command line tool.
     """
 
-from . import commands
+## These modules must be imported after defining cli
 
+from . import commands # pylint: disable=wrong-import-position
 
 __all__ = ['__version__',
            'test']
