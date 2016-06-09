@@ -2,6 +2,7 @@ import os
 import click
 
 
+
 def test():
     r"""
     Run all the doctests available.
@@ -29,8 +30,13 @@ def get_version():
 
 __version__ = get_version()
 
+@click.group()
+@click.version_option(__version__)
+def cli():
+    """The CoRR command line tool.
+    """
 
-
+from . import commands
 
 
 __all__ = ['__version__',
