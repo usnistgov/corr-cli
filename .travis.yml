@@ -9,7 +9,7 @@ install:
 
 notifications:
   email: "daniel.wheeler2@gmail.com"
-# a comment
+
 script:
   - py.test
   - pylint corrcli --ignore=main,test

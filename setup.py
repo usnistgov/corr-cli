@@ -84,5 +84,5 @@ setup(
             'corrcli = corrcli:cli'
         ],
     },
-    install_requires=['click']
+    install_requires=['click', 'configparser']
 )
