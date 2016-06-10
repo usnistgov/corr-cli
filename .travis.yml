@@ -7,10 +7,11 @@ python:
 install:
   - pip install .
   - pip install pylint
+  - pip install pytest-cov
 
 notifications:
   email: "daniel.wheeler2@gmail.com"
 
 script:
-  - py.test
+  - py.test --cov=corrcli --cov-report term-missing
   - pylint corrcli --ignore=main,test
