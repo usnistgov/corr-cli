@@ -6,6 +6,7 @@ python:
 
 install:
   - pip install .
+  - pip install pylint
 
 notifications:
   email: "daniel.wheeler2@gmail.com"
