@@ -4,6 +4,7 @@ import os
 import inspect
 from configparser import ConfigParser
 import click
+from .cli import cli
 import corrcli
 
 
@@ -26,7 +27,7 @@ def get_config_path(module):
     return config_path
 
 
-@corrcli.cli.command()
+@cli.command()
 @click.option('--email', default=None, help="Add email address.", type=str)
 @click.option('--name', default=None, help="Add email address.", type=str)
 @click.option('--url', default=None, help="Set the remote API url", type=str)
@@ -35,7 +36,8 @@ def get_config_path(module):
               default=get_config_path(corrcli),
               help="Set the config file to write to",
               type=str)
-def config(email, name, url, port, ini_file):
+@click.option('--list', default=False, is_flag=True, help="List contents of the config file")
+def config(email, name, url, port, ini_file, list):
     """Write data to the 'config.ini' file.
     """
     entries = [('default', 'email', email),
@@ -47,8 +49,12 @@ def config(email, name, url, port, ini_file):
         if value:
             write_item(section, key, value, ini_file)
 
+    if list:
+        with open(ini_file, 'r') as fpointer:
+            click.echo(fpointer.read())
 
-def write_item(section, key, value, config_file):
+
+def write_item(section, key, value, ini_file):
     """Write a key value pair to an ini file.
 
     Write the following to a file.
@@ -62,13 +68,13 @@ def write_item(section, key, value, config_file):
       section: the `[section]` to write to
       key: the key in `key = value`
       value: the value in `key = value`
-      config_file: the config file to write to
+      ini_file: the config file to write to
     """
     parser = ConfigParser()
-    parser.read(config_file)
+    parser.read(ini_file)
     if not parser.has_section(section):
         parser.add_section(section)
     parser.set(section, key, str(value))
     click.echo("Write '{key} = {value}' to config.ini.".format(key=key, value=value))
-    with open(config_file, 'w') as fpointer:
+    with open(ini_file, 'w') as fpointer:
         parser.write(fpointer)
