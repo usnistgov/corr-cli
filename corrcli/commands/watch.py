@@ -14,8 +14,7 @@ Stop the deamon.
 
 import click
 import corrcli
-import daemon
-from corrcli.watcher_deamon import WatcherDaemon
+from corrcli.watcher import Watcher
 
 
 @corrcli.cli.command()
@@ -24,11 +23,13 @@ def watch(list):
     """Launch a deamon process for watching processes.
     """
     if list:
-        click.echo(WatcherDaemon.get_daemon_dataframe())
+        click.echo(Watcher.get_all())
 
 @watch.command()
 def start():
-    watcher = WatcherDaemon()
+    """Launch a Daemon to watch processes.
+    """
+    watcher = Watcher()
     watcher.run()
     click.echo(watcher.tag)
 
@@ -36,7 +37,15 @@ def start():
 @click.option('--all', is_flag=True, help="Stop all watcher daemons.")
 @click.option('--tag', 'tags', multiple=True, help="Stop the given daeomon corresping to [tag]")
 def stop(all, tags):
+    """Shut down watching daemons.
+    """
     if all:
-        click.echo(WatcherDaemon.stop_all())
+        click.echo(Watcher.stop_all())
     for tag in tags:
-        click.echo(WatcherDaemon.stop(tag))
+        click.echo(Watcher.stop(tag))
+
+@watch.command()
+def clean():
+    """Remove
+    """
+    click.echo(Watcher.clean())
