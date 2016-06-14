@@ -1,11 +1,11 @@
 """The config commands for `corrcli`
 """
 import os
-import inspect
 from configparser import ConfigParser
 import click
 from .cli import cli
 import corrcli
+from ..tools import get_config_dir
 
 
 def get_config_path(module):
@@ -19,12 +19,7 @@ def get_config_path(module):
     Returns:
       the path to config.ini
     """
-    app_name = dict(inspect.getmembers(module))['__name__']
-    config_dir = click.get_app_dir(app_name)
-    if not os.path.exists(config_dir):
-        os.makedirs(config_dir)
-    config_path = os.path.join(config_dir, 'config.ini')
-    return config_path
+    return os.path.join(get_config_dir(module), 'config.ini')
 
 
 @cli.command()
