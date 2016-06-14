@@ -4,22 +4,7 @@ import os
 from configparser import ConfigParser
 import click
 from .cli import cli
-import corrcli
-from ..tools import get_config_dir
-
-
-def get_config_path(module):
-    """Get the path to CoRR's config.ini
-
-    The path is platform independent.
-
-    Args:
-      app: a module to obtain the app name from
-
-    Returns:
-      the path to config.ini
-    """
-    return os.path.join(get_config_dir(module), 'config.ini')
+from corrcli import default_config_file
 
 
 @cli.command()
@@ -28,7 +13,7 @@ def get_config_path(module):
 @click.option('--url', default=None, help="Set the remote API url", type=str)
 @click.option('--port', default=None, help="Set the remote API port", type=str)
 @click.option('--ini_file',
-              default=get_config_path(corrcli),
+              default=default_config_file,
               help="Set the config file to write to",
               type=str)
 @click.option('--list', default=False, is_flag=True, help="List contents of the config file")

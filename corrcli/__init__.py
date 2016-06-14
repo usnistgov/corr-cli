@@ -18,10 +18,7 @@ to test.
 
 import os
 from .tools import get_version
-from .commands.cli import cli
-from .commands.config import config
-from .commands.watch import watch
-
+from .tools import get_config_dir
 
 def test():
     r"""
@@ -33,6 +30,15 @@ def test():
 
 
 __version__ = get_version()
+
+default_config_dir = get_config_dir(__name__)
+default_config_file = os.path.join(default_config_dir, 'config.ini')
+
+
+from .commands.cli import cli
+from .commands.config import config
+from .commands.watch import watch
+
 
 __all__ = ['__version__',
            'test']

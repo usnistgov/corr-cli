@@ -1,4 +1,3 @@
-import inspect
 import click
 import os
 
@@ -18,19 +17,17 @@ def get_version():
 
     return version
 
-def get_config_dir(module):
+def get_config_dir(app_name):
     """Get the path to CoRR's config directory
 
     The path is platform independent.
 
     Args:
-      app: a module to obtain the app name from
+      app_name: name of the app
 
     Returns:
       the path to the config directory
     """
-
-    app_name = dict(inspect.getmembers(module))['__name__']
     config_dir = click.get_app_dir(app_name)
     if not os.path.exists(config_dir):
         os.makedirs(config_dir)
