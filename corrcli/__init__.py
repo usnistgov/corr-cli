@@ -32,7 +32,7 @@ def test():
 __version__ = get_version()
 
 default_config_dir = get_config_dir(__name__)
-default_config_file = os.path.join(default_config_dir, 'config.ini')
+default_config_file = 'config.ini'
 
 
 from .commands.cli import cli

@@ -3,7 +3,6 @@ import uuid
 from time import sleep
 import logging
 import daemon.pidfile
-from corrcli import default_config_dir
 import os
 import glob
 import pandas
@@ -16,21 +15,17 @@ class Watcher(object):
 
     """
     pidext = 'pid'
-    def __init__(self, refresh_rate=10.0, config_dir=None, watcher_id=None, logging_on=False):
-        if watcher_id is None:
-            watcher_id = uuid.uuid4()
-        self.watcher_id = watcher_id
-        self.refresh_rate = refresh_rate
+    def __init__(self, callback, config_dir, logging_on=False):
+        self.watcher_id = uuid.uuid4()
         self.daemon_dir = self.get_daemon_dir(config_dir)
         if not os.path.exists(self.daemon_dir):
             os.makedirs(self.daemon_dir)
         self.logging_on = logging_on
         self.log_file = os.path.join(self.daemon_dir, '{0}_daemon.log'.format(self.watcher_id))
+        self.callback = callback
 
     @staticmethod
     def get_daemon_dir(config_dir):
-        if config_dir is None:
-            config_dir = default_config_dir
         return os.path.join(config_dir, 'corr_daemons')
 
     def get_pidfile(self):
@@ -58,11 +53,11 @@ class Watcher(object):
         daemon_context = daemon.DaemonContext(pidfile=self.get_pidfile(),
                                               files_preserve=files_preserve)
         with daemon_context:
-            self.run(logger, daemon_context)
+            self._run(logger, daemon_context)
 
     @classmethod
-    def stop(cls, watcher_ids=[], config_dir=None, all=True):
-        watcher_df = cls.list(config_dir=config_dir)
+    def stop(cls, config_dir, watcher_ids=[], all=False):
+        watcher_df = cls.list(config_dir)
         if all:
             rows_df = watcher_df
         else:
@@ -76,7 +71,7 @@ class Watcher(object):
         return rows_df
 
     @classmethod
-    def list(cls, config_dir=None):
+    def list(cls, config_dir):
         daemon_dir = cls.get_daemon_dir(config_dir)
         pidfile_exp = os.path.join(daemon_dir, '*.{0}'.format(cls.pidext))
         watcher_ids = []
@@ -90,8 +85,10 @@ class Watcher(object):
                                  'process_id' : pids})
 
 
-    def run(self, logger, context):
-        while True:
-            if logger:
-                logger.info('Refresh watcher with pid {1}'.format(self.watcher_id, context.pidfile.read_pid()))
-            sleep(self.refresh_rate)
+    def _run(self, logger, context):
+        pid = context.pidfile.read_pid()
+        if logger:
+            logger.info("Start watcher with pid {0}".format(pid))
+        self.callback(logger=logger)
+        if logger:
+            logger.info("Stop watcher with pid {1}".format(pid))
