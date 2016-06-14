@@ -7,19 +7,19 @@ from .cli import cli
 from corrcli import default_config_file
 
 
+
 @cli.command()
 @click.option('--email', default=None, help="Add email address.", type=str)
-@click.option('--name', default=None, help="Add email address.", type=str)
+@click.option('--name', default=None, help="Add user's name.", type=str)
 @click.option('--url', default=None, help="Set the remote API url", type=str)
 @click.option('--port', default=None, help="Set the remote API port", type=str)
-@click.option('--ini_file',
-              default=default_config_file,
-              help="Set the config file to write to",
-              type=str)
 @click.option('--list', default=False, is_flag=True, help="List contents of the config file")
-def config(email, name, url, port, ini_file, list):
+@click.pass_context
+def config(ctx, email, name, url, port, list):
     """Write data to the 'config.ini' file.
     """
+    ini_file = os.path.join(ctx.parent.params['config_dir'], default_config_file)
+
     entries = [('default', 'email', email),
                ('default', 'name', name),
                ('api', 'url', url),
