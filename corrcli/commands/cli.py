@@ -1,14 +1,16 @@
+"""Base corrcli command for all subcommands.
+"""
+import os
 import click
 from ..tools import get_version
-from corrcli import default_config_dir
-import os
+from ..tools import get_config_dir
 
 
 @click.group()
 @click.version_option(get_version())
 @click.option('--config-dir',
               'config_dir',
-              default=default_config_dir,
+              default=get_config_dir('corrcli'),
               help="Set the config directory for CoRR.",
               type=str)
 @click.pass_context

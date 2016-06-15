@@ -4,32 +4,31 @@ import os
 from configparser import ConfigParser
 import click
 from .cli import cli
-from corrcli import default_config_file
-
-
 
 @cli.command()
 @click.option('--email', default=None, help="Add email address.", type=str)
 @click.option('--name', default=None, help="Add user's name.", type=str)
-@click.option('--url', default=None, help="Set the remote API url", type=str)
-@click.option('--port', default=None, help="Set the remote API port", type=str)
-@click.option('--list', default=False, is_flag=True, help="List contents of the config file")
+@click.option('--api', default=None, help="Set the remote API url", type=str)
+@click.option('--list',
+              'list_config',
+              default=False,
+              is_flag=True,
+              help="List contents of the config file")
 @click.pass_context
-def config(ctx, email, name, url, port, list):
+def config(ctx, email, name, api, list_config):
     """Write data to the 'config.ini' file.
     """
-    ini_file = os.path.join(ctx.parent.params['config_dir'], default_config_file)
+    ini_file = os.path.join(ctx.parent.params['config_dir'], 'config.ini')
 
     entries = [('default', 'email', email),
                ('default', 'name', name),
-               ('api', 'url', url),
-               ('api', 'port', port)]
+               ('default', 'api', api)]
 
     for section, key, value in entries:
         if value:
             write_item(section, key, value, ini_file)
 
-    if list:
+    if list_config:
         with open(ini_file, 'r') as fpointer:
             click.echo(fpointer.read())
 

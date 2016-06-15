@@ -1,20 +1,44 @@
-import daemon
+"""The Watcher class to launch a deamon process.
+"""
 import uuid
 import logging
-import daemon.pidfile
 import os
 import glob
-import pandas
 import signal
+import pandas
+import daemon
+import daemon.pidfile
 
 
 class Watcher(object):
-    """Possible alternative to this class could be
-    http://python-service.readthedocs.io/en/latest/.
+    """Launch a callback function as a daemon process.
 
+    Multiple `Watcher`s can launch multiple callback functions as
+    daemon processes and keep track of running deamons as well as
+    shutdown daemons.
+
+    Attributes:
+      watcher_id: a unique ID for each watcher
+      daemon_dir: the directory for pid and log files
+      logging_on: whether the daemon should log its output
+      log_file: the path to the deaemon's log file
+      callback: the callback function that's executed in the daemon
+      pidext: the extension for pid files
+
+    Note that a possible alternative to this class might be
+    http://python-service.readthedocs.io/en/latest/.
     """
     pidext = 'pid'
     def __init__(self, callback, config_dir, logging_on=False):
+        """Instantiate a `Watcher`.
+
+        Args:
+          callback: the callback function that's executed in the
+            daemon
+          config_dir: the CoRR config directory
+          logging_on: whether the daemon should log its output
+
+        """
         self.watcher_id = uuid.uuid4()
         self.daemon_dir = self.get_daemon_dir(config_dir)
         if not os.path.exists(self.daemon_dir):
@@ -25,14 +49,35 @@ class Watcher(object):
 
     @staticmethod
     def get_daemon_dir(config_dir):
+        """Get the daemon directory.
+
+        Args:
+          config_dir: the CoRR config directory
+
+        Returns:
+          A path like `/home/user/.config/corrcli/corr_daemons`.
+        """
         return os.path.join(config_dir, 'corr_daemons')
 
     def get_pidfile(self):
+        """Get the PID file for the daemon process.
+
+        The file is named something like
+        `e6f14ae7-efef-435e-b9ce-db04982afc5c.pid`.
+
+        Returns:
+           a PIDLockFile instance
+        """
         lock_file = os.path.join(self.daemon_dir,
                                  '{0}.{1}'.format(self.watcher_id, self.pidext))
         return daemon.pidfile.PIDLockFile(lock_file)
 
     def get_logger(self):
+        """Get the logger for logging the deamon process.
+
+        Returns:
+          a tuple containing the logger and the file handler
+        """
         logger = logging.getLogger("CoRR Watcher Log -- {0}".format(self.watcher_id))
         logger.setLevel(level=logging.INFO)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -43,6 +88,8 @@ class Watcher(object):
         return logger, handler
 
     def start(self):
+        """Start a process and detach as a daemon.
+        """
         files_preserve = []
         logger = None
         if self.logging_on:
@@ -55,25 +102,46 @@ class Watcher(object):
             self._run(logger, daemon_context)
 
     @classmethod
-    def stop(cls, config_dir, watcher_ids=[], all=False):
+    def stop(cls, config_dir, watcher_ids=(), all_watchers=False):
+        """Stop daemon processes base on watcher_ids.
+
+        Args:
+          config_dir: the CoRR config directory
+          watcher_ids: the watcher IDs to stop
+          all_watchers: shut down all daemons
+
+        Returns:
+          a data frame containing the watcher IDs and PIDs for all
+          daemons shutdown
+
+        """
         watcher_df = cls.list(config_dir)
-        if all:
+        if all_watchers:
             rows_df = watcher_df
         else:
             rows_df = watcher_df.loc[watcher_df['watcher_id'].isin(watcher_ids)]
 
-        for index, row in rows_df.iterrows():
+        for _, row in rows_df.iterrows():
             os.kill(row.process_id, signal.SIGTERM)
 
         return rows_df
 
     @classmethod
     def list(cls, config_dir):
+        """List all running daemons.
+
+        Args:
+          config_dir: the CoRR config directory
+
+        Returns:
+          a data frame containing the watcher IDs and PIDs for all
+          running daemons
+        """
         daemon_dir = cls.get_daemon_dir(config_dir)
-        pidfile_exp = os.path.join(daemon_dir, '*.{0}'.format(cls.pidext))
+        pidfile_regex = os.path.join(daemon_dir, '*.{0}'.format(cls.pidext))
         watcher_ids = []
         pids = []
-        for pidfile in glob.glob(pidfile_exp):
+        for pidfile in glob.glob(pidfile_regex):
             with open(pidfile, 'r') as fpointer:
                 pids.append(int(fpointer.read()))
             watcher_id = os.path.splitext(os.path.split(pidfile)[1])[0]

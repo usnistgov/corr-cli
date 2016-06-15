@@ -19,25 +19,23 @@ def test_config():
         test_dir = 'test_dir'
         test_ini = os.path.join(test_dir, 'config.ini')
         email = "test.test@test.com"
-        url = "www.test.com"
-        port = 80
+        url = "www.test.com:80"
         arguments = ['--config-dir={0}'.format(test_dir),
                      'config',
                      '--email={0}'.format(email),
-                     '--url={0}'.format(url),
-                     '--port={0}'.format(port)]
+                     '--api={0}'.format(url)]
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
         parser = ConfigParser()
         parser.read(test_ini)
         assert parser.get('default', 'email') == email
-        assert parser.get('api', 'url') == url
+        assert parser.get('default', 'api') == url
 
         list_arguments = ['--config-dir={0}'.format(test_dir),
                           'config',
                           '--list']
         list_result = runner.invoke(cli, list_arguments)
-        list_output = '[default]\nemail = {0}\n\n[api]\nurl = {1}\nport = {2}\n\n\n'.format(email, url, port)
+        list_output = '[default]\nemail = {0}\napi = {1}\n\n\n'.format(email, url)
         assert list_result.exit_code == 0
         assert list_result.output == list_output
 
@@ -59,7 +57,7 @@ def test_watch_start():
         start_watcher(config_path)
         watcher_df = Watcher.list(config_path)
         assert len(watcher_df) == 1
-        stopped_df = Watcher.stop(config_path, all=True)
+        stopped_df = Watcher.stop(config_path, all_watchers=True)
         assert stopped_df.watcher_id[0] == watcher_df.watcher_id[0]
         watcher_id = stopped_df.watcher_id[0]
         log_dir = os.path.join(config_path, 'corr_daemons')
@@ -114,7 +112,7 @@ def test_watch_list():
                      'list']
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
-        Watcher.stop(config_path, all=True)
+        Watcher.stop(config_path, all_watchers=True)
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
         assert result.output == "No running daemons.\n"

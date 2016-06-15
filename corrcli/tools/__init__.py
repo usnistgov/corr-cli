@@ -1,5 +1,7 @@
-import click
+"""Miscellaneous functions for corr-cli.
+"""
 import os
+import click
 
 
 def get_version():
@@ -12,12 +14,12 @@ def get_version():
 
     try:
         version = get_distribution(__name__.split('.')[0]).version # pylint: disable=no-member
-    except DistributionNotFound:
+    except DistributionNotFound: # pragma: no cover
         version = "unknown, try running `python setup.py egg_info`"
 
     return version
 
-def get_config_dir(app_name):
+def get_config_dir(app_name): # pragma: no cover
     """Get the path to CoRR's config directory
 
     The path is platform independent.
