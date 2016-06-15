@@ -61,8 +61,6 @@ class Watcher(object):
             rows_df = watcher_df
         else:
             rows_df = watcher_df.loc[watcher_df['watcher_id'].isin(watcher_ids)]
-        if len(rows_df) == 0:
-            raise RuntimeError('No processes found with watcher ids in {0}'.format(watcher_ids))
 
         for index, row in rows_df.iterrows():
             os.kill(row.process_id, signal.SIGTERM)

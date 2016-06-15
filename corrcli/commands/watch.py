@@ -53,10 +53,14 @@ def stop(ctx, all, watcher_ids):
     if (not all) and len(watcher_ids) == 0:
         click.echo("Require a watcher ID to proceed.")
     else:
-        click.echo("Stopping watchers.")
         stopped_df = Watcher.stop(watcher_ids=watcher_ids, all=all, config_dir=config_dir)
-        for index, row in stopped_df.iterrows():
-            click.echo("Stopped {0} with pid {1}".format(row.watcher_id, row.process_id))
+        if len(stopped_df) > 0:
+            click.echo("Stopping watchers.")
+            for index, row in stopped_df.iterrows():
+                click.echo("Stopped {0} with pid {1}".format(row.watcher_id, row.process_id))
+        else:
+            click.echo("No watchers stopped.")
+
 
 @watch.command()
 @click.pass_context
