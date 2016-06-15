@@ -5,8 +5,8 @@ from click.testing import CliRunner
 from corrcli import cli
 import os
 from corrcli.watcher import Watcher
+from subprocess import Popen
 from time import sleep
-
 
 def test_config():
     """Test `corrcli config`.
@@ -36,14 +36,18 @@ def test_watch_start():
     """Test starting a watcher.
     """
     runner = CliRunner()
-    with runner.isolated_filesystem():
-        test_dir = 'test_dir'
-        arguments = ['--config-dir={0}'.format(test_dir),
+    with runner.isolated_filesystem() as config_path:
+        arguments = ['corrcli',
+                     '--config-dir={0}'.format(config_path),
                      'watch',
                      'start']
-        result = runner.invoke(cli, arguments)
-        assert result.exit_code == 0
-        watcher_df = Watcher.list(test_dir)
+        Popen(arguments)
+        sleep(3)
+        watcher_df = Watcher.list(config_path)
         assert len(watcher_df) == 1
-        stopped_df = Watcher.stop(test_dir, all=True)
-        assert stopped_df == watcher_df
+        stopped_df = Watcher.stop(config_path, all=True)
+        assert stopped_df.watcher_id[0] == watcher_df.watcher_id[0]
+
+
+if __name__ == '__main__':
+    test_watch_start()

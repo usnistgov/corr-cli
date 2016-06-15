@@ -22,18 +22,17 @@ def watch():
     """Launch a deamon for watching other processes.
     """
 
-
 def test_callback(logger=None):
     if logger:
         logger.info("in callback function")
     from time import sleep
     while True:
-        sleep()
+        sleep(10)
 
 @watch.command()
 @click.option('--log/--no-log', default=False, help="Whether to record the output of the watcher daemon")
 @click.pass_context
-def start(ctx, log, refresh_rate):
+def start(ctx, log):
     """Launch a Daemon to watch processes.
     """
     config_dir = ctx.parent.parent.params['config_dir']

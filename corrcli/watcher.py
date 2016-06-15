@@ -1,6 +1,5 @@
 import daemon
 import uuid
-from time import sleep
 import logging
 import daemon.pidfile
 import os
