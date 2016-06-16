@@ -94,6 +94,8 @@ def test_watch_stop():
         arguments[3] = '--all'
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
+        assert result.output == 'testing output for travis CI'
+        assert len(result.output.split('\n')) == 4
         watcher_df = Watcher.list(config_path)
         assert len(watcher_df) == 0
 
