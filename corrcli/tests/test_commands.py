@@ -115,6 +115,7 @@ def test_watch_list():
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
         Watcher.stop(config_path, all_watchers=True)
+        sleep(3)
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
         assert result.output == "No running daemons.\n"
