@@ -23,6 +23,13 @@ def watch():
     """
 
 def test_callback(logger=None):
+    """Callback function to test the daemon launcher.
+
+    It writes to the log file and waits to be shutdown.
+
+    Args:
+      logger: a logger object to write log messages
+    """
     if logger:
         logger.info("in callback function")
     from time import sleep
@@ -30,7 +37,9 @@ def test_callback(logger=None):
         sleep(10)
 
 @watch.command()
-@click.option('--log/--no-log', default=False, help="Whether to record the output of the watcher daemon")
+@click.option('--log/--no-log',
+              default=False,
+              help="Whether to record the output of the watcher daemon")
 @click.pass_context
 def start(ctx, log):
     """Launch a Daemon to watch processes.
@@ -43,28 +52,33 @@ def start(ctx, log):
     watcher.start()
 
 @watch.command()
-@click.option('--all', is_flag=True, help="Stop all watcher daemons.")
-@click.option('--watcher-id', 'watcher_ids', multiple=True, help="Stop the given daeomon corresping to [tag]")
+@click.option('--all', 'all_watchers', is_flag=True, help="Stop all watcher daemons.")
+@click.option('--watcher-id',
+              'watcher_ids',
+              multiple=True,
+              help="Stop the given daeomon corresping to [tag]")
 @click.pass_context
-def stop(ctx, all, watcher_ids):
+def stop(ctx, all_watchers, watcher_ids):
     """Shut down watching daemons.
     """
     config_dir = ctx.parent.parent.params['config_dir']
-    if (not all) and len(watcher_ids) == 0:
+    if (not all_watchers) and len(watcher_ids) == 0:
         click.echo("Require a watcher ID to proceed.")
     else:
-        stopped_df = Watcher.stop(watcher_ids=watcher_ids, all=all, config_dir=config_dir)
+        stopped_df = Watcher.stop(watcher_ids=watcher_ids,
+                                  all_watchers=all_watchers,
+                                  config_dir=config_dir)
         if len(stopped_df) > 0:
             click.echo("Stopping watchers.")
-            for index, row in stopped_df.iterrows():
+            for _, row in stopped_df.iterrows():
                 click.echo("Stopped {0} with pid {1}".format(row.watcher_id, row.process_id))
         else:
             click.echo("No watchers stopped.")
 
 
-@watch.command()
+@watch.command('list')
 @click.pass_context
-def list(ctx):
+def list_watchers(ctx):
     """List all daemons.
     """
     config_dir = ctx.parent.parent.params['config_dir']
