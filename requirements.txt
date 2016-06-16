@@ -1,2 +1,4 @@
 click
 configparser
+pandas
+python-daemon
