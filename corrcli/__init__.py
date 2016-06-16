@@ -17,10 +17,13 @@ to test.
 """
 
 import os
-import click
+from .tools import get_version
+from .commands.cli import cli
+from .commands.config import config
+from .commands.watch import watch
 
 
-def test():
+def test(): # pragma: no cover
     r"""
     Run all the doctests available.
     """
@@ -29,33 +32,7 @@ def test():
     pytest.main(args=[path, '--doctest-modules', '-r s'])
 
 
-def get_version():
-    """Get the version of the code from egg_info.
-
-    Returns:
-      the package version number
-    """
-    from pkg_resources import get_distribution, DistributionNotFound
-
-    try:
-        version = get_distribution(__name__).version # pylint: disable=no-member
-    except DistributionNotFound:
-        version = "unknown, try running `python setup.py egg_info`"
-
-    return version
-
-
 __version__ = get_version()
-
-@click.group()
-@click.version_option(__version__)
-def cli():
-    """The CoRR command line tool.
-    """
-
-## These modules must be imported after defining cli
-
-from . import commands # pylint: disable=wrong-import-position
 
 __all__ = ['__version__',
            'test']
