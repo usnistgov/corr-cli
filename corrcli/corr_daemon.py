@@ -8,6 +8,7 @@ import signal
 import pandas
 import daemon
 import daemon.pidfile
+from .commands.cli import DEFAULT_DAEMON_DIR
 
 
 class CoRRDaemon(object):
@@ -40,7 +41,7 @@ class CoRRDaemon(object):
           logging_on: whether the daemon should log its output
 
         """
-        self.daemon_id = uuid.uuid4()
+        self.daemon_id = str(uuid.uuid4())[-12:]
         self.daemon_dir = self.get_daemon_dir(config_dir)
         if not os.path.exists(self.daemon_dir):
             os.makedirs(self.daemon_dir)
@@ -58,7 +59,7 @@ class CoRRDaemon(object):
         Returns:
           A path like `/home/user/.config/corrcli/corr_daemons`.
         """
-        return os.path.join(config_dir, 'corr_daemons')
+        return os.path.join(config_dir, DEFAULT_DAEMON_DIR)
 
     def get_pidfile(self):
         """Get the PID file for the daemon process.

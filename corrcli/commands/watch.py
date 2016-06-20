@@ -15,6 +15,7 @@ Stop the deamon.
 import click
 from ..corr_daemon import CoRRDaemon
 from .cli import cli
+from ..task_manager import task_manager_callback
 
 
 @cli.group()
@@ -22,7 +23,7 @@ def watch():
     """Launch a deamon for watching other processes.
     """
 
-def test_callback(logger=None):
+def test_callback(daemon_id, config_dir, logger=None):
     """Callback function to test the daemon launcher.
 
     It writes to the log file and waits to be shutdown.
@@ -31,7 +32,7 @@ def test_callback(logger=None):
       logger: a logger object to write log messages
     """
     if logger:
-        logger.info("in callback function")
+        logger.info("in callback function for daemon {0} and config directory {1}".format(daemon_id, config_dir))
     from time import sleep
     while True:
         sleep(10)
@@ -40,11 +41,18 @@ def test_callback(logger=None):
 @click.option('--log/--no-log',
               default=False,
               help="Whether to record the output of the watcher daemon")
+@click.option('--test/--no-test',
+              default=False,
+              help="Whether to use a simple test callback function for testing purposes")
 @click.pass_context
-def start(ctx, log):
+def start(ctx, log, test):
     """Launch a Daemon to watch processes.
     """
     config_dir = ctx.parent.parent.params['config_dir']
+    if test:
+        callback = test_callback
+    else:
+        callback = task_manager_callback
     daemon = CoRRDaemon(test_callback, config_dir, logging_on=log)
     click.echo("Launch daemon with ID: {0}".format(daemon.daemon_id))
     if log:
@@ -56,7 +64,7 @@ def start(ctx, log):
 @click.option('--watcher-id',
               'watcher_ids',
               multiple=True,
-              help="Stop the given daeomon corresping to [tag]")
+              help="Stop the given daeomon corresponding to [watcher-id]")
 @click.pass_context
 def stop(ctx, all_watchers, watcher_ids):
     """Shut down watching daemons.

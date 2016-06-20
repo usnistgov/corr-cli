@@ -1,8 +1,10 @@
 import platform
 
 class PlatformWatcher(object):
-    schema = {'name' : 'node',
-              'platform' ; 'platform'}
+    schema = {'node_name' : 'node',
+              'platform' : 'platform'}
 
-    def watch(self):
-        return dict((key, getattr(platform, value)()) for key, value in self.schema)
+    def watch(self, data_dict=dict()):
+        for key, value in self.schema.items():
+            data_dict[key] = getattr(platform, value)()
+        return data_dict

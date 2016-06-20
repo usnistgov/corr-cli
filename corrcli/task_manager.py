@@ -1,69 +1,85 @@
-"""
----
-corr:
-  - label
-  - comment
-  - parameters
-platform:
-  - machine
-  - processor
-psutil:
-  - name
-  - exe
-  - cwd
-  - cmdline
-  - status
-  - username
-  - create_time
-  - memory_info
-    - rss
-"""
 import datetime
-from .pid_watcher import PIDWatcher
+from .process_watcher import ProcessWatcher
 from .platform_watcher import PlatformWatcher
+import uuid
+import os
+import json
+from .commands.cli import DEFAULT_TASK_DIR
+from .commands.config import parse_config
+import time
+import psutil
 
 
-
-def TaskManager(object):
+class TaskManager(object):
     def __init__(self, pid, config_dir):
-        self.pid_watcher = PIDWatcher(pid)
-        self.platform_data = PlatformWatcher().watch()
-        self.datafile = datafile
-        self.initialize_data()
+        self.label = str(uuid.uuid4())
+        self.process_watcher = ProcessWatcher(pid)
+        task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
+        if not os.path.exists(task_dir):
+            os.makedirs(task_dir)
+        self.datafile = os.path.join(task_dir, '{0}.json'.format(self.label))
+        data_dict = self.initialize_data(pid, config_dir)
+        self.write_data(data_dict)
+        self.update_data()
 
-    def initialize_data(self):
-        task_data = {'label' : uuid.uuid4(),
-                     'last_update' : str(datetime.datetime.now())}
-        pid_data = {'process' : {'status' : None}}
+    def initialize_data(self, pid, config_dir):
+        config_data = parse_config(config_dir)
+        email = config_data.get('default', 'email')
+        name = config_data.get('default', 'name')
+        data_dict = {'label' : self.label,
+                     'process_id' : pid,
+                     'create_time' : str(datetime.datetime.now()),
+                     'email' : email,
+                     'name' : name}
+        PlatformWatcher().watch(data_dict)
+        return data_dict
 
     def update_data(self):
-        data = self.read_data()
-        pid_data = self.pid_watcher.watch()
-        task_data = {'label' : self.task_id,
-                     'update time' : str(datetime.datetime.now())}
-        if pid_data:
-            data = {'process' : pid_data,
-                    'task' : task_data,
-                    'platform' : platform_data}
-        else:
-            if data:
-                data['process']['status'] = None
-            else:
-                data = {'task', task_data,
-                        'process', process_data}
+        data_dict = self.read_data()
+        data_dict['update_time'] = str(datetime.datetime.now())
+        self.process_watcher.watch(data_dict)
+        self.write_data(data_dict)
+        return data_dict['status']
 
-    def write_data(self):
-        pass
+    def write_data(self, data_dict):
+        with open(self.datafile, 'w') as outfile:
+            json.dump(data_dict, outfile)
 
     def read_data(self):
-        pass
+        with open(self.datafile, 'r') as infile:
+            data_dict = json.load(infile)
+        return data_dict
 
-
-
-
-
-def task_watcher_control(daemon_id, logger=None):
-
-    watcher = TaskWatcher(identifier)
+def task_manager_callback(daemon_id, config_dir, logger=None):
+    task_manager_dict = dict()
+    config_data = parse_config(config_dir)
+    refresh_rate = float(config_data.get('tasks', 'refresh_rate'))
     while True:
-        watcher.update()
+        pids = get_pids_for_identifier(daemon_id)
+        update_task_manager_dict(pids, task_manager_dict, config_dir, logger)
+        update_task_manager_data(task_manager_dict, logger)
+        time.sleep(refresh_rate)
+
+def update_task_manager_dict(pids, task_manager_dict, config_dir, logger):
+    for pid in pids:
+        if not pid in task_manager_dict:
+            task_manager_dict[pid] = TaskManager(pid, config_dir)
+            if logger:
+                label = task_manager_dict[pid].label
+                logger.info("created task {0} with pid {1}".format(label, pid))
+
+def update_task_manager_data(task_manager_dict, logger):
+    for pid, task_manager in task_manager_dict.items():
+        status = task_manager.update_data()
+        if status is 'finished':
+            label = task_manager_dict[pid].label
+            if logger:
+                logger.info("deleting task {0} with pid {1}".format(label, pid))
+            del task_manager_dict[pid]
+
+def get_pids_for_identifier(identifier):
+    pid_list = []
+    for pid in psutil.pids():
+        if any(identifier in item for item in psutil.Process(pid).cmdline()):
+            pid_list.append(pid)
+    return pid_list

@@ -5,6 +5,9 @@ import click
 from ..tools import get_version
 from ..tools import get_config_dir
 
+DEFAULT_CONFIG_FILE = 'config.ini'
+DEFAULT_DAEMON_DIR = 'daemons'
+DEFAULT_TASK_DIR = 'tasks'
 
 @click.group()
 @click.version_option(get_version())

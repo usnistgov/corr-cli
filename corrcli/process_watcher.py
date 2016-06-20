@@ -1,11 +1,11 @@
 import psutil
 
-class PIDWatcher(object):
-    schema_dict = {'name' : 'name',
+class ProcessWatcher(object):
+    schema_dict = {'process_name' : 'name',
                    'executable' : 'exe',
-                   'created' : 'create_time',
+                   'process_created' : 'create_time',
                    'cwd' : 'cwd',
-                   'memory' : lambda process_dict: process_dict['memory'].rss,
+                   'memory' : lambda process_dict, data_dict_old: max(int(process_dict['memory_info'].rss), data_dict_old.get('memory', 0.)),
                    'username' : 'username',
                    'status' : 'status',
                    'cmdline' : 'cmdline'}
@@ -13,24 +13,22 @@ class PIDWatcher(object):
     def __init__(self, pid):
         self.pid = pid
 
-    def watch(self):
-        process = psutil.Process(self.pid)
+    def watch(self, data_dict=dict()):
+        data_dict_old = data_dict.copy()
+        for key in self.schema_dict.keys():
+            data_dict[key] = data_dict.get(key, None)
+        try:
+            process = psutil.Process(self.pid)
+        except psutil.NoSuchProcess:
+            process = None
         if process:
             process_dict = process.as_dict()
-            data_dict = dict()
-            for key, value in self.schema_dict.iteritems():
+            for key, value in self.schema_dict.items():
                 if type(value) is str:
                     data_dict[key] = process_dict[value]
                 else:
-                    data_dict[key] = value(process_dict)
+                    data_dict[key] = value(process_dict, data_dict_old)
             return data_dict
         else:
-            return None
-
-    @staticmethod
-    def get_pids_for_identifier(identifier):
-        pid_list = []
-        for pid in psutil.pids():
-            if any(identifier in item for item in psutil.Process(pid)['cmdline']):
-                pid_list.append(pid)
-        return pid_list
+            data_dict['status'] = 'finished'
+            return data_dict
