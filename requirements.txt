@@ -2,3 +2,4 @@ click
 configparser
 pandas
 python-daemon
+psutil
