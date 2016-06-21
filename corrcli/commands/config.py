@@ -6,20 +6,20 @@ import click
 from .cli import cli
 from .cli import DEFAULT_CONFIG_FILE
 
-@cli.command()
+@cli.group()
+@click.pass_context
+def config(ctx):
+    pass
+
+@config.command()
 @click.option('--email', default=None, help="Add email address.", type=str)
 @click.option('--name', default=None, help="Add user's name.", type=str)
-@click.option('--refresh-rate', default=10.0, help="The refresh rate for watching tasks.", type=float)
-@click.option('--list',
-              'list_config',
-              default=False,
-              is_flag=True,
-              help="List contents of the config file")
+@click.option('--refresh-rate', default=None, help="The refresh rate for watching tasks.", type=float)
 @click.pass_context
-def config(ctx, email, name, refresh_rate, list_config):
+def set(ctx, email, name, refresh_rate):
     """Write data to the 'config.ini' file.
     """
-    ini_file = os.path.join(ctx.parent.params['config_dir'], DEFAULT_CONFIG_FILE)
+    ini_file = os.path.join(ctx.parent.parent.params['config_dir'], DEFAULT_CONFIG_FILE)
 
     entries = [('default', 'email', email),
                ('default', 'name', name),
@@ -29,9 +29,15 @@ def config(ctx, email, name, refresh_rate, list_config):
         if value:
             write_item(section, key, value, ini_file)
 
-    if list_config:
-        with open(ini_file, 'r') as fpointer:
-            click.echo(fpointer.read())
+
+@config.command('list')
+@click.pass_context
+def list_config(ctx):
+    """List contents of the config file.
+    """
+    ini_file = os.path.join(ctx.parent.parent.params['config_dir'], DEFAULT_CONFIG_FILE)
+    with open(ini_file, 'r') as fpointer:
+        click.echo(fpointer.read())
 
 
 def write_item(section, key, value, ini_file):

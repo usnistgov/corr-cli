@@ -19,10 +19,10 @@ class ProcessWatcher(object):
             data_dict[key] = data_dict.get(key, None)
         try:
             process = psutil.Process(self.pid)
+            process_dict = process.as_dict()
         except psutil.NoSuchProcess:
             process = None
-        if process:
-            process_dict = process.as_dict()
+        if process is not None:
             for key, value in self.schema_dict.items():
                 if type(value) is str:
                     data_dict[key] = process_dict[value]

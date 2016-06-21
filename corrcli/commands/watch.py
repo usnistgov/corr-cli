@@ -32,7 +32,7 @@ def test_callback(daemon_id, config_dir, logger=None):
       logger: a logger object to write log messages
     """
     if logger:
-        logger.info("in callback function for daemon {0} and config directory {1}".format(daemon_id, config_dir))
+        logger.info("in test callback function for daemon {0} and config directory {1}".format(daemon_id, config_dir))
     from time import sleep
     while True:
         sleep(10)
@@ -44,8 +44,12 @@ def test_callback(daemon_id, config_dir, logger=None):
 @click.option('--test/--no-test',
               default=False,
               help="Whether to use a simple test callback function for testing purposes")
+@click.option('--daemon/--no-daemon',
+              'daemon_on',
+              default=True,
+              help="Whether to run the watcher as a daemon process")
 @click.pass_context
-def start(ctx, log, test):
+def start(ctx, log, test, daemon_on):
     """Launch a Daemon to watch processes.
     """
     config_dir = ctx.parent.parent.params['config_dir']
@@ -53,7 +57,7 @@ def start(ctx, log, test):
         callback = test_callback
     else:
         callback = task_manager_callback
-    daemon = CoRRDaemon(test_callback, config_dir, logging_on=log)
+    daemon = CoRRDaemon(callback, config_dir, daemon_on, logging_on=log)
     click.echo("Launch daemon with ID: {0}".format(daemon.daemon_id))
     if log:
         click.echo("Writing logs to {0}".format(daemon.log_file))

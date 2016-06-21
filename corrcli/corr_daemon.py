@@ -31,7 +31,7 @@ class CoRRDaemon(object):
 
     """
     pidext = 'pid'
-    def __init__(self, callback, config_dir, logging_on=False):
+    def __init__(self, callback, config_dir, daemon_on, logging_on=False):
         """Instantiate a `CoRRDaemon`.
 
         Args:
@@ -46,8 +46,10 @@ class CoRRDaemon(object):
         if not os.path.exists(self.daemon_dir):
             os.makedirs(self.daemon_dir)
         self.logging_on = logging_on
-        self.log_file = os.path.join(self.daemon_dir, '{0}_daemon.log'.format(self.daemon_id))
+        self.log_file = os.path.join(self.daemon_dir, '{0}.log'.format(self.daemon_id))
         self.callback = callback
+        self.config_dir = config_dir
+        self.daemon_on = daemon_on
 
     @staticmethod
     def get_daemon_dir(config_dir):
@@ -57,7 +59,7 @@ class CoRRDaemon(object):
           config_dir: the CoRR config directory
 
         Returns:
-          A path like `/home/user/.config/corrcli/corr_daemons`.
+          A path like `/home/user/.config/corrcli/daemons`.
         """
         return os.path.join(config_dir, DEFAULT_DAEMON_DIR)
 
@@ -100,7 +102,10 @@ class CoRRDaemon(object):
 
         daemon_context = daemon.DaemonContext(pidfile=self.get_pidfile(),
                                               files_preserve=files_preserve)
-        with daemon_context:
+        if self.daemon_on:
+            with daemon_context:
+                self._run(logger, daemon_context)
+        else:
             self._run(logger, daemon_context)
 
     @classmethod
@@ -151,11 +156,10 @@ class CoRRDaemon(object):
         return pandas.DataFrame({'daemon_id' : daemon_ids,
                                  'process_id' : pids})
 
-
     def _run(self, logger, context):
         pid = context.pidfile.read_pid()
         if logger:
             logger.info("Start daemon with pid {0}".format(pid))
-        self.callback(logger=logger)
+        self.callback(self.daemon_id, self.config_dir, logger=logger)
         if logger:
             logger.info("Stop daemon with pid {1}".format(pid))

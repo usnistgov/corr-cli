@@ -1,6 +1,5 @@
 """Test the command line tool.
 """
-from configparser import ConfigParser
 from click.testing import CliRunner
 from corrcli import cli
 import os
@@ -9,43 +8,13 @@ from subprocess import Popen
 from time import sleep
 
 
-def test_config():
-    """Test `corrcli config`.
-
-    Test writing to a config file with corrcli.
-    """
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        test_dir = 'test_dir'
-        test_ini = os.path.join(test_dir, 'config.ini')
-        email = "test.test@test.com"
-        url = "www.test.com:80"
-        arguments = ['--config-dir={0}'.format(test_dir),
-                     'config',
-                     '--email={0}'.format(email),
-                     '--api={0}'.format(url)]
-        result = runner.invoke(cli, arguments)
-        assert result.exit_code == 0
-        parser = ConfigParser()
-        parser.read(test_ini)
-        assert parser.get('default', 'email') == email
-        assert parser.get('default', 'api') == url
-
-        list_arguments = ['--config-dir={0}'.format(test_dir),
-                          'config',
-                          '--list']
-        list_result = runner.invoke(cli, list_arguments)
-        list_output = '[default]\nemail = {0}\napi = {1}\n\n\n'.format(email, url)
-        assert list_result.exit_code == 0
-        assert list_result.output == list_output
-
-
 def start_daemon(config_dir):
     arguments = ['corrcli',
                  '--config-dir={0}'.format(config_dir),
                  'watch',
                  'start',
-                 '--log']
+                 '--log',
+                 '--test']
     Popen(arguments)
     sleep(3)
 
@@ -60,8 +29,8 @@ def test_daemon_start():
         stopped_df = CoRRDaemon.stop(config_path, all_daemons=True)
         assert stopped_df.daemon_id[0] == daemon_df.daemon_id[0]
         daemon_id = stopped_df.daemon_id[0]
-        log_dir = os.path.join(config_path, 'corr_daemons')
-        log_path = os.path.join(log_dir, daemon_id + '_daemon.log')
+        log_dir = os.path.join(config_path, 'daemons')
+        log_path = os.path.join(log_dir, daemon_id + '.log')
         with open(log_path, 'r') as fpointer:
             log_contents = fpointer.read()
         assert daemon_id in log_contents
@@ -82,6 +51,7 @@ def test_daemon_stop():
                      '--watcher-id={0}'.format(daemon_id)]
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
+        sleep(3)
         daemon_df = CoRRDaemon.list(config_path)
         assert len(daemon_df) == 2
 
