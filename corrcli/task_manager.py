@@ -14,7 +14,8 @@ import pandas
 
 class TaskManager(object):
     def __init__(self, pid, config_dir):
-        self.process_watcher = ProcessWatcher(pid)
+        self.watchers = [ProcessWatcher(pid),
+                         PlatformWatcher(pid)]
         self.label = str(uuid.uuid4())
         task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
         if not os.path.exists(task_dir):
@@ -33,12 +34,12 @@ class TaskManager(object):
                      'created_time' : str(datetime.datetime.now()),
                      'email' : email,
                      'name' : name}
-        PlatformWatcher().watch(data_dict)
         self.data_dict = data_dict
 
     def update_data(self):
         self.data_dict['update_time'] = str(datetime.datetime.now())
-        self.process_watcher.watch(self.data_dict)
+        for watcher in self.watchers:
+            self.data_dict = watcher.watch(self.data_dict)
 
     def write_data(self):
         with open(self.datafile, 'w') as outfile:

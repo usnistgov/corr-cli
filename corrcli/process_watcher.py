@@ -3,8 +3,9 @@
 
 """
 import psutil
+from .watcher import Watcher
 
-class ProcessWatcher(object):
+class ProcessWatcher(Watcher):
     """Watcher that uses psutil to gather data.
 
     A process is returned with 'status' finished if it can't be found.
@@ -19,8 +20,8 @@ class ProcessWatcher(object):
       schema_dict: the mapping from psutil to the CoRR schema
 
     """
-    memory_parse = lambda process_dict, data_dict_old: \
-                   max(int(process_dict['memory_info'].rss), data_dict_old.get('memory', 0.))
+    memory_parse = lambda process_dict, data_dict: \
+                   max(int(process_dict['memory_info'].rss), data_dict['memory'] or 0)
 
     schema_dict = {'process_name' : 'name',
                    'executable' : 'exe',
@@ -31,13 +32,6 @@ class ProcessWatcher(object):
                    'status' : 'status',
                    'cmdline' : 'cmdline'}
 
-    def __init__(self, pid):
-        """Instantiate a ProcessWatcher.
-
-        Args:
-          pid: the process ID to watch
-        """
-        self.pid = pid
 
     def watch(self, data_dict=None):
         """Gather data about a process.
@@ -57,20 +51,9 @@ class ProcessWatcher(object):
 
         """
         watch_dict = self.get_watch_dict()
-
-        if data_dict is None:
-            data_dict = dict()
-        data_dict_old = data_dict.copy()
-        for key in self.schema_dict.keys():
-            data_dict[key] = data_dict.get(key, None)
-
+        data_dict = self.ini_data_dict(data_dict)
         if watch_dict is not None:
-            for key, value in self.schema_dict.items():
-                if isinstance(value, str):
-                    data_dict[key] = watch_dict[value]
-                else:
-                    data_dict[key] = value(watch_dict, data_dict_old)
-            return data_dict
+            return self.update_data_dict(watch_dict, data_dict)
         else:
             data_dict['status'] = 'finished'
             return data_dict
