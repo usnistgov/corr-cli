@@ -14,7 +14,7 @@ def start_daemon(config_dir):
                  'watch',
                  'start',
                  '--log',
-                 '--test']
+                 '--callback-func=test_callback']
     Popen(arguments)
     sleep(3)
 
@@ -89,3 +89,20 @@ def test_daemon_list():
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
         assert result.output == "No running daemons.\n"
+
+
+def test_no_daemon():
+    """Test running the daemon as an attached process.
+
+    """
+    runner = CliRunner()
+    with runner.isolated_filesystem() as config_path:
+        arguments = ['--config-dir={0}'.format(config_path),
+                     'watch',
+                     'start',
+                     '--no-daemon',
+                     '--callback-func=test_callback_nosleep',
+                     '--log']
+        result = runner.invoke(cli, arguments)
+        assert "Launch daemon with ID:" in result.output
+        assert result.exit_code == 0

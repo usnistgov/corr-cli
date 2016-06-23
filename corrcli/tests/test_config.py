@@ -33,6 +33,3 @@ def test_config():
         list_output = '[default]\nemail = {0}\n\n\n'.format(email)
         assert list_result.exit_code == 0
         assert list_result.output == list_output
-
-if __name__ == '__main__':
-    test_config()

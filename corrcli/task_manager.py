@@ -26,11 +26,11 @@ class TaskManager(object):
 
     def initialize_data(self, pid, config_dir):
         config_data = parse_config(config_dir)
-        email = config_data.get('default', 'email')
-        name = config_data.get('default', 'name')
+        email = config_data.get('default_email')
+        name = config_data.get('default_name')
         data_dict = {'label' : self.label,
                      'process_id' : pid,
-                     'create_time' : str(datetime.datetime.now()),
+                     'created_time' : str(datetime.datetime.now()),
                      'email' : email,
                      'name' : name}
         PlatformWatcher().watch(data_dict)
@@ -46,17 +46,10 @@ class TaskManager(object):
 
 def task_manager_callback(daemon_id, config_dir, logger=None):
     """Task manager control function for running in a Daemon.
-
-    >>>
-
-
     """
     task_manager_dict = dict()
     config_data = parse_config(config_dir)
-    if config_data.has_option('tasks', 'refresh_rate'):
-        refresh_rate = float(config_data.get('tasks', 'refresh_rate'))
-    else:
-        refresh_rate = DEFAULT_REFRESH_RATE
+    refresh_rate = float(config_data.get('tasks_refresh_rate', DEFAULT_REFRESH_RATE))
     while True:
         tstart = time.time()
         pids = get_pids_for_identifier(daemon_id)
@@ -83,7 +76,7 @@ def write_task_manager_data(task_manager_dict, logger):
     for pid in pids:
         task_manager_dict[pid].write_data()
         status = task_manager_dict[pid].data_dict['status']
-        if status is 'finished':
+        if status in ('finished', 'zombie'):
             label = task_manager_dict[pid].label
             if logger:
                 logger.info("finished task {0} with pid {1}".format(label, pid))
@@ -98,12 +91,9 @@ def get_pids_for_identifier(identifier):
 
 def get_task_df(config_dir):
     task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
-    if not os.path.exists(task_dir):
-        return None
-    else:
-        regex = os.path.join(task_dir, '*.json')
-        task_list = []
-        for jsonfile in glob.glob(regex):
-             with open(jsonfile, 'r') as infile:
-                 task_list.append(json.load(infile))
-        return pandas.DataFrame(task_list)
+    regex = os.path.join(task_dir, '*.json')
+    task_list = []
+    for jsonfile in glob.glob(regex):
+        with open(jsonfile, 'r') as infile:
+            task_list.append(json.load(infile))
+    return pandas.DataFrame(task_list)

@@ -37,27 +37,31 @@ def test_callback(daemon_id, config_dir, logger=None):
     while True:
         sleep(10)
 
+def test_callback_nosleep(daemon_id, config_dir, logger=None):
+    print(daemon_id)
+
+CALLBACK_FUNCTIONS = dict((func.__name__, func) for func in (test_callback_nosleep, task_manager_callback, test_callback))
+
 @watch.command()
 @click.option('--log/--no-log',
               default=False,
               help="Whether to record the output of the watcher daemon")
-@click.option('--test/--no-test',
-              default=False,
-              help="Whether to use a simple test callback function for testing purposes")
+@click.option('--callback-func',
+              'callback_func_key',
+              default=task_manager_callback.__name__,
+              help="The callback function to use (only for testing purposes).",
+              type=click.Choice(CALLBACK_FUNCTIONS.keys()))
 @click.option('--daemon/--no-daemon',
               'daemon_on',
               default=True,
               help="Whether to run the watcher as a daemon process")
 @click.pass_context
-def start(ctx, log, test, daemon_on):
+def start(ctx, log, callback_func_key, daemon_on):
     """Launch a Daemon to watch processes.
     """
     config_dir = ctx.parent.parent.params['config_dir']
-    if test:
-        callback = test_callback
-    else:
-        callback = task_manager_callback
-    daemon = CoRRDaemon(callback, config_dir, daemon_on, logging_on=log)
+    callback_func = CALLBACK_FUNCTIONS[callback_func_key]
+    daemon = CoRRDaemon(callback_func, config_dir, daemon_on, logging_on=log)
     click.echo("Launch daemon with ID: {0}".format(daemon.daemon_id))
     if log:
         click.echo("Writing logs to {0}".format(daemon.log_file))

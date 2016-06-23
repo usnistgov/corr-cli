@@ -68,4 +68,8 @@ def write_item(section, key, value, ini_file):
 def parse_config(config_dir):
     parser = ConfigParser()
     parser.read(os.path.join(config_dir, DEFAULT_CONFIG_FILE))
-    return parser
+    data = {}
+    for section in parser.sections():
+        for option in parser.options(section):
+            data["{0}_{1}".format(section, option)] = parser.get(section, option)
+    return data

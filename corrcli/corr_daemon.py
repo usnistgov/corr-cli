@@ -162,4 +162,4 @@ class CoRRDaemon(object):
             logger.info("Start daemon with pid {0}".format(pid))
         self.callback(self.daemon_id, self.config_dir, logger=logger)
         if logger:
-            logger.info("Stop daemon with pid {1}".format(pid))
+            logger.info("Stop daemon with pid {0}".format(pid))

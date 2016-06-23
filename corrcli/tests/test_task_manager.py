@@ -1,13 +1,12 @@
 """Test the command line tool.
 """
 from click.testing import CliRunner
-from corrcli import cli
 import os
 from corrcli.corr_daemon import CoRRDaemon
 from subprocess import Popen
 from time import sleep
 from corrcli.task_manager import get_task_df
-
+from corrcli.commands.cli import DEFAULT_REFRESH_RATE
 
 def configure(config_dir, refresh_rate):
     arguments = ['corrcli',
@@ -24,9 +23,10 @@ def start_daemon(config_dir):
     arguments = ['corrcli',
                  '--config-dir={0}'.format(config_dir),
                  'watch',
-                 'start']
+                 'start',
+                 '--log',]
     Popen(arguments)
-    sleep(3)
+    sleep(4)
 
 def stop_daemon(config_dir):
     arguments = ['corrcli',
@@ -65,13 +65,13 @@ def test_task_manager():
             process = start_process(daemon_id, config_path)
             sleep(refresh_rate + 1)
             task_df = get_task_df(config_path)
-        except:
+        except: # pragma: no cover
             process.kill()
             raise
+        process.kill()
         assert task_df is not None
         assert len(task_df) == 1
         assert task_df.status[0] != 'finished'
-        process.kill()
         sleep(refresh_rate + 1)
         task_df = get_task_df(config_path)
         assert len(task_df) == 1
@@ -79,5 +79,23 @@ def test_task_manager():
         stop_daemon(config_path)
 
 
-if __name__ == '__main__':
-    test_task_manager()
+def test_noconfig():
+    """Test that jobs are captured when no config set.
+    """
+    runner = CliRunner()
+    with runner.isolated_filesystem() as config_path:
+        start_daemon(config_path)
+        daemon_df = CoRRDaemon.list(config_path)
+        daemon_id = daemon_df.daemon_id[0]
+        try:
+            process = start_process(daemon_id, config_path)
+            sleep(DEFAULT_REFRESH_RATE * 2)
+            task_df = get_task_df(config_path)
+        except: # pragma: no cover
+            process.kill()
+            raise
+        process.kill()
+        assert task_df is not None
+        assert len(task_df) == 1
+        assert task_df.status[0] != 'finished'
+        stop_daemon(config_path)
