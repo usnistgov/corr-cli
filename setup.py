@@ -84,5 +84,5 @@ setup(
             'corrcli = corrcli:cli'
         ],
     },
-    install_requires=['click', 'configparser', 'pandas', 'python-daemon', 'psutil']
+    install_requires=['click', 'configparser', 'pandas', 'python-daemon', 'psutil', 'pytest', 'pytest-cov', 'pylint']
 )

@@ -3,3 +3,6 @@ configparser
 pandas
 python-daemon
 psutil
+pytest
+pytest-cov
+pylint

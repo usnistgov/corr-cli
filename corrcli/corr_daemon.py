@@ -83,7 +83,7 @@ class CoRRDaemon(object):
           a tuple containing the logger and the file handler
         """
         logger = logging.getLogger("CoRRDaemon Log -- {0}".format(self.daemon_id))
-        logger.setLevel(level=logging.INFO)
+        logger.setLevel(level=logging.DEBUG)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         handler = logging.FileHandler(self.log_file)
         handler.setFormatter(formatter)
@@ -160,6 +160,12 @@ class CoRRDaemon(object):
         pid = context.pidfile.read_pid()
         if logger:
             logger.info("Start daemon with pid {0}".format(pid))
-        self.callback(self.daemon_id, self.config_dir, logger=logger)
+        try:
+            self.callback(self.daemon_id, self.config_dir, logger=logger)
+        except Exception:
+            if logger:
+                logger.exception("Exception in daemon callback function.")
+            raise
+
         if logger:
             logger.info("Stop daemon with pid {0}".format(pid))

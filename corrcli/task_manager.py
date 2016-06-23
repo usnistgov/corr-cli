@@ -14,8 +14,8 @@ import pandas
 
 class TaskManager(object):
     def __init__(self, pid, config_dir):
-        self.label = str(uuid.uuid4())
         self.process_watcher = ProcessWatcher(pid)
+        self.label = str(uuid.uuid4())
         task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
         if not os.path.exists(task_dir):
             os.makedirs(task_dir)
