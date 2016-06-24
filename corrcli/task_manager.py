@@ -174,8 +174,6 @@ def get_pids_for_identifier(identifier):
     $ python myjob.py 0df1d25782e9
 
     >>> pids = get_pids_for_identifier('0df1d25782e9')
-    >>> print(type(pids))
-    <class 'list'>
 
     Args:
       identifier: the string to search in the process table
