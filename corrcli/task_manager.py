@@ -169,12 +169,13 @@ def get_pids_for_identifier(identifier):
     """Get process IDs for a given identifier
 
     Checks to see if the identifier is part of the command line string
-    for a given process. For example
+    of each process in the process table. For example
 
     $ python myjob.py 0df1d25782e9
 
-    >>> get_pids_for_identifier('0df1d25782e9') # doctest: +IGNORE_RESULT
-    [17872]
+    >>> pids = get_pids_for_identifier('0df1d25782e9')
+    >>> print(type(pids))
+    <class 'list'>
 
     Args:
       identifier: the string to search in the process table

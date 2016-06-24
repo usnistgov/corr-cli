@@ -7,8 +7,10 @@ from .watcher import Watcher
 class PlatformWatcher(Watcher):
     """Gather data about the platform
 
-    >>> PlatformWatcher(None).watch() # doctest: +ELLIPSIS
-    ...
+    >>> keys = list(PlatformWatcher(None).watch().keys())
+    >>> keys.sort()
+    >>> print(keys)
+    ['node_name', 'platform']
 
     Attributes:
       pid: the process ID to watch

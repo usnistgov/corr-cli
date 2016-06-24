@@ -30,7 +30,7 @@ def test_callback(daemon_id, config_dir, logger=None):
 
     Args:
       daemon_id: the ID of daemon running the callback
-      config_fir: the CoRR configuration directory
+      config_dir: the CoRR configuration directory
       logger: a logger object to write log messages
 
     """
@@ -46,7 +46,7 @@ def test_callback_nosleep(daemon_id, config_dir, logger=None):
 
     Args:
       daemon_id: the ID of daemon running the callback
-      config_fir: the CoRR configuration directory
+      config_dir: the CoRR configuration directory
       logger: a logger object to write log messages
 
     """
