@@ -7,16 +7,19 @@ from .cli import cli
 from .cli import DEFAULT_CONFIG_FILE
 
 @cli.group()
-@click.pass_context
-def config(ctx):
-    pass
+def config():
+    """Configure the CoRR command line tool.
+    """
 
-@config.command()
+@config.command('set')
 @click.option('--email', default=None, help="Add email address.", type=str)
 @click.option('--name', default=None, help="Add user's name.", type=str)
-@click.option('--refresh-rate', default=None, help="The refresh rate for watching tasks.", type=float)
+@click.option('--refresh-rate',
+              default=None,
+              help="The refresh rate for watching tasks.",
+              type=float)
 @click.pass_context
-def set(ctx, email, name, refresh_rate):
+def set_config(ctx, email, name, refresh_rate):
     """Write data to the 'config.ini' file.
     """
     ini_file = os.path.join(ctx.parent.parent.params['config_dir'], DEFAULT_CONFIG_FILE)
@@ -66,6 +69,17 @@ def write_item(section, key, value, ini_file):
         parser.write(fpointer)
 
 def parse_config(config_dir):
+    """Parse the configuration file.
+
+    Using a dictionary is easier than using the ConfigParser directly.
+
+    Args:
+      config_dir: the CoRR configuration directory
+
+    Returns:
+      a dictionary of the form `section_option : value`.
+
+    """
     parser = ConfigParser()
     parser.read(os.path.join(config_dir, DEFAULT_CONFIG_FILE))
     data = {}

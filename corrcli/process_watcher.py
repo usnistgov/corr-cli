@@ -34,41 +34,18 @@ class ProcessWatcher(Watcher):
 
 
     def watch(self, data_dict=None):
-        """Gather data about a process.
-
-        Data is updated based what would intuitvely be the most useful
-        to record. For example, 'memory' is calculated from the max
-        value of the data passed in and the new data. However,
-        'status' is the latest value. The 'status' is changed to
-        'finished' in the evernt that the process is not in the
-        process table (when psutil.NoSuchProcess is raised).
-
-        Args:
-          data_dict: the dictionary to update
-
-        Returns:
-          an updated data_dict
-
-        """
-        watch_dict = self.get_watch_dict()
+        observed_dict = self.get_observed_dict()
         data_dict = self.ini_data_dict(data_dict)
-        if watch_dict is not None:
-            return self.update_data_dict(watch_dict, data_dict)
+        if observed_dict is not None:
+            return self.update_data_dict(observed_dict, data_dict)
         else:
             data_dict['status'] = 'finished'
             return data_dict
 
-    def get_watch_dict(self):
-        """Get the dict for the watcher.
-
-        The format is that of the psutil module.
-
-        Returns:
-          a psutil.Process as a dict
-        """
+    def get_observed_dict(self):
         try:
             process = psutil.Process(self.pid)
-            value_dict = process.as_dict()
+            observed_dict = process.as_dict()
         except psutil.NoSuchProcess:
-            value_dict = None
-        return value_dict
+            observed_dict = None
+        return observed_dict

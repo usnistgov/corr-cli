@@ -29,18 +29,34 @@ def test_callback(daemon_id, config_dir, logger=None):
     It writes to the log file and waits to be shutdown.
 
     Args:
+      daemon_id: the ID of daemon running the callback
+      config_fir: the CoRR configuration directory
       logger: a logger object to write log messages
+
     """
     if logger:
-        logger.info("in test callback function for daemon {0} and config directory {1}".format(daemon_id, config_dir))
+        logger.info("in callback for daemon {0} and config directory {1}".format(daemon_id,
+                                                                                 config_dir))
     from time import sleep
     while True:
         sleep(10)
 
 def test_callback_nosleep(daemon_id, config_dir, logger=None):
-    print(daemon_id)
+    """Callback that exits for testing purposes.
 
-CALLBACK_FUNCTIONS = dict((func.__name__, func) for func in (test_callback_nosleep, task_manager_callback, test_callback))
+    Args:
+      daemon_id: the ID of daemon running the callback
+      config_fir: the CoRR configuration directory
+      logger: a logger object to write log messages
+
+    """
+    if logger:
+        logger.info("in callback for daemon {0} and config directory {1}".format(daemon_id,
+                                                                                 config_dir))
+
+CALLBACK_FUNCTIONS = dict((func.__name__, func) for func in (test_callback_nosleep,
+                                                             task_manager_callback,
+                                                             test_callback))
 
 @watch.command()
 @click.option('--log/--no-log',
