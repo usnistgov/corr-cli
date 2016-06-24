@@ -11,8 +11,8 @@ import glob
 import pandas
 import psutil
 
-from .process_watcher import ProcessWatcher
-from .platform_watcher import PlatformWatcher
+from .watchers.process_watcher import ProcessWatcher
+from .watchers.platform_watcher import PlatformWatcher
 from .commands.cli import DEFAULT_TASK_DIR, DEFAULT_REFRESH_RATE
 from .commands.config import parse_config
 
