@@ -5,8 +5,9 @@ import os
 from corrcli.corr_daemon import CoRRDaemon
 from subprocess import Popen
 from time import sleep
-from corrcli.task_manager import get_task_df
 from corrcli.commands.cli import DEFAULT_REFRESH_RATE
+from corrcli.stores.file_store import FileStore
+
 
 def configure(config_dir, refresh_rate):
     arguments = ['corrcli',
@@ -14,7 +15,7 @@ def configure(config_dir, refresh_rate):
                  'config',
                  'set',
                  '--email=test@test.com',
-                 '--name="Test Person"',
+                 '--author="Test Person"',
                  '--refresh-rate={0}'.format(refresh_rate)]
     Popen(arguments).wait()
     sleep(3)
@@ -64,18 +65,17 @@ def test_task_manager():
         try:
             process = start_process(daemon_id, config_path)
             sleep(refresh_rate + 1)
-            task_df = get_task_df(config_path)
+            tasks = FileStore.read_all(config_path)
         except: # pragma: no cover
             process.kill()
             raise
         process.kill()
-        assert task_df is not None
-        assert len(task_df) == 1
-        assert task_df.status[0] != 'finished'
+        assert len(tasks) == 1
+        assert tasks[0]['status'] != 'finished'
         sleep(refresh_rate + 1)
-        task_df = get_task_df(config_path)
-        assert len(task_df) == 1
-        assert task_df.status[0] == 'zombie'
+        tasks = FileStore.read_all(config_path)
+        assert len(tasks) == 1
+        assert tasks[0]['status'] == 'zombie'
         stop_daemon(config_path)
 
 
@@ -90,12 +90,11 @@ def test_noconfig():
         try:
             process = start_process(daemon_id, config_path)
             sleep(DEFAULT_REFRESH_RATE * 2)
-            task_df = get_task_df(config_path)
+            tasks = FileStore.read_all(config_path)
         except: # pragma: no cover
             process.kill()
             raise
         process.kill()
-        assert task_df is not None
-        assert len(task_df) == 1
-        assert task_df.status[0] != 'finished'
+        assert len(tasks) == 1
+        assert tasks[0]['status'] != 'finished'
         stop_daemon(config_path)

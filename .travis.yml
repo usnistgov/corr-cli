@@ -12,4 +12,4 @@ notifications:
 
 script:
   - py.test
-  - pylint corrcli --ignore=main,test
+  - pylint corrcli

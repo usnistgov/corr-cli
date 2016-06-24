@@ -1,32 +1,29 @@
 """Management tools for aggregating and controlling tasks.
 
 """
-import os
-import json
 import uuid
 import datetime
 import time
-import glob
 
-import pandas
 import psutil
 
 from .watchers.process_watcher import ProcessWatcher
 from .watchers.platform_watcher import PlatformWatcher
-from .commands.cli import DEFAULT_TASK_DIR, DEFAULT_REFRESH_RATE
+from .commands.cli import DEFAULT_REFRESH_RATE
 from .commands.config import parse_config
+from .stores.file_store import FileStore
 
 
 class TaskManager(object):
     """Task manager for a single process.
 
-    Aggregates data from multiple process watchers and writes it to a
-    JSON file.
+    Aggregates data from multiple process watchers and writes it to
+    the data stores.
 
     Attributes:
       watchers: a list of watcher objects
       label: the unique label associated with the task
-      datafile: the local data file to record the JSON record
+      stores: store objects to store the task records
       data_dict: the dictionary to gather the data
 
     """
@@ -41,10 +38,7 @@ class TaskManager(object):
         self.watchers = [ProcessWatcher(pid),
                          PlatformWatcher(pid)]
         self.label = str(uuid.uuid4())
-        task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
-        if not os.path.exists(task_dir):
-            os.makedirs(task_dir)
-        self.datafile = os.path.join(task_dir, '{0}.json'.format(self.label))
+        self.stores = [FileStore(self.label, config_dir)]
         self.data_dict = self.initialize_data(pid, config_dir)
         self.update_data()
 
@@ -62,12 +56,12 @@ class TaskManager(object):
         data_dict = {}
         config_data = parse_config(config_dir)
         email = config_data.get('default_email')
-        name = config_data.get('default_name')
+        author = config_data.get('default_author')
         data_dict = {'label' : self.label,
                      'process_id' : pid,
                      'created_time' : str(datetime.datetime.now()),
                      'email' : email,
-                     'name' : name}
+                     'author' : author}
         return data_dict
 
     def update_data(self):
@@ -79,10 +73,10 @@ class TaskManager(object):
             self.data_dict = watcher.watch(self.data_dict)
 
     def write_data(self):
-        """Write the data to a JSON file.
+        """Write the data to the record stores
         """
-        with open(self.datafile, 'w') as outfile:
-            json.dump(self.data_dict, outfile)
+        for store in self.stores:
+            store.write(self.data_dict)
 
 def task_manager_callback(daemon_id, config_dir, logger=None):
     """Task manager callback function for running in a Daemon.
@@ -187,18 +181,3 @@ def get_pids_for_identifier(identifier):
         if any(identifier in item for item in psutil.Process(pid).cmdline()):
             pid_list.append(pid)
     return pid_list
-
-def get_task_df(config_dir):
-    """Read in all the task JSON files and make a dataframe.
-
-    Args:
-      config_dir: the CoRR configuration directory
-
-    """
-    task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
-    regex = os.path.join(task_dir, '*.json')
-    task_list = []
-    for jsonfile in glob.glob(regex):
-        with open(jsonfile, 'r') as infile:
-            task_list.append(json.load(infile))
-    return pandas.DataFrame(task_list)

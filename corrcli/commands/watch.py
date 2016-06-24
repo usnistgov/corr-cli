@@ -70,7 +70,7 @@ CALLBACK_FUNCTIONS = dict((func.__name__, func) for func in (test_callback_nosle
 @click.option('--daemon/--no-daemon',
               'daemon_on',
               default=True,
-              help="Whether to run the watcher as a daemon process")
+              help="Whether to run the watcher as a daemon process (only for testing purposes)")
 @click.pass_context
 def start(ctx, log, callback_func_key, daemon_on):
     """Launch a Daemon to watch processes.
