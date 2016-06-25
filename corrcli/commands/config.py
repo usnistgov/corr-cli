@@ -73,6 +73,15 @@ def parse_config(config_dir):
 
     Using a dictionary is easier than using the ConfigParser directly.
 
+    >>> from click.testing import CliRunner
+    >>> runner = CliRunner()
+    >>> ini_contents = '[default]\\nvalue = 0'
+    >>> with runner.isolated_filesystem() as config_dir:
+    ...     config_file = os.path.join(config_dir, 'config.ini')
+    ...     with open(config_file, 'w') as fout:
+    ...         _ = fout.write(ini_contents)
+    ...     assert parse_config(config_dir) == {'default_value' : '0'}
+
     Args:
       config_dir: the CoRR configuration directory
 
