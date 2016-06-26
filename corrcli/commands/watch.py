@@ -85,10 +85,7 @@ def start(ctx, log, callback_func_key, daemon_on):
 
 @watch.command()
 @click.option('--all', 'all_watchers', is_flag=True, help="Stop all watcher daemons.")
-@click.option('--watcher-id',
-              'watcher_ids',
-              multiple=True,
-              help="Stop the given daeomon corresponding to [watcher-id]")
+@click.argument('watcher_ids', nargs=-1)
 @click.pass_context
 def stop(ctx, all_watchers, watcher_ids):
     """Shut down watching daemons.

@@ -1,9 +1,12 @@
 """Test the command line tool.
 """
+import os
+
 from configparser import ConfigParser
 from click.testing import CliRunner
+
 from corrcli import cli
-import os
+
 
 
 def test_config():

@@ -1,29 +1,21 @@
 """Test the command line tool.
 """
-from click.testing import CliRunner
-from corrcli import cli
 import os
-from corrcli.corr_daemon import CoRRDaemon
-from subprocess import Popen
 from time import sleep
 
+from click.testing import CliRunner
 
-def start_daemon(config_dir):
-    arguments = ['corrcli',
-                 '--config-dir={0}'.format(config_dir),
-                 'watch',
-                 'start',
-                 '--log',
-                 '--callback-func=test_callback']
-    Popen(arguments)
-    sleep(3)
+from corrcli import cli
+from corrcli.corr_daemon import CoRRDaemon
+from corrcli.tools import start_daemon
+
 
 def test_daemon_start():
     """Test `corrcli watch stop`
     """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
-        start_daemon(config_path)
+        start_daemon(config_path, callback_func='test_callback')
         daemon_df = CoRRDaemon.list(config_path)
         assert len(daemon_df) == 1
         stopped_df = CoRRDaemon.stop(config_path, all_daemons=True)
@@ -36,10 +28,13 @@ def test_daemon_start():
         assert daemon_id in log_contents
 
 def test_daemon_stop():
+    """Test stopping deamons
+
+    """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
         for _ in range(3):
-            start_daemon(config_path)
+            start_daemon(config_path, callback_func='test_callback')
         daemon_df = CoRRDaemon.list(config_path)
         daemon_id = daemon_df.daemon_id[0]
         assert len(daemon_df) == 3
@@ -48,7 +43,7 @@ def test_daemon_stop():
         arguments = ['--config-dir={0}'.format(config_path),
                      'watch',
                      'stop',
-                     '--watcher-id={0}'.format(daemon_id)]
+                     '{0}'.format(daemon_id)]
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
         sleep(3)
@@ -76,9 +71,12 @@ def test_daemon_stop():
 
 
 def test_daemon_list():
+    """Test listing running daemons
+
+    """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
-        start_daemon(config_path)
+        start_daemon(config_path, 'test_callback')
         arguments = ['--config-dir={0}'.format(config_path),
                      'watch',
                      'list']

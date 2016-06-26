@@ -16,7 +16,7 @@ DEFAULT_REFRESH_RATE = 5.0
               'config_dir',
               default=get_config_dir('corrcli'),
               help="Set the config directory for CoRR.",
-              type=str)
+              type=click.Path())
 @click.pass_context
 def cli(ctx, config_dir):
     """The CoRR command line tool.

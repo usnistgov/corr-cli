@@ -1,15 +1,21 @@
 """Test the command line tool.
 """
-from click.testing import CliRunner
 import os
-from corrcli.corr_daemon import CoRRDaemon
 from subprocess import Popen
 from time import sleep
+
+from click.testing import CliRunner
+
+from corrcli.corr_daemon import CoRRDaemon
 from corrcli.commands.cli import DEFAULT_REFRESH_RATE
 from corrcli.stores.file_store import FileStore
+from corrcli.tools import start_daemon
 
 
 def configure(config_dir, refresh_rate):
+    """Configure CoRR
+
+    """
     arguments = ['corrcli',
                  '--config-dir={0}'.format(config_dir),
                  'config',
@@ -20,16 +26,10 @@ def configure(config_dir, refresh_rate):
     Popen(arguments).wait()
     sleep(3)
 
-def start_daemon(config_dir):
-    arguments = ['corrcli',
-                 '--config-dir={0}'.format(config_dir),
-                 'watch',
-                 'start',
-                 '--log',]
-    Popen(arguments)
-    sleep(4)
-
 def stop_daemon(config_dir):
+    """Stop all daemons
+
+    """
     arguments = ['corrcli',
                  '--config-dir={0}'.format(config_dir),
                  'watch',
@@ -38,6 +38,9 @@ def stop_daemon(config_dir):
     Popen(arguments)
 
 def start_process(daemon_id, config_dir):
+    """Launch a test process.
+
+    """
     contents = """
 import time
 while True:
