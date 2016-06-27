@@ -12,4 +12,4 @@ notifications:
 
 script:
   - py.test
-  - pylint corrcli
+  - pylint corrcli corrcli/test/*.py

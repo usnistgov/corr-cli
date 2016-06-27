@@ -31,6 +31,13 @@ def list_tasks(ctx, number, task_ids):
         list_task_json(task_ids, config_dir, number)
 
 def list_task_df(config_dir, number):
+    """Print a condensed version of the task data frame.
+
+    Args:
+      config_dir: the CoRR configuration directory
+      number: the number of most recent tasks to print
+
+    """
     tasks_df = pandas.DataFrame(FileStore.read_all(config_dir))
     pandas.options.mode.chained_assignment = None
     columns = ['label', 'status', 'created_time', 'process_id']
@@ -39,14 +46,24 @@ def list_task_df(config_dir, number):
                   'created_time' : datetime_func}
     rename = {'created_time' : 'time stamp',
               'process_id' : 'pid'}
-    out_df = tasks_df[columns]
+    reduced_df = tasks_df[columns]
     for column in columns:
         if column in formatters:
-            out_df[column] = out_df[column].apply(formatters[column])
-    out_df = out_df.rename(columns=rename).sort_values(by='time stamp', ascending=False).reset_index(drop=True)
-    click.echo(out_df[:number])
+            reduced_df[column] = reduced_df[column].apply(formatters[column])
+    reduced_df.rename(columns=rename, inplace=True)
+    reduced_df.sort_values(by='time stamp', ascending=False, inplace=True)
+    reduced_df.reset_index(drop=True, inplace=True)
+    click.echo(reduced_df[:number])
 
 def list_task_json(task_ids, config_dir, number):
+    """Print the JSON for a list of shortend task IDs.
+
+    Args:
+      task_ids: a list of short task IDs
+      config_dir: the CoRR configuration directory
+      number: the number of tasks to print
+
+    """
     all_tasks = FileStore.read_all(config_dir)
     min_len = min([len(task_id) for task_id in task_ids])
     task_dict = {task_['label'][:min_len] : task_ for task_ in all_tasks}
