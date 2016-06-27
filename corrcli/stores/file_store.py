@@ -62,7 +62,7 @@ class FileStore(object):
         """
         with fasteners.InterProcessLock(self.lockfile):
             with open(self.datafile, 'w') as outfile:
-                json.dump(data, outfile)
+                json.dump(data, outfile, indent=2, sort_keys=True)
 
     @staticmethod
     def read_all(config_dir):
