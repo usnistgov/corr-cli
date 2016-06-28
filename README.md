@@ -21,8 +21,6 @@ collaboration.
 
 [![Gitter Chat](https://img.shields.io/gitter/room/gitterHQ/gitter.svg)](https://gitter.im/usnistgov/corr)
 
-[![Travis CI](https://api.travis-ci.org/usnistgov/corr-cli.svg)](https://travis-ci.org/usnistgov/corr-cli)
-
 * **[INSTALL](INSTALLATION.md)** – install CoRR-cli
 * **[LICENSE](LICENSE)** – the license
 * **[USAGE](USAGE)** - use CoRR-cli
