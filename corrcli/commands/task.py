@@ -65,6 +65,6 @@ def list_task_json(task_ids, config_dir, number):
 
     """
     long_ids = FileStore.get_long_labels(config_dir, task_ids)
-    for long_id in long_ids:
+    for long_id in long_ids[:number]:
         task_dict = FileStore(long_id, config_dir).read()
         click.echo(json.dumps(task_dict, indent=2, sort_keys=True))
