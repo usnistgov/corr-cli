@@ -2,7 +2,7 @@
 
 To install CoRR-cmd, clone the repository and install:
 
-    $ git clone git@github.com:wd15/corr-cli.git
+    $ git clone git@github.com:usnistgov/corr-cli.git
     $ cd corr-cli
     $ python setup.py install
 
