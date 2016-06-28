@@ -5,6 +5,10 @@ import click
 from ..tools import get_version
 from ..tools import get_config_dir
 
+DEFAULT_CONFIG_FILE = 'config.ini'
+DEFAULT_DAEMON_DIR = 'daemons'
+DEFAULT_TASK_DIR = 'tasks'
+DEFAULT_REFRESH_RATE = 5.0
 
 @click.group()
 @click.version_option(get_version())
@@ -12,7 +16,7 @@ from ..tools import get_config_dir
               'config_dir',
               default=get_config_dir('corrcli'),
               help="Set the config directory for CoRR.",
-              type=str)
+              type=click.Path())
 @click.pass_context
 def cli(ctx, config_dir):
     """The CoRR command line tool.

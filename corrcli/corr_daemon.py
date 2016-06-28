@@ -1,4 +1,4 @@
-"""The Watcher class to launch a deamon process.
+"""The CoRRDaemon class to launch a deamon process.
 """
 import uuid
 import logging
@@ -8,17 +8,18 @@ import signal
 import pandas
 import daemon
 import daemon.pidfile
+from .commands.cli import DEFAULT_DAEMON_DIR
 
 
-class Watcher(object):
+class CoRRDaemon(object):
     """Launch a callback function as a daemon process.
 
-    Multiple `Watcher`s can launch multiple callback functions as
+    Multiple `CoRRDaemon`s can launch multiple callback functions as
     daemon processes and keep track of running deamons as well as
     shutdown daemons.
 
     Attributes:
-      watcher_id: a unique ID for each watcher
+      daemon_id: a unique ID for each daemon
       daemon_dir: the directory for pid and log files
       logging_on: whether the daemon should log its output
       log_file: the path to the deaemon's log file
@@ -27,10 +28,11 @@ class Watcher(object):
 
     Note that a possible alternative to this class might be
     http://python-service.readthedocs.io/en/latest/.
+
     """
     pidext = 'pid'
-    def __init__(self, callback, config_dir, logging_on=False):
-        """Instantiate a `Watcher`.
+    def __init__(self, callback, config_dir, daemon_on, logging_on=False):
+        """Instantiate a `CoRRDaemon`.
 
         Args:
           callback: the callback function that's executed in the
@@ -39,13 +41,15 @@ class Watcher(object):
           logging_on: whether the daemon should log its output
 
         """
-        self.watcher_id = uuid.uuid4()
+        self.daemon_id = str(uuid.uuid4().hex)[:12]
         self.daemon_dir = self.get_daemon_dir(config_dir)
         if not os.path.exists(self.daemon_dir):
             os.makedirs(self.daemon_dir)
         self.logging_on = logging_on
-        self.log_file = os.path.join(self.daemon_dir, '{0}_daemon.log'.format(self.watcher_id))
+        self.log_file = os.path.join(self.daemon_dir, '{0}.log'.format(self.daemon_id))
         self.callback = callback
+        self.config_dir = config_dir
+        self.daemon_on = daemon_on
 
     @staticmethod
     def get_daemon_dir(config_dir):
@@ -55,9 +59,9 @@ class Watcher(object):
           config_dir: the CoRR config directory
 
         Returns:
-          A path like `/home/user/.config/corrcli/corr_daemons`.
+          A path like `/home/user/.config/corrcli/daemons`.
         """
-        return os.path.join(config_dir, 'corr_daemons')
+        return os.path.join(config_dir, DEFAULT_DAEMON_DIR)
 
     def get_pidfile(self):
         """Get the PID file for the daemon process.
@@ -69,7 +73,7 @@ class Watcher(object):
            a PIDLockFile instance
         """
         lock_file = os.path.join(self.daemon_dir,
-                                 '{0}.{1}'.format(self.watcher_id, self.pidext))
+                                 '{0}.{1}'.format(self.daemon_id, self.pidext))
         return daemon.pidfile.PIDLockFile(lock_file)
 
     def get_logger(self):
@@ -78,8 +82,8 @@ class Watcher(object):
         Returns:
           a tuple containing the logger and the file handler
         """
-        logger = logging.getLogger("CoRR Watcher Log -- {0}".format(self.watcher_id))
-        logger.setLevel(level=logging.INFO)
+        logger = logging.getLogger("CoRRDaemon Log -- {0}".format(self.daemon_id))
+        logger.setLevel(level=logging.DEBUG)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         handler = logging.FileHandler(self.log_file)
         handler.setFormatter(formatter)
@@ -98,28 +102,31 @@ class Watcher(object):
 
         daemon_context = daemon.DaemonContext(pidfile=self.get_pidfile(),
                                               files_preserve=files_preserve)
-        with daemon_context:
+        if self.daemon_on:
+            with daemon_context:
+                self._run(logger, daemon_context)
+        else:
             self._run(logger, daemon_context)
 
     @classmethod
-    def stop(cls, config_dir, watcher_ids=(), all_watchers=False):
-        """Stop daemon processes base on watcher_ids.
+    def stop(cls, config_dir, daemon_ids=(), all_daemons=False):
+        """Stop daemon processes base on daemon_ids.
 
         Args:
           config_dir: the CoRR config directory
-          watcher_ids: the watcher IDs to stop
-          all_watchers: shut down all daemons
+          daemon_ids: the daemon IDs to stop
+          all_daemons: shut down all daemons
 
         Returns:
-          a data frame containing the watcher IDs and PIDs for all
+          a data frame containing the daemon IDs and PIDs for all
           daemons shutdown
 
         """
-        watcher_df = cls.list(config_dir)
-        if all_watchers:
-            rows_df = watcher_df
+        daemon_df = cls.list(config_dir)
+        if all_daemons:
+            rows_df = daemon_df
         else:
-            rows_df = watcher_df.loc[watcher_df['watcher_id'].isin(watcher_ids)]
+            rows_df = daemon_df.loc[daemon_df['daemon_id'].isin(daemon_ids)]
 
         for _, row in rows_df.iterrows():
             os.kill(row.process_id, signal.SIGTERM)
@@ -134,26 +141,31 @@ class Watcher(object):
           config_dir: the CoRR config directory
 
         Returns:
-          a data frame containing the watcher IDs and PIDs for all
+          a data frame containing the deamon IDs and PIDs for all
           running daemons
         """
         daemon_dir = cls.get_daemon_dir(config_dir)
         pidfile_regex = os.path.join(daemon_dir, '*.{0}'.format(cls.pidext))
-        watcher_ids = []
+        daemon_ids = []
         pids = []
         for pidfile in glob.glob(pidfile_regex):
             with open(pidfile, 'r') as fpointer:
                 pids.append(int(fpointer.read()))
-            watcher_id = os.path.splitext(os.path.split(pidfile)[1])[0]
-            watcher_ids.append(watcher_id)
-        return pandas.DataFrame({'watcher_id' : watcher_ids,
+            daemon_id = os.path.splitext(os.path.split(pidfile)[1])[0]
+            daemon_ids.append(daemon_id)
+        return pandas.DataFrame({'daemon_id' : daemon_ids,
                                  'process_id' : pids})
-
 
     def _run(self, logger, context):
         pid = context.pidfile.read_pid()
         if logger:
-            logger.info("Start watcher with pid {0}".format(pid))
-        self.callback(logger=logger)
+            logger.info("Start daemon with pid {0}".format(pid))
+        try:
+            self.callback(self.daemon_id, self.config_dir, logger=logger)
+        except Exception:
+            if logger:
+                logger.exception("Exception in daemon callback function.")
+            raise
+
         if logger:
-            logger.info("Stop watcher with pid {1}".format(pid))
+            logger.info("Stop daemon with pid {0}".format(pid))

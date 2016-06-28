@@ -1,1 +1,2 @@
-recursive-include corr/data *.json
+include corrcli/tests/*.py
+include corrcli/tests/*.json

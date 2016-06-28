@@ -6,12 +6,10 @@ python:
 
 install:
   - pip install .
-  - pip install pylint
-  - pip install pytest-cov
 
 notifications:
   email: "daniel.wheeler2@gmail.com"
 
 script:
-  - py.test --cov=corrcli --cov-report term-missing
-  - pylint corrcli --ignore=main,test
+  - py.test
+  - pylint corrcli corrcli/tests/*.py
