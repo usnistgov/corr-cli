@@ -80,8 +80,6 @@ def test_list_json():
                      '68ede088',
                      'xxxxxxxx']
         result = runner.invoke(cli, arguments)
-        print(result.output)
-        print(JSON_OUTPUT)
         assert result.exit_code == 0
         assert result.output.replace(' ', '') == JSON_OUTPUT.replace(' ', '')
 
