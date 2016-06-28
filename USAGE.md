@@ -7,8 +7,6 @@ requiring only the most minimal change to the workflow. It uses a
 records information about those processes and stores that information
 as a permanent record.
 
-## Why CoRR-cli
-
 ## Quickstart
 
 ### Configuration
@@ -32,7 +30,7 @@ have the author name and email saved with the task records.
 ### Watchers
 
 In CoRR-cli, the watched processes are known as "tasks" while the
-wathcing deamon is a "watcher". To start a watcher use,
+watching deamon is a "watcher". To start a watcher use,
 
     $ corrcli watch start
     Launch daemon with ID: e58d5000c5f4
@@ -58,8 +56,8 @@ Use `--all` to stop all running watchers. Start up another watcher,
 ### Tasks
 
 To record processes, jobs or tasks, the daemon ID is required to be
-present on the command line of the job being executed. So, to record a very trivial
-task use,
+present on the command line of the job being executed. So, to record a
+very trivial task use,
 
     $ python -c "import time; time.sleep(3)" 3fb28b6527e6
 
@@ -71,7 +69,7 @@ Remember to copy the tag from the watcher which will be different from
     0  a056b686  finished  2016-06-28 12:37:42  7559
 
 This is the most basic information about the job being executed such
-as the pid and the status of the task. Each taskn is also given a
+as the pid and the status of the task. Each task is also given a
 unique label. A longer view of the task's data can be view by passing
 the task label.
 
