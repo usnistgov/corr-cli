@@ -82,3 +82,26 @@ class FileStore(object):
             store = FileStore(label, config_dir)
             task_list.append(store.read())
         return task_list
+
+    @staticmethod
+    def get_long_labels(config_dir, short_labels):
+        """Find the long labels corresponding to short labels.
+
+        Args:
+          config_dir: the CoRR configuration directory
+          short_labels: a list of short labels
+
+        Returns:
+          a list of long IDs
+        """
+        task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
+        regex = os.path.join(task_dir, '*.json')
+        long_labels = []
+        for jsonfile in glob.glob(regex):
+            long_label = jsonfile[:-5]
+            for short_label in short_labels:
+                if short_label in long_label:
+                    long_labels.append(long_label)
+            if len(long_labels) == len(short_labels):
+                break
+        return long_labels

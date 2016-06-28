@@ -64,8 +64,7 @@ def list_task_json(task_ids, config_dir, number):
       number: the number of tasks to print
 
     """
-    all_tasks = FileStore.read_all(config_dir)
-    min_len = min([len(task_id) for task_id in task_ids])
-    task_dict = {task_['label'][:min_len] : task_ for task_ in all_tasks}
-    for task_id in task_ids[:number]:
-        click.echo(json.dumps(task_dict[task_id], indent=2, sort_keys=True))
+    long_ids = FileStore.get_long_labels(config_dir, task_ids)
+    for long_id in long_ids:
+        task_dict = FileStore(long_id, config_dir).read()
+        click.echo(json.dumps(task_dict, indent=2, sort_keys=True))
