@@ -41,7 +41,7 @@ class CoRRDaemon(object):
           logging_on: whether the daemon should log its output
 
         """
-        self.daemon_id = str(uuid.uuid4())[-12:]
+        self.daemon_id = str(uuid.uuid4().hex)[:12]
         self.daemon_dir = self.get_daemon_dir(config_dir)
         if not os.path.exists(self.daemon_dir):
             os.makedirs(self.daemon_dir)

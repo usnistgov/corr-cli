@@ -64,6 +64,16 @@ class FileStore(object):
             with open(self.datafile, 'w') as outfile:
                 json.dump(data, outfile, indent=2, sort_keys=True)
 
+    def remove(self):
+        """Remove the data store for a task.
+
+        Removes both the JSON file and the lock file.
+
+        """
+        os.remove(self.datafile)
+        if os.path.isfile(self.lockfile):
+            os.remove(self.lockfile)
+
     @staticmethod
     def read_all(config_dir):
         """Read in all the tasks in the store.
@@ -78,7 +88,7 @@ class FileStore(object):
         regex = os.path.join(task_dir, '*.json')
         task_list = []
         for jsonfile in glob.glob(regex):
-            label = jsonfile[:-5]
+            label = os.path.splitext(os.path.split(jsonfile)[1])[0]
             store = FileStore(label, config_dir)
             task_list.append(store.read())
         return task_list
@@ -92,16 +102,14 @@ class FileStore(object):
           short_labels: a list of short labels
 
         Returns:
-          a list of long IDs
+          a dictionary of long IDs
         """
         task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
         regex = os.path.join(task_dir, '*.json')
-        long_labels = []
+        long_labels = {}
         for jsonfile in glob.glob(regex):
-            long_label = jsonfile[:-5]
+            long_label = os.path.splitext(os.path.split(jsonfile)[1])[0]
             for short_label in short_labels:
                 if short_label in long_label:
-                    long_labels.append(long_label)
-            if len(long_labels) == len(short_labels):
-                break
+                    long_labels[short_label] = long_label
         return long_labels

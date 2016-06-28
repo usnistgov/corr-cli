@@ -37,7 +37,7 @@ class TaskManager(object):
         """
         self.watchers = [ProcessWatcher(pid),
                          PlatformWatcher(pid)]
-        self.label = str(uuid.uuid4())
+        self.label = str(uuid.uuid4().hex)
         self.stores = [FileStore(self.label, config_dir)]
         self.data_dict = self.initialize_data(pid, config_dir)
         self.update_data()
