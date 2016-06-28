@@ -80,8 +80,10 @@ def test_list_json():
                      '68ede088',
                      'xxxxxxxx']
         result = runner.invoke(cli, arguments)
+        print(result.output)
+        print(JSON_OUTPUT)
         assert result.exit_code == 0
-        assert result.output == JSON_OUTPUT
+        assert result.output.replace(' ', '') == JSON_OUTPUT.replace(' ', '')
 
 def test_remove():
     """Test removing task records from the data store.
