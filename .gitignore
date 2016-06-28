@@ -2,6 +2,3 @@
 *.pyc
 build/
 dist/
-.cache/
-.coverage
-.coverage.*

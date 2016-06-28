@@ -1,9 +1,8 @@
-"""The setup.py for corrcli.
-"""
+#!/usr/bin/env python
 
+from setuptools import setup, find_packages
 import os
 import subprocess
-from setuptools import setup, find_packages
 
 
 def make_version():
@@ -47,11 +46,11 @@ def make_version():
                                     'v*'])
             # ticket:475 - fix for bytecode received in Py3k
             # http://jeetworks.org/node/67
-            outdecode = out.decode("utf-8")
+            out = out.decode("utf-8")
             # convert git long-form version string, e.g.,
             # "version-3_1_1-127-g413ed61", into PEP 440 version,
             # e.g., "3.1.1.dev127+g413ed61"
-            version = outdecode.strip().split("-")
+            version = out.strip().split("-")
             if len(version) > 1:
                 version, dev, sha = version
                 version = "%s.dev%s+%s" % (version[1:], dev, sha)
@@ -61,7 +60,7 @@ def make_version():
             import warnings
             warnings.warn("Could not run ``git describe``")
     elif os.path.exists('corrdb.egg-info'):
-        from corrcli import get_version
+        from corrdb import get_version
         version = get_version()
 
     return version
@@ -81,16 +80,9 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'corrcli = corrcli:cli'
+            'corrcli = corrcli.main.cli:handle',
         ],
     },
-    install_requires=['click',
-                      'configparser',
-                      'pandas',
-                      'python-daemon',
-                      'psutil',
-                      'pytest',
-                      'pytest-cov',
-                      'pylint',
-                      'fasteners']
+    test_suite='nose.collector',
+    tests_require=['nose'],
 )
