@@ -31,7 +31,10 @@ def list_tasks(ctx, number, task_ids):
         list_task_json(task_ids, config_dir, number)
 
 @task.command()
-@click.option('--force/--no-force', '-f', default=False, help="Whether to promt when removing task records.")
+@click.option('--force/--no-force',
+              '-f',
+              default=False,
+              help="Whether to promt when removing task records.")
 @click.argument('task_ids', nargs=-1)
 @click.pass_context
 def remove(ctx, force, task_ids):
@@ -42,12 +45,35 @@ def remove(ctx, force, task_ids):
     for task_id in task_ids:
         long_id = long_ids.get(task_id)
         if long_id:
-            if force or click.confirm("Remove task {0} from the file data store?".format(long_id[:8])):
+            confirm_string = "Remove task {0} from the file data store?".format(long_id[:8])
+            if force or click.confirm(confirm_string):
                 FileStore(long_id, config_dir).remove()
                 click.echo("Task {0} removed.".format(long_id[:8]))
         else:
             click.echo("No such task as {0}.".format(task_id))
 
+def datetime_func(item):
+    """Reformat a datatime string.
+
+    Turn a datatime string into a Pandas datetime object and then
+    reformat if not a null object.
+
+    >>> print(datetime_func('2016-06-25 21:53:19.71829'))
+    2016-06-25 21:53:19
+    >>> print(datetime_func(None))
+    None
+
+    Args:
+      item: a datetime string or null object
+
+    Returns:
+      a reformatted datatime string
+
+    """
+    if not pandas.isnull(item):
+        return pandas.to_datetime(item).strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        return item
 
 def list_task_df(config_dir, number):
     """Print a condensed version of the task data frame.
@@ -62,12 +88,6 @@ def list_task_df(config_dir, number):
     tasks_df['process_id'] = tasks_df['process_id'].astype(int)
     pandas.options.mode.chained_assignment = None
     columns = ['label', 'status', 'created_time', 'process_id']
-
-    def datetime_func(item):
-        if not pandas.isnull(item):
-            return pandas.to_datetime(item).strftime("%y-%m-%d %H:%M:%S")
-        else:
-            return item
 
     formatters = {'label' : lambda item: item[:8],
                   'created_time' : datetime_func}
@@ -92,7 +112,7 @@ def list_task_json(task_ids, config_dir, number):
 
     """
     long_ids = FileStore.get_long_labels(config_dir, task_ids)
-    for task_id in task_ids:
+    for task_id in task_ids[:number]:
         long_id = long_ids.get(task_id)
         if long_id:
             task_dict = FileStore(long_id, config_dir).read()
