@@ -35,14 +35,14 @@ watching deamon is a "watcher". To start a watcher use,
     $ corrcli watch start
     Launch daemon with ID: e58d5000c5f4
 
-A watcher daemon is now running. To check for running daemons use
+A watcher daemon is now running. To check for running watcher use
 
     $ corrcli watch list
        daemon_id  process_id
     e58d5000c5f4        1230
 
-Note that multiple daemons can run at once and daemons can watch an
-unlimited number of processes. To stop a daemon use,
+Note that multiple watchers can run at once and watchers can watch an
+unlimited number of processes. To stop a watcher use,
 
     $ corrcli watch stop e58d5000c5f4
     Stopping watchers.
