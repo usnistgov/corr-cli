@@ -8,7 +8,8 @@ from ..tools import get_config_dir
 DEFAULT_CONFIG_FILE = 'config.ini'
 DEFAULT_DAEMON_DIR = 'daemons'
 DEFAULT_TASK_DIR = 'tasks'
-DEFAULT_REFRESH_RATE = 5.0
+DEFAULT_WRITE_REFRESH_RATE = 5.0
+DEFAULT_WATCH_REFRESH_RATE = 0.1
 
 @click.group()
 @click.version_option(get_version())
