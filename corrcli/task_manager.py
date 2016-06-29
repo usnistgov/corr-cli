@@ -94,8 +94,10 @@ def task_manager_callback(daemon_id, config_dir, logger=None):
     """
     task_manager_dict = dict()
     config_data = parse_config(config_dir)
-    watch_refresh_rate = float(config_data.get('tasks_watch_refresh_rate', DEFAULT_WATCH_REFRESH_RATE))
-    write_refresh_rate = float(config_data.get('tasks_write_refresh_rate', DEFAULT_WRITE_REFRESH_RATE))
+    watch_refresh_rate = float(config_data.get('tasks_watch_refresh_rate',
+                                               DEFAULT_WATCH_REFRESH_RATE))
+    write_refresh_rate = float(config_data.get('tasks_write_refresh_rate',
+                                               DEFAULT_WRITE_REFRESH_RATE))
     while True:
         tstart = time.time()
         pids = get_pids_for_identifier(daemon_id)
