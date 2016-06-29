@@ -25,6 +25,6 @@ collaboration.
 
 * **[INSTALL](INSTALLATION.md)** – install CoRR-cli
 * **[LICENSE](LICENSE)** – the license
-* **[USAGE](USAGE)** - use CoRR-cli
+* **[USAGE](USAGE.md)** - use CoRR-cli
 
 [CoRR]: https://github.com/usnistgov/corr
