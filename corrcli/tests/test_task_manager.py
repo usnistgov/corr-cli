@@ -7,7 +7,7 @@ from time import sleep
 from click.testing import CliRunner
 
 from corrcli.corr_daemon import CoRRDaemon
-from corrcli.commands.cli import DEFAULT_REFRESH_RATE
+from corrcli.commands.cli import DEFAULT_WRITE_REFRESH_RATE
 from corrcli.stores.file_store import FileStore
 from corrcli.tools import start_daemon
 
@@ -22,7 +22,7 @@ def configure(config_dir, refresh_rate):
                  'set',
                  '--email=test@test.com',
                  '--author="Test Person"',
-                 '--refresh-rate={0}'.format(refresh_rate)]
+                 '--write-refresh-rate={0}'.format(refresh_rate)]
     Popen(arguments).wait()
     sleep(3)
 
@@ -58,16 +58,16 @@ while True:
 def test_task_manager():
     """Test that tasks can be captured.
     """
-    refresh_rate = 1
+    write_refresh_rate = 1
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
-        configure(config_path, refresh_rate)
+        configure(config_path, write_refresh_rate)
         start_daemon(config_path)
         daemon_df = CoRRDaemon.list(config_path)
         daemon_id = daemon_df.daemon_id[0]
         try:
             process = start_process(daemon_id, config_path)
-            sleep(refresh_rate + 1)
+            sleep(write_refresh_rate + 1)
             tasks = FileStore.read_all(config_path)
         except: # pragma: no cover
             process.kill()
@@ -75,7 +75,7 @@ def test_task_manager():
         process.kill()
         assert len(tasks) == 1
         assert tasks[0]['status'] != 'finished'
-        sleep(refresh_rate + 1)
+        sleep(write_refresh_rate + 1)
         tasks = FileStore.read_all(config_path)
         assert len(tasks) == 1
         assert tasks[0]['status'] == 'zombie'
@@ -92,7 +92,7 @@ def test_noconfig():
         daemon_id = daemon_df.daemon_id[0]
         try:
             process = start_process(daemon_id, config_path)
-            sleep(DEFAULT_REFRESH_RATE * 2)
+            sleep(DEFAULT_WRITE_REFRESH_RATE * 2)
             tasks = FileStore.read_all(config_path)
         except: # pragma: no cover
             process.kill()

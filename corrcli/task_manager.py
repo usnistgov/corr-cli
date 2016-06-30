@@ -9,7 +9,7 @@ import psutil
 
 from .watchers.process_watcher import ProcessWatcher
 from .watchers.platform_watcher import PlatformWatcher
-from .commands.cli import DEFAULT_REFRESH_RATE
+from .commands.cli import DEFAULT_WRITE_REFRESH_RATE, DEFAULT_WATCH_REFRESH_RATE
 from .commands.config import parse_config
 from .stores.file_store import FileStore
 
@@ -94,13 +94,20 @@ def task_manager_callback(daemon_id, config_dir, logger=None):
     """
     task_manager_dict = dict()
     config_data = parse_config(config_dir)
-    refresh_rate = float(config_data.get('tasks_refresh_rate', DEFAULT_REFRESH_RATE))
+    watch_refresh_rate = float(config_data.get('tasks_watch_refresh_rate',
+                                               DEFAULT_WATCH_REFRESH_RATE))
+    write_refresh_rate = float(config_data.get('tasks_write_refresh_rate',
+                                               DEFAULT_WRITE_REFRESH_RATE))
     while True:
         tstart = time.time()
         pids = get_pids_for_identifier(daemon_id)
         task_manager_dict = update_task_manager_dict(pids, task_manager_dict, config_dir, logger)
-        while (time.time() - tstart) < refresh_rate:
-            update_task_manager_data(task_manager_dict)
+        if len(task_manager_dict) > 0:
+            while (time.time() - tstart) < write_refresh_rate:
+                update_task_manager_data(task_manager_dict)
+                time.sleep(watch_refresh_rate)
+        else:
+            time.sleep(write_refresh_rate)
         task_manager_dict = write_task_manager_data(task_manager_dict, logger)
 
 
