@@ -77,6 +77,15 @@ class Watcher(object):
         Returns:
           the data dictionary updated with the observed data
 
+        >>> class TestWatcher(Watcher):
+        ...     schema_dict = {'key1' : 'value1',
+        ...                    'key2' : lambda x, y: x['value2'] + '_test'}
+        >>> watcher = TestWatcher(1)
+        >>> observed_dict = {'value1' : 'observation1',
+        ...                  'value2' : 'observation2'}
+        >>> data_dict = {}
+        >>> print(watcher.update_data_dict(observed_dict, data_dict))
+        {'key2': 'observation2_test', 'key1': 'observation1'}
         """
         for key, value in self.schema_dict.items():
             if isinstance(value, str):
