@@ -63,7 +63,7 @@ class Watcher(object):
         """
         if data_dict is None:
             data_dict = dict()
-        for key in self.schema_dict.keys():
+        for key in self.schema_dict:
             data_dict[key] = data_dict.get(key, None)
         return data_dict
 
