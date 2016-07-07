@@ -77,10 +77,7 @@ class Watcher(object):
         Returns:
           the data dictionary updated with the observed data
 
-        >>> class TestWatcher(Watcher):
-        ...     schema_dict = {'key1' : 'value1',
-        ...                    'key2' : lambda x, y: x['value2'] + '_test'}
-        >>> watcher = TestWatcher(1)
+        >>> watcher = DummyWatcher(1)
         >>> observed_dict = {'value1' : 'observation1',
         ...                  'value2' : 'observation2'}
         >>> data_dict = {}
@@ -96,3 +93,16 @@ class Watcher(object):
                 func = value
                 data_dict[key] = func(observed_dict, data_dict)
         return data_dict
+
+
+class DummyWatcher(Watcher):
+    """Used for testing only
+    """
+    schema_dict = {'key1' : 'value1',
+                   'key2' : lambda x, y: x['value2'] + '_test'}
+
+    def get_observed_dict(self): # pragma: no cover
+        pass
+
+    def watch(self, data_dict=None): # pragma: no cover
+        pass
