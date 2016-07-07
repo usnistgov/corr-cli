@@ -84,8 +84,10 @@ class Watcher(object):
         >>> observed_dict = {'value1' : 'observation1',
         ...                  'value2' : 'observation2'}
         >>> data_dict = {}
-        >>> print(watcher.update_data_dict(observed_dict, data_dict))
-        {'key2': 'observation2_test', 'key1': 'observation1'}
+        >>> actual = watcher.update_data_dict(observed_dict, data_dict)
+        >>> test = {'key2': 'observation2_test', 'key1': 'observation1'}
+        >>> assert test == actual
+
         """
         for key, value in self.schema_dict.items():
             if isinstance(value, str):
