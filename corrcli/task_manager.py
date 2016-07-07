@@ -55,8 +55,8 @@ class TaskManager(object):
         """
         data_dict = {}
         config_data = parse_config(config_dir)
-        email = config_data.get('default_email')
-        author = config_data.get('default_author')
+        email = config_data.get('global_email') or config_data.get('default_email')
+        author = config_data.get('global_author') or config_data.get('default_author')
         data_dict = {'label' : self.label,
                      'process_id' : pid,
                      'created_time' : str(datetime.datetime.now()),
