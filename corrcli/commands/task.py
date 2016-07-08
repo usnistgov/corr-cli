@@ -82,12 +82,22 @@ def list_task_df(config_dir, number):
       config_dir: the CoRR configuration directory
       number: the number of most recent tasks to print
 
+    Test with no tasks.
+
+    >>> from click.testing import CliRunner
+    >>> with CliRunner().isolated_filesystem() as config_dir:
+    ...     list_task_df(config_dir, 10)
+    No tasks in file data store
+
     """
     tasks_df = pandas.DataFrame(FileStore.read_all(config_dir))
+    columns = ['label', 'status', 'created_time', 'process_id']
+    if len(tasks_df) == 0:
+        for column in columns:
+            tasks_df[column] = []
     tasks_df['process_id'] = tasks_df['process_id'].where(~tasks_df['process_id'].isnull(), -1)
     tasks_df['process_id'] = tasks_df['process_id'].astype(int)
     pandas.options.mode.chained_assignment = None
-    columns = ['label', 'status', 'created_time', 'process_id']
 
     formatters = {'label' : lambda item: item[:8],
                   'created_time' : datetime_func}
@@ -100,7 +110,10 @@ def list_task_df(config_dir, number):
     reduced_df.rename(columns=rename, inplace=True)
     reduced_df.sort_values(by='time stamp', ascending=False, inplace=True)
     reduced_df.reset_index(drop=True, inplace=True)
-    click.echo(reduced_df[:number])
+    if len(tasks_df) == 0:
+        click.echo("No tasks in file data store")
+    else:
+        click.echo(reduced_df[:number])
 
 def list_task_json(task_ids, config_dir, number):
     """Print the JSON for a list of shortend task IDs.
