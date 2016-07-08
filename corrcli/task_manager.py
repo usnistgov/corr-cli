@@ -185,6 +185,11 @@ def get_pids_for_identifier(identifier):
     """
     pid_list = []
     for pid in psutil.pids():
-        if any(identifier in item for item in psutil.Process(pid).cmdline()):
-            pid_list.append(pid)
+        try:
+            process = psutil.Process(pid)
+        except psutil.NoSuchProcess:
+            process = None
+        if process is not None:
+            if any(identifier in item for item in process.cmdline()):
+                pid_list.append(pid)
     return pid_list
