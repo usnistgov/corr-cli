@@ -28,8 +28,8 @@ def set_config(ctx, email, author, watch_refresh_rate, write_refresh_rate):
     """
     ini_file = os.path.join(ctx.parent.parent.params['config_dir'], DEFAULT_CONFIG_FILE)
 
-    entries = [('default', 'email', email),
-               ('default', 'author', author),
+    entries = [('global', 'email', email),
+               ('global', 'author', author),
                ('tasks', 'write_refresh_rate', write_refresh_rate),
                ('tasks', 'watch_refresh_rate', watch_refresh_rate)]
 

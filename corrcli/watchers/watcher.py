@@ -63,7 +63,7 @@ class Watcher(object):
         """
         if data_dict is None:
             data_dict = dict()
-        for key in self.schema_dict.keys():
+        for key in self.schema_dict:
             data_dict[key] = data_dict.get(key, None)
         return data_dict
 
@@ -77,6 +77,14 @@ class Watcher(object):
         Returns:
           the data dictionary updated with the observed data
 
+        >>> watcher = DummyWatcher(1)
+        >>> observed_dict = {'value1' : 'observation1',
+        ...                  'value2' : 'observation2'}
+        >>> data_dict = {}
+        >>> actual = watcher.update_data_dict(observed_dict, data_dict)
+        >>> test = {'key2': 'observation2_test', 'key1': 'observation1'}
+        >>> assert test == actual
+
         """
         for key, value in self.schema_dict.items():
             if isinstance(value, str):
@@ -85,3 +93,16 @@ class Watcher(object):
                 func = value
                 data_dict[key] = func(observed_dict, data_dict)
         return data_dict
+
+
+class DummyWatcher(Watcher):
+    """Used for testing only
+    """
+    schema_dict = {'key1' : 'value1',
+                   'key2' : lambda x, y: x['value2'] + '_test'}
+
+    def get_observed_dict(self): # pragma: no cover
+        pass
+
+    def watch(self, data_dict=None): # pragma: no cover
+        pass
