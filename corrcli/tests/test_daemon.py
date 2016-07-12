@@ -10,7 +10,8 @@ from corrcli.corr_daemon import CoRRDaemon
 from corrcli.corr_daemon import start_daemon
 
 
-DAEMON_OUTPUT = '              process_id\ndaemon_id               \n{daemon_id}      {process_id}\n'
+DAEMON_OUTPUT = """              process_id
+daemon_id               \n{daemon_id}      {process_id}\n"""
 
 def test_daemon_start():
     """Test `corrcli watch stop`
