@@ -110,6 +110,7 @@ def list_task_df(config_dir, number):
     reduced_df.rename(columns=rename, inplace=True)
     reduced_df.sort_values(by='time stamp', ascending=False, inplace=True)
     reduced_df.reset_index(drop=True, inplace=True)
+    reduced_df.set_index('label', inplace=True)
     if len(tasks_df) == 0:
         click.echo("No tasks in file data store")
     else:
