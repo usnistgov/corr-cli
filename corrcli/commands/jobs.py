@@ -18,17 +18,52 @@ def jobs():
 
 @jobs.command('list')
 @click.option('--number', '-n', type=int, default=None, help="The number of job records to list")
-@click.argument('job_ids', nargs=-1)
 @click.pass_context
-def list_jobs(ctx, number, job_ids):
+def list_jobs(ctx, number):
     """List jobs in the file data store.
     """
     config_dir = ctx.parent.parent.params['config_dir']
+    jobs_df = pandas.DataFrame(FileStore.read_all(config_dir))
+    columns = ['label', 'status', 'created_time', 'process_id']
+    if len(jobs_df) == 0:
+        for column in columns:
+            jobs_df[column] = []
+    jobs_df['process_id'] = jobs_df['process_id'].where(~jobs_df['process_id'].isnull(), -1)
+    jobs_df['process_id'] = jobs_df['process_id'].astype(int)
+    pandas.options.mode.chained_assignment = None
 
-    if len(job_ids) == 0:
-        list_job_df(config_dir, number)
+    formatters = {'label' : lambda item: item[:8],
+                  'created_time' : datetime_func}
+    rename = {'created_time' : 'time stamp',
+              'process_id' : 'pid'}
+    reduced_df = jobs_df[columns]
+    for column in columns:
+        if column in formatters:
+            reduced_df[column] = reduced_df[column].apply(formatters[column])
+    reduced_df.rename(columns=rename, inplace=True)
+    reduced_df.sort_values(by='time stamp', ascending=False, inplace=True)
+    reduced_df.reset_index(drop=True, inplace=True)
+    reduced_df.set_index('label', inplace=True)
+    if len(jobs_df) == 0:
+        click.echo("No jobs in file data store")
     else:
-        list_job_json(job_ids, config_dir, number)
+        click.echo(reduced_df[:number])
+
+@jobs.command()
+@click.argument('job_ids', nargs=-1)
+@click.pass_context
+def show(ctx, job_ids):
+    """Show jobs JSON in the file data store.
+    """
+    config_dir = ctx.parent.parent.params['config_dir']
+    long_ids = FileStore.get_long_labels(config_dir, job_ids)
+    for job_id in job_ids:
+        long_id = long_ids.get(job_id)
+        if long_id:
+            job_dict = FileStore(long_id, config_dir).read()
+            click.echo(json.dumps(job_dict, indent=2, sort_keys=True))
+        else:
+            click.echo("No such job as {0}.".format(job_id))
 
 @jobs.command()
 @click.option('--force/--no-force',
@@ -74,62 +109,3 @@ def datetime_func(item):
         return pandas.to_datetime(item).strftime("%Y-%m-%d %H:%M:%S")
     else:
         return item
-
-def list_job_df(config_dir, number):
-    """Print a condensed version of the job data frame.
-
-    Args:
-      config_dir: the CoRR configuration directory
-      number: the number of most recent jobs to print
-
-    Test with no jobs.
-
-    >>> from click.testing import CliRunner
-    >>> with CliRunner().isolated_filesystem() as config_dir:
-    ...     list_job_df(config_dir, 10)
-    No jobs in file data store
-
-    """
-    jobs_df = pandas.DataFrame(FileStore.read_all(config_dir))
-    columns = ['label', 'status', 'created_time', 'process_id']
-    if len(jobs_df) == 0:
-        for column in columns:
-            jobs_df[column] = []
-    jobs_df['process_id'] = jobs_df['process_id'].where(~jobs_df['process_id'].isnull(), -1)
-    jobs_df['process_id'] = jobs_df['process_id'].astype(int)
-    pandas.options.mode.chained_assignment = None
-
-    formatters = {'label' : lambda item: item[:8],
-                  'created_time' : datetime_func}
-    rename = {'created_time' : 'time stamp',
-              'process_id' : 'pid'}
-    reduced_df = jobs_df[columns]
-    for column in columns:
-        if column in formatters:
-            reduced_df[column] = reduced_df[column].apply(formatters[column])
-    reduced_df.rename(columns=rename, inplace=True)
-    reduced_df.sort_values(by='time stamp', ascending=False, inplace=True)
-    reduced_df.reset_index(drop=True, inplace=True)
-    reduced_df.set_index('label', inplace=True)
-    if len(jobs_df) == 0:
-        click.echo("No jobs in file data store")
-    else:
-        click.echo(reduced_df[:number])
-
-def list_job_json(job_ids, config_dir, number):
-    """Print the JSON for a list of shortend job IDs.
-
-    Args:
-      job_ids: a list of short job IDs
-      config_dir: the CoRR configuration directory
-      number: the number of jobs to print
-
-    """
-    long_ids = FileStore.get_long_labels(config_dir, job_ids)
-    for job_id in job_ids[:number]:
-        long_id = long_ids.get(job_id)
-        if long_id:
-            job_dict = FileStore(long_id, config_dir).read()
-            click.echo(json.dumps(job_dict, indent=2, sort_keys=True))
-        else:
-            click.echo("No such job as {0}.".format(job_id))

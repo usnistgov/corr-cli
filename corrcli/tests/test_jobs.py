@@ -76,7 +76,7 @@ def test_list_json():
             FileStore(job['label'], config_dir).write(job)
         arguments = ['--config-dir={0}'.format(config_dir),
                      'jobs',
-                     'list',
+                     'show',
                      '68ede088',
                      'xxxxxxxx']
         result = runner.invoke(cli, arguments)
