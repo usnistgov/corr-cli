@@ -1,22 +1,21 @@
-"""Watcher that uses psutil to gather proces data.
-
+"""Inspector that uses psutil to gather proces data.
 
 """
 import psutil
-from .watcher import Watcher
+from .inspector import Inspector
 
-class ProcessWatcher(Watcher):
-    """Watcher that uses psutil to gather data.
+class ProcessInspector(Inspector):
+    """Inspector that uses psutil to gather data.
 
     A process is returned with 'status' finished if it can't be found.
 
     >>> large_int = 100000000000000
-    >>> watcher = ProcessWatcher(large_int)
-    >>> print(watcher.watch()['status'])
+    >>> inspector = ProcessInspector(large_int)
+    >>> print(inspector.inspect()['status'])
     finished
 
     Attributes:
-      pid: the process ID to watch
+      pid: the process ID to inspect
       schema_dict: the mapping from psutil to the CoRR schema
 
     """
@@ -33,7 +32,7 @@ class ProcessWatcher(Watcher):
                    'cmdline' : 'cmdline'}
 
 
-    def watch(self, data_dict=None):
+    def inspect(self, data_dict=None):
         observed_dict = self.get_observed_dict()
         data_dict = self.ini_data_dict(data_dict)
         if observed_dict is not None:

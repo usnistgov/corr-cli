@@ -7,8 +7,8 @@ import time
 
 import psutil
 
-from .watchers.process_watcher import ProcessWatcher
-from .watchers.platform_watcher import PlatformWatcher
+from .inspectors.process_inspector import ProcessInspector
+from .inspectors.platform_inspector import PlatformInspector
 from .commands.cli import DEFAULT_WRITE_REFRESH_RATE, DEFAULT_WATCH_REFRESH_RATE
 from .commands.config import parse_config
 from .stores.file_store import FileStore
@@ -17,11 +17,11 @@ from .stores.file_store import FileStore
 class JobManager(object):
     """Job manager for a single process.
 
-    Aggregates data from multiple process watchers and writes it to
+    Aggregates data from multiple process inspectors and writes it to
     the data stores.
 
     Attributes:
-      watchers: a list of watcher objects
+      inspectors: a list of inspector objects
       label: the unique label associated with the job
       stores: store objects to store the job records
       data_dict: the dictionary to gather the data
@@ -31,12 +31,12 @@ class JobManager(object):
         """Instantiate a JobManager.
 
         Args:
-          pid: the process ID to watch
+          pid: the process ID to inspect
           config_dir: the CoRR configuration directory
 
         """
-        self.watchers = [ProcessWatcher(pid),
-                         PlatformWatcher(pid)]
+        self.inspectors = [ProcessInspector(pid),
+                           PlatformInspector(pid)]
         self.label = str(uuid.uuid4().hex)
         self.stores = [FileStore(self.label, config_dir)]
         self.data_dict = self.initialize_data(pid, config_dir)
@@ -46,7 +46,7 @@ class JobManager(object):
         """Intialize the data.
 
         Args:
-          pid: the process ID to watch
+          pid: the process ID to inspect
           config_dir: the CoRR configuration directory
 
         Returns:
@@ -65,12 +65,12 @@ class JobManager(object):
         return data_dict
 
     def update_data(self):
-        """Update the data with the watchers.
+        """Update the data with the inspectors.
 
         """
         self.data_dict['update_time'] = str(datetime.datetime.now())
-        for watcher in self.watchers:
-            self.data_dict = watcher.watch(self.data_dict)
+        for inspector in self.inspectors:
+            self.data_dict = inspector.inspect(self.data_dict)
 
     def write_data(self):
         """Write the data to the record stores
