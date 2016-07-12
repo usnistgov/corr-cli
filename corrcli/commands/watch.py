@@ -15,7 +15,7 @@ Stop the deamon.
 import click
 from ..corr_daemon import CoRRDaemon
 from .cli import cli
-from ..task_manager import task_manager_callback
+from ..job_manager import job_manager_callback
 
 
 @cli.group()
@@ -55,7 +55,7 @@ def test_callback_nosleep(daemon_id, config_dir, logger=None):
                                                                                  config_dir))
 
 CALLBACK_FUNCTIONS = dict((func.__name__, func) for func in (test_callback_nosleep,
-                                                             task_manager_callback,
+                                                             job_manager_callback,
                                                              test_callback))
 
 @watch.command()
@@ -64,7 +64,7 @@ CALLBACK_FUNCTIONS = dict((func.__name__, func) for func in (test_callback_nosle
               help="Whether to record the output of the watcher daemon")
 @click.option('--callback-func',
               'callback_func_key',
-              default=task_manager_callback.__name__,
+              default=job_manager_callback.__name__,
               help="The callback function to use (only for testing purposes).",
               type=click.Choice(CALLBACK_FUNCTIONS.keys()))
 @click.option('--daemon/--no-daemon',

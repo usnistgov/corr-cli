@@ -32,6 +32,6 @@ def test_config():
                           'config',
                           'list']
         list_result = runner.invoke(cli, list_arguments)
-        list_output = '[global]\nemail = {0}\n\n[tasks]\n\n\n'.format(email)
+        list_output = '[global]\nemail = {0}\n\n[jobs]\n\n\n'.format(email)
         assert list_result.exit_code == 0
         assert list_result.output == list_output

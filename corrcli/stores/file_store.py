@@ -1,4 +1,4 @@
-"""File store for task JSON records.
+"""File store for job JSON records.
 """
 
 import json
@@ -7,11 +7,11 @@ import glob
 
 import fasteners
 
-from ..commands.cli import DEFAULT_TASK_DIR
+from ..commands.cli import DEFAULT_JOB_DIR
 
 
 class FileStore(object):
-    """File store for task JSON records.
+    """File store for job JSON records.
 
     Reads and writes to JSON files based on the label and the
     config_dir. Files are locked when reading and writing, only one
@@ -36,15 +36,15 @@ class FileStore(object):
         """Instantiate a FileStore.
 
         Args:
-          label: a unique task label
+          label: a unique job label
           config_dir: the CoRR configuration directory
 
         """
-        task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
-        if not os.path.exists(task_dir):
-            os.makedirs(task_dir)
-        self.datafile = os.path.join(task_dir, '{0}.json'.format(label))
-        self.lockfile = os.path.join(task_dir, '{0}.lock'.format(label))
+        job_dir = os.path.join(config_dir, DEFAULT_JOB_DIR)
+        if not os.path.exists(job_dir):
+            os.makedirs(job_dir)
+        self.datafile = os.path.join(job_dir, '{0}.json'.format(label))
+        self.lockfile = os.path.join(job_dir, '{0}.lock'.format(label))
 
     def read(self):
         """Read from the data nfile.
@@ -65,7 +65,7 @@ class FileStore(object):
                 json.dump(data, outfile, indent=2, sort_keys=True)
 
     def remove(self):
-        """Remove the data store for a task.
+        """Remove the data store for a job.
 
         Removes both the JSON file and the lock file.
 
@@ -76,22 +76,22 @@ class FileStore(object):
 
     @staticmethod
     def read_all(config_dir):
-        """Read in all the tasks in the store.
+        """Read in all the jobs in the store.
 
         Args:
           config_dir: the CoRR configuration directory
 
         Returns:
-          a list of task dictionaries
+          a list of jobs dictionaries
         """
-        task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
-        regex = os.path.join(task_dir, '*.json')
-        task_list = []
+        job_dir = os.path.join(config_dir, DEFAULT_JOB_DIR)
+        regex = os.path.join(job_dir, '*.json')
+        job_list = []
         for jsonfile in glob.glob(regex):
             label = os.path.splitext(os.path.split(jsonfile)[1])[0]
             store = FileStore(label, config_dir)
-            task_list.append(store.read())
-        return task_list
+            job_list.append(store.read())
+        return job_list
 
     @staticmethod
     def get_long_labels(config_dir, short_labels):
@@ -104,8 +104,8 @@ class FileStore(object):
         Returns:
           a dictionary of long IDs
         """
-        task_dir = os.path.join(config_dir, DEFAULT_TASK_DIR)
-        regex = os.path.join(task_dir, '*.json')
+        job_dir = os.path.join(config_dir, DEFAULT_JOB_DIR)
+        regex = os.path.join(job_dir, '*.json')
         long_labels = {}
         for jsonfile in glob.glob(regex):
             long_label = os.path.splitext(os.path.split(jsonfile)[1])[0]

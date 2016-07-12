@@ -19,11 +19,11 @@ def config():
 @click.option('--author', default=None, help="Add author's name.", type=str)
 @click.option('--watch-refresh-rate',
               default=None,
-              help="The refresh rate for watching tasks.",
+              help="The refresh rate for watching jobs.",
               type=float)
 @click.option('--write-refresh-rate',
               default=None,
-              help="The refresh rate for writing tasks.",
+              help="The refresh rate for writing jobs.",
               type=float)
 @click.pass_context
 def set_config(ctx, email, author, watch_refresh_rate, write_refresh_rate):
@@ -36,8 +36,8 @@ def set_config(ctx, email, author, watch_refresh_rate, write_refresh_rate):
 
     entries = [('global', 'email', email),
                ('global', 'author', author),
-               ('tasks', 'write_refresh_rate', write_refresh_rate),
-               ('tasks', 'watch_refresh_rate', watch_refresh_rate)]
+               ('jobs', 'write_refresh_rate', write_refresh_rate),
+               ('jobs', 'watch_refresh_rate', watch_refresh_rate)]
 
     for section, key, value in entries:
         write_item(ini_file, section, key, value)

@@ -43,8 +43,8 @@ while True:
     process = Popen(arguments)
     return process
 
-def test_task_manager():
-    """Test that tasks can be captured.
+def test_job_manager():
+    """Test that jobs can be captured.
     """
     write_refresh_rate = 1
     runner = CliRunner()
@@ -54,17 +54,17 @@ def test_task_manager():
             try:
                 process = start_process(daemon_id, config_path)
                 sleep(write_refresh_rate + 1)
-                tasks = FileStore.read_all(config_path)
+                jobs = FileStore.read_all(config_path)
             except: # pragma: no cover
                 process.kill()
                 raise
             process.kill()
-            assert len(tasks) == 1
-            assert tasks[0]['status'] != 'finished'
+            assert len(jobs) == 1
+            assert jobs[0]['status'] != 'finished'
             sleep(write_refresh_rate + 1)
-            tasks = FileStore.read_all(config_path)
-            assert len(tasks) == 1
-            assert tasks[0]['status'] == 'zombie'
+            jobs = FileStore.read_all(config_path)
+            assert len(jobs) == 1
+            assert jobs[0]['status'] == 'zombie'
 
 
 def test_noconfig():
@@ -76,10 +76,10 @@ def test_noconfig():
             try:
                 process = start_process(daemon_id, config_path)
                 sleep(DEFAULT_WRITE_REFRESH_RATE * 2)
-                tasks = FileStore.read_all(config_path)
+                jobs = FileStore.read_all(config_path)
             except: # pragma: no cover
                 process.kill()
                 raise
             process.kill()
-            assert len(tasks) == 1
-            assert tasks[0]['status'] != 'finished'
+            assert len(jobs) == 1
+            assert jobs[0]['status'] != 'finished'
