@@ -29,7 +29,8 @@ def config():
 def set_config(ctx, email, author, watch_refresh_rate, write_refresh_rate):
     """Write data to the 'config.ini' file.
     """
-    config_dir = ctx.parent.parent.params.get('config_dir') or ctx.parent.parent.parent.params.get('config_dir')
+    config_dir = ctx.parent.parent.params.get('config_dir') or \
+                 ctx.parent.parent.parent.params.get('config_dir')
 
     ini_file = os.path.join(config_dir, DEFAULT_CONFIG_FILE)
 
@@ -84,10 +85,13 @@ def write_item(ini_file, section, key, value=None):
     parser.read(ini_file)
     if not parser.has_section(section):
         parser.add_section(section)
-        click.echo("Write '[{section}]' to {config_ini}.".format(section=section, config_ini=ini_file))
+        click.echo("Write '[{section}]' to {config_ini}.".format(section=section,
+                                                                 config_ini=ini_file))
     if value:
         parser.set(section, key, str(value))
-        click.echo("Write '{key} = {value}' to {config_ini}.".format(key=key, value=value, config_ini=ini_file))
+        click.echo("Write '{key} = {value}' to {config_ini}.".format(key=key,
+                                                                     value=value,
+                                                                     config_ini=ini_file))
     with open(ini_file, 'w') as fpointer:
         parser.write(fpointer)
 
