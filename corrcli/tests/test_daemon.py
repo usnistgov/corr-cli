@@ -10,7 +10,7 @@ from corrcli.corr_daemon import CoRRDaemon
 from corrcli.corr_daemon import start_daemon
 
 
-DAEMON_OUTPUT = '              process_id\ndaemon_id               \n{daemon_id}       {process_id}\n'
+DAEMON_OUTPUT = '              process_id\ndaemon_id               \n{daemon_id}      {process_id}\n'
 
 def test_daemon_start():
     """Test `corrcli watch stop`
@@ -86,6 +86,7 @@ def test_daemon_list():
                          'list']
             result = runner.invoke(cli, arguments)
             assert result.exit_code == 0
+            process_id = str(process_id).rjust(6, ' ')
             assert result.output == DAEMON_OUTPUT.format(daemon_id=daemon_id, process_id=process_id)
             CoRRDaemon.stop(config_path, all_daemons=True)
             sleep(3)
