@@ -6,7 +6,6 @@ from time import sleep
 
 from click.testing import CliRunner
 
-from corrcli.corr_daemon import CoRRDaemon
 from corrcli.commands.cli import DEFAULT_WRITE_REFRESH_RATE
 from corrcli.stores.file_store import FileStore
 from corrcli.corr_daemon import start_daemon
