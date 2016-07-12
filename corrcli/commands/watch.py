@@ -111,8 +111,8 @@ def list_watchers(ctx):
     """List all Watchers.
     """
     config_dir = ctx.parent.parent.params['config_dir']
-    daemon_df = CoRRDaemon.list(config_dir=config_dir)
+    daemon_df = CoRRDaemon.list(config_dir=config_dir).set_index('daemon_id')
     if len(daemon_df) == 0:
         click.echo("No running daemons.")
     else:
-        click.echo(daemon_df.to_string(index=False))
+        click.echo(daemon_df)

@@ -10,13 +10,14 @@ from corrcli.corr_daemon import CoRRDaemon
 from corrcli.corr_daemon import start_daemon
 
 
+DAEMON_OUTPUT = '              process_id\ndaemon_id               \n{daemon_id}       {process_id}\n'
+
 def test_daemon_start():
     """Test `corrcli watch stop`
     """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
-        with start_daemon(config_path, callback_func='test_callback') as daemon_id_start:
-
+        with start_daemon(config_path, callback_func='test_callback') as (daemon_id_start, _):
             daemon_df = CoRRDaemon.list(config_path)
             assert len(daemon_df) == 1
             stopped_df = CoRRDaemon.stop(config_path, all_daemons=True)
@@ -79,12 +80,13 @@ def test_daemon_list():
     """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
-        with start_daemon(config_path, 'test_callback'):
+        with start_daemon(config_path, 'test_callback') as (daemon_id, process_id):
             arguments = ['--config-dir={0}'.format(config_path),
                          'watch',
                          'list']
             result = runner.invoke(cli, arguments)
             assert result.exit_code == 0
+            assert result.output == DAEMON_OUTPUT.format(daemon_id=daemon_id, process_id=process_id)
             CoRRDaemon.stop(config_path, all_daemons=True)
             sleep(3)
             result = runner.invoke(cli, arguments)
@@ -106,3 +108,6 @@ def test_no_daemon():
         result = runner.invoke(cli, arguments)
         assert "Launch daemon with ID:" in result.output
         assert result.exit_code == 0
+
+# if __name__ == '__main__':
+#     test_daemon_list()
