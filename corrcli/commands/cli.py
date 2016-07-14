@@ -15,13 +15,20 @@ DEFAULT_WATCH_REFRESH_RATE = 0.1
 @click.version_option(get_version())
 @click.option('--config-dir',
               'config_dir',
-              default=get_config_dir('corrcli'),
-              help="Set the config directory for CoRR.",
+              default=None,
+              help="Set the config directory for CoRR-cli.",
               type=click.Path())
 @click.pass_context
 def cli(ctx, config_dir):
     """The CoRR command line tool.
     """
-    if not os.path.exists(config_dir):
-        os.makedirs(config_dir)
-    ctx.params['config_dir'] = os.path.abspath(config_dir)
+    if config_dir is None:
+        config_dir = get_config_dir('corrcli')
+        if not os.path.exists(config_dir):
+            os.makedirs(config_dir)
+            click.echo('Creating config directory {0}.'.format(config_dir))
+    else:
+        if not os.path.exists(config_dir):
+            click.echo('Config directory {0} does not exist'.format(config_dir))
+            ctx.exit()
+    ctx.params['config_dir'] = os.path.expanduser(os.path.abspath(config_dir))

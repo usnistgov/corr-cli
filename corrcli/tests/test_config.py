@@ -15,11 +15,10 @@ def test_config():
     Test writing to a config file with corrcli.
     """
     runner = CliRunner()
-    with runner.isolated_filesystem():
-        test_dir = 'test_dir'
-        test_ini = os.path.join(test_dir, 'config.ini')
+    with runner.isolated_filesystem() as config_path:
+        test_ini = os.path.join(config_path, 'config.ini')
         email = "test.test@test.com"
-        arguments = ['--config-dir={0}'.format(test_dir),
+        arguments = ['--config-dir={0}'.format(config_path),
                      'config',
                      'set',
                      '--email={0}'.format(email)]
@@ -29,10 +28,10 @@ def test_config():
         parser.read(test_ini)
         assert parser.get('global', 'email') == email
 
-        list_arguments = ['--config-dir={0}'.format(test_dir),
+        list_arguments = ['--config-dir={0}'.format(config_path),
                           'config',
                           'list']
         list_result = runner.invoke(cli, list_arguments)
-        list_output = '[global]\nemail = {0}\n\n\n'.format(email)
+        list_output = '[global]\nemail = {0}\n\n[tasks]\n\n\n'.format(email)
         assert list_result.exit_code == 0
         assert list_result.output == list_output

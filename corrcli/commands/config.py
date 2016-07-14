@@ -1,10 +1,13 @@
 """The config commands for `corrcli`
 """
 import os
+
 from configparser import ConfigParser
 import click
+
 from .cli import cli
 from .cli import DEFAULT_CONFIG_FILE
+
 
 @cli.group()
 def config():
@@ -26,7 +29,10 @@ def config():
 def set_config(ctx, email, author, watch_refresh_rate, write_refresh_rate):
     """Write data to the 'config.ini' file.
     """
-    ini_file = os.path.join(ctx.parent.parent.params['config_dir'], DEFAULT_CONFIG_FILE)
+    config_dir = ctx.parent.parent.params.get('config_dir') or \
+                 ctx.parent.parent.parent.params.get('config_dir')
+
+    ini_file = os.path.join(config_dir, DEFAULT_CONFIG_FILE)
 
     entries = [('global', 'email', email),
                ('global', 'author', author),
@@ -34,8 +40,7 @@ def set_config(ctx, email, author, watch_refresh_rate, write_refresh_rate):
                ('tasks', 'watch_refresh_rate', watch_refresh_rate)]
 
     for section, key, value in entries:
-        if value:
-            write_item(section, key, value, ini_file)
+        write_item(ini_file, section, key, value)
 
 
 @config.command('list')
@@ -43,12 +48,23 @@ def set_config(ctx, email, author, watch_refresh_rate, write_refresh_rate):
 def list_config(ctx):
     """List contents of the config file.
     """
-    ini_file = os.path.join(ctx.parent.parent.params['config_dir'], DEFAULT_CONFIG_FILE)
+    config_dir = ctx.parent.parent.params['config_dir']
+    ini_file = os.path.join(config_dir, DEFAULT_CONFIG_FILE)
+    ctx.invoke(set_config)
     with open(ini_file, 'r') as fpointer:
         click.echo(fpointer.read())
 
+@config.command()
+@click.pass_context
+def edit(ctx):
+    """Edit the contents of the config file.
+    """
+    config_dir = ctx.parent.parent.params['config_dir']
+    ini_file = os.path.join(config_dir, DEFAULT_CONFIG_FILE)
+    ctx.invoke(set_config)
+    click.edit(filename=ini_file)
 
-def write_item(section, key, value, ini_file):
+def write_item(ini_file, section, key, value=None):
     """Write a key value pair to an ini file.
 
     Write the following to a file.
@@ -59,17 +75,23 @@ def write_item(section, key, value, ini_file):
     ```
 
     Args:
+      ini_file: the config file to write to
       section: the `[section]` to write to
       key: the key in `key = value`
       value: the value in `key = value`
-      ini_file: the config file to write to
+
     """
     parser = ConfigParser()
     parser.read(ini_file)
     if not parser.has_section(section):
         parser.add_section(section)
-    parser.set(section, key, str(value))
-    click.echo("Write '{key} = {value}' to config.ini.".format(key=key, value=value))
+        click.echo("Write '[{section}]' to {config_ini}.".format(section=section,
+                                                                 config_ini=ini_file))
+    if value:
+        parser.set(section, key, str(value))
+        click.echo("Write '{key} = {value}' to {config_ini}.".format(key=key,
+                                                                     value=value,
+                                                                     config_ini=ini_file))
     with open(ini_file, 'w') as fpointer:
         parser.write(fpointer)
 
