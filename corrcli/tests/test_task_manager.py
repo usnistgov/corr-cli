@@ -50,7 +50,7 @@ def test_task_manager():
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
         configure(config_path, write_refresh_rate)
-        with start_daemon(config_path) as daemon_id:
+        with start_daemon(config_path) as (daemon_id, _):
             try:
                 process = start_process(daemon_id, config_path)
                 sleep(write_refresh_rate + 1)
@@ -72,7 +72,7 @@ def test_noconfig():
     """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
-        with start_daemon(config_path) as daemon_id:
+        with start_daemon(config_path) as (daemon_id, _):
             try:
                 process = start_process(daemon_id, config_path)
                 sleep(DEFAULT_WRITE_REFRESH_RATE * 2)

@@ -9,10 +9,10 @@ from corrcli.stores.file_store import FileStore
 from corrcli import cli
 
 
-LIST_OUTPUT = """      label    status           time stamp    pid
-0  68ede088  finished  2016-06-25 21:51:39  18879
-1  6b3c991f  finished  2016-06-24 23:20:13  10405
-2  19c8f844       NaN                  NaN     -1
+LIST_OUTPUT = """            status           time stamp    pid
+label                                         \n68ede088  finished  2016-06-25 21:51:39  18879
+6b3c991f  finished  2016-06-24 23:20:13  10405
+19c8f844       NaN                  NaN     -1
 """
 
 JSON_OUTPUT = """{

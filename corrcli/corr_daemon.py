@@ -191,6 +191,7 @@ def start_daemon(config_dir, callback_func=None):
 
     """
     daemon_ids_before = set(CoRRDaemon.list(config_dir).daemon_id)
+    process_ids_before = set(CoRRDaemon.list(config_dir).daemon_id)
     arguments = ['corrcli',
                  '--config-dir={0}'.format(config_dir),
                  'watch',
@@ -201,7 +202,8 @@ def start_daemon(config_dir, callback_func=None):
     Popen(arguments).communicate()
     sleep(1)
     daemon_id = (set(CoRRDaemon.list(config_dir).daemon_id) - daemon_ids_before).pop()
-    yield daemon_id
+    process_id = (set(CoRRDaemon.list(config_dir).process_id) - process_ids_before).pop()
+    yield daemon_id, process_id
     arguments = ['corrcli',
                  '--config-dir={0}'.format(config_dir),
                  'watch',
