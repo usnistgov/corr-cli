@@ -4,6 +4,7 @@ import os
 
 from configparser import ConfigParser
 from click.testing import CliRunner
+import pytest
 
 from corrcli import cli
 
@@ -35,3 +36,16 @@ def test_config():
         list_output = '[global]\nemail = {0}\n\n[jobs]\n\n\n'.format(email)
         assert list_result.exit_code == 0
         assert list_result.output == list_output
+
+        incorrect_config_dir_test(runner, config_path)
+
+def incorrect_config_dir_test(runner, config_path):
+    incorrect_config_path = os.path.join(config_path, 'incorrect')
+    list_arguments = ['--config-dir={0}'.format(incorrect_config_path),
+                      'config',
+                      'list']
+    list_result = runner.invoke(cli, list_arguments)
+    list_output = 'Config directory {0} does not exist\n'.format(incorrect_config_path)
+
+    assert list_result.exit_code == 0
+    assert list_result.output == list_output

@@ -22,7 +22,7 @@ DEFAULT_WATCH_REFRESH_RATE = 0.1
 def cli(ctx, config_dir):
     """The CoRR command line tool.
     """
-    if config_dir is None:
+    if config_dir is None: # pragma: no cover
         config_dir = get_config_dir('corrcli')
         if not os.path.exists(config_dir):
             os.makedirs(config_dir)
