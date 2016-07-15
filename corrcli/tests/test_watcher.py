@@ -88,7 +88,8 @@ def test_watcher_list():
             result = runner.invoke(cli, arguments)
             assert result.exit_code == 0
             process_id = str(process_id).rjust(6, ' ')
-            assert result.output == WATCHER_OUTPUT.format(watcher_id=watcher_id, process_id=process_id)
+            assert result.output == WATCHER_OUTPUT.format(watcher_id=watcher_id,
+                                                          process_id=process_id)
             Watcher.stop(config_path, all_watchers=True)
             sleep(3)
             result = runner.invoke(cli, arguments)

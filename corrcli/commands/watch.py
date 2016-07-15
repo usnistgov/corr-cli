@@ -36,7 +36,7 @@ def test_callback(watcher_id, config_dir, logger=None):
     """
     if logger:
         logger.info("in callback for watcher {0} and config directory {1}".format(watcher_id,
-                                                                                 config_dir))
+                                                                                  config_dir))
     from time import sleep
     while True:
         sleep(10)
@@ -52,7 +52,7 @@ def test_callback_nosleep(watcher_id, config_dir, logger=None):
     """
     if logger:
         logger.info("in callback for watcher {0} and config directory {1}".format(watcher_id,
-                                                                                 config_dir))
+                                                                                  config_dir))
 
 CALLBACK_FUNCTIONS = dict((func.__name__, func) for func in (test_callback_nosleep,
                                                              job_manager_callback,
