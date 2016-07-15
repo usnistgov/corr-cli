@@ -6,7 +6,7 @@ from ..tools import get_version
 from ..tools import get_config_dir
 
 DEFAULT_CONFIG_FILE = 'config.ini'
-DEFAULT_DAEMON_DIR = 'daemons'
+DEFAULT_WATCHER_DIR = 'watchers'
 DEFAULT_JOB_DIR = 'jobs'
 DEFAULT_WRITE_REFRESH_RATE = 5.0
 DEFAULT_WATCH_REFRESH_RATE = 0.1

@@ -8,7 +8,7 @@ from click.testing import CliRunner
 
 from corrcli.commands.cli import DEFAULT_WRITE_REFRESH_RATE
 from corrcli.stores.file_store import FileStore
-from corrcli.corr_daemon import start_daemon
+from corrcli.watcher import start_watcher
 
 
 def configure(config_dir, refresh_rate):
@@ -25,7 +25,7 @@ def configure(config_dir, refresh_rate):
     Popen(arguments).communicate()
     sleep(3)
 
-def start_process(daemon_id, config_dir):
+def start_process(watcher_id, config_dir):
     """Launch a test process.
 
     """
@@ -39,7 +39,7 @@ while True:
         fout.write(contents)
     arguments = ['python',
                  test_process_file,
-                 daemon_id]
+                 watcher_id]
     process = Popen(arguments)
     return process
 
@@ -50,9 +50,9 @@ def test_job_manager():
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
         configure(config_path, write_refresh_rate)
-        with start_daemon(config_path) as (daemon_id, _):
+        with start_watcher(config_path) as (watcher_id, _):
             try:
-                process = start_process(daemon_id, config_path)
+                process = start_process(watcher_id, config_path)
                 sleep(write_refresh_rate + 1)
                 jobs = FileStore.read_all(config_path)
             except: # pragma: no cover
@@ -72,9 +72,9 @@ def test_noconfig():
     """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
-        with start_daemon(config_path) as (daemon_id, _):
+        with start_watcher(config_path) as (watcher_id, _):
             try:
-                process = start_process(daemon_id, config_path)
+                process = start_process(watcher_id, config_path)
                 sleep(DEFAULT_WRITE_REFRESH_RATE * 2)
                 jobs = FileStore.read_all(config_path)
             except: # pragma: no cover

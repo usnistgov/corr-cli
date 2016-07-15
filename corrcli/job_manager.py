@@ -78,8 +78,8 @@ class JobManager(object):
         for store in self.stores:
             store.write(self.data_dict)
 
-def job_manager_callback(daemon_id, config_dir, logger=None):
-    """Job manager callback function for running in a Daemon.
+def job_manager_callback(watcher_id, config_dir, logger=None):
+    """Job manager callback function for running in a Watcher.
 
     Creates and removes JobManager's as processes start and
     finish. Prompts JobManager's to update data as frequently as
@@ -87,7 +87,7 @@ def job_manager_callback(daemon_id, config_dir, logger=None):
     `refresh_rate`.
 
     Args:
-      daemon_id: the ID of the daemon launching the call back
+      watcher_id: the ID of the Watcher launching the call back
       config_dir: the CoRR configuration directory
       logger: a logger object
 
@@ -100,7 +100,7 @@ def job_manager_callback(daemon_id, config_dir, logger=None):
                                                DEFAULT_WRITE_REFRESH_RATE))
     while True:
         tstart = time.time()
-        pids = get_pids_for_identifier(daemon_id)
+        pids = get_pids_for_identifier(watcher_id)
         job_manager_dict = update_job_manager_dict(pids, job_manager_dict, config_dir, logger)
         if len(job_manager_dict) > 0:
             while (time.time() - tstart) < write_refresh_rate:
@@ -115,7 +115,7 @@ def update_job_manager_dict(pids, job_manager_dict, config_dir, logger):
     """Add jobs to the job_manager_dict.
 
     Args:
-      pids: list of pids that associated with the daemon_id
+      pids: list of pids that associated with the watcher_id
       job_manager_dict: a pid: JobManager dictionary
       config_dir: the CoRR configuration directory
       logger: a logger object
