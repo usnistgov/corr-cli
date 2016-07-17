@@ -4,16 +4,15 @@ import os
 
 from configparser import ConfigParser
 from click.testing import CliRunner
-import pytest
 
 from corrcli import cli
-
 
 
 def test_config():
     """Test `corrcli config`.
 
     Test writing to a config file with corrcli.
+
     """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
@@ -40,6 +39,9 @@ def test_config():
         incorrect_config_dir_test(runner, config_path)
 
 def incorrect_config_dir_test(runner, config_path):
+    """Subfunction to test incorrect path for config directory
+
+    """
     incorrect_config_path = os.path.join(config_path, 'incorrect')
     list_arguments = ['--config-dir={0}'.format(incorrect_config_path),
                       'config',
