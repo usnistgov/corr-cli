@@ -1,4 +1,4 @@
-"""Test the CoRR-cli task command.
+"""Test the CoRR-cli job command.
 """
 import json
 import os
@@ -37,15 +37,15 @@ JSON_OUTPUT = """{
   "update_time": "2016-06-25 21:53:19.718295",
   "username": "dwheeler"
 }
-No such task as xxxxxxxx.
+No such job as xxxxxxxx.
 """
 
-REMOVE_OUTPUT = """Task 68ede088 removed.
-No such task as xxxxxxxx.
+REMOVE_OUTPUT = """Job 68ede088 removed.
+No such job as xxxxxxxx.
 """
 
-def test_list_tasks():
-    """Test listing tasks.
+def test_list_jobs():
+    """Test listing jobs.
 
     """
     datafile = os.path.join(os.path.dirname(__file__), 'test_data.json')
@@ -53,10 +53,10 @@ def test_list_tasks():
         data = json.load(infile)
     runner = CliRunner()
     with runner.isolated_filesystem() as config_dir:
-        for task in data:
-            FileStore(task['label'], config_dir).write(task)
+        for job in data:
+            FileStore(job['label'], config_dir).write(job)
         arguments = ['--config-dir={0}'.format(config_dir),
-                     'task',
+                     'jobs',
                      'list']
         result = runner.invoke(cli, arguments)
         assert result.exit_code == 0
@@ -64,7 +64,7 @@ def test_list_tasks():
 
 
 def test_list_json():
-    """Test listing tasks as JSON.
+    """Test listing jobs as JSON.
 
     """
     datafile = os.path.join(os.path.dirname(__file__), 'test_data.json')
@@ -72,11 +72,11 @@ def test_list_json():
         data = json.load(infile)
     runner = CliRunner()
     with runner.isolated_filesystem() as config_dir:
-        for task in data:
-            FileStore(task['label'], config_dir).write(task)
+        for job in data:
+            FileStore(job['label'], config_dir).write(job)
         arguments = ['--config-dir={0}'.format(config_dir),
-                     'task',
-                     'list',
+                     'jobs',
+                     'show',
                      '68ede088',
                      'xxxxxxxx']
         result = runner.invoke(cli, arguments)
@@ -84,17 +84,17 @@ def test_list_json():
         assert result.output.replace(' ', '') == JSON_OUTPUT.replace(' ', '')
 
 def test_remove():
-    """Test removing task records from the data store.
+    """Test removing job records from the data store.
     """
     datafile = os.path.join(os.path.dirname(__file__), 'test_data.json')
     with open(datafile, 'r') as infile:
         data = json.load(infile)
     runner = CliRunner()
     with runner.isolated_filesystem() as config_dir:
-        for task in data:
-            FileStore(task['label'], config_dir).write(task)
+        for job in data:
+            FileStore(job['label'], config_dir).write(job)
         arguments = ['--config-dir={0}'.format(config_dir),
-                     'task',
+                     'jobs',
                      'remove',
                      '--force',
                      '68ede088',

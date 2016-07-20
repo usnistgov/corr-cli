@@ -1,28 +1,28 @@
 """Gather data about the platform.
 """
 import platform
-from .watcher import Watcher
+from .inspector import Inspector
 
 
-class PlatformWatcher(Watcher):
+class PlatformInspector(Inspector):
     """Gather data about the platform
 
-    >>> keys = list(PlatformWatcher(None).watch().keys())
+    >>> keys = list(PlatformInspector(None).inspect().keys())
     >>> keys.sort()
     >>> print(keys)
     ['node_name', 'platform']
 
     Attributes:
-      pid: the process ID to watch
+      pid: the process ID to inspector
       schema_dict: mapping from the observed data to the output data
-      watch_dict: the cached observed data
+      inspector_dict: the cached observed data
 
     """
     schema_dict = {'node_name' : 'node',
                    'platform' : 'platform'}
 
     def __init__(self, pid):
-        super(PlatformWatcher, self).__init__(pid)
+        super(PlatformInspector, self).__init__(pid)
         self.observed_dict = {}
         for value in self.schema_dict.values():
             self.observed_dict[value] = getattr(platform, value)()
@@ -30,7 +30,7 @@ class PlatformWatcher(Watcher):
     def get_observed_dict(self):
         return self.observed_dict
 
-    def watch(self, data_dict=None):
+    def inspect(self, data_dict=None):
         observed_dict = self.get_observed_dict()
         data_dict = self.ini_data_dict(data_dict)
         return self.update_data_dict(observed_dict, data_dict)

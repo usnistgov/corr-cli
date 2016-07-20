@@ -8,7 +8,7 @@ from click.testing import CliRunner
 
 from corrcli.commands.cli import DEFAULT_WRITE_REFRESH_RATE
 from corrcli.stores.file_store import FileStore
-from corrcli.corr_daemon import start_daemon
+from corrcli.watcher import start_watcher
 
 
 def configure(config_dir, refresh_rate):
@@ -25,7 +25,7 @@ def configure(config_dir, refresh_rate):
     Popen(arguments).communicate()
     sleep(3)
 
-def start_process(daemon_id, config_dir):
+def start_process(watcher_id, config_dir):
     """Launch a test process.
 
     """
@@ -39,32 +39,32 @@ while True:
         fout.write(contents)
     arguments = ['python',
                  test_process_file,
-                 daemon_id]
+                 watcher_id]
     process = Popen(arguments)
     return process
 
-def test_task_manager():
-    """Test that tasks can be captured.
+def test_job_manager():
+    """Test that jobs can be captured.
     """
     write_refresh_rate = 1
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
         configure(config_path, write_refresh_rate)
-        with start_daemon(config_path) as (daemon_id, _):
+        with start_watcher(config_path) as (watcher_id, _):
             try:
-                process = start_process(daemon_id, config_path)
+                process = start_process(watcher_id, config_path)
                 sleep(write_refresh_rate + 1)
-                tasks = FileStore.read_all(config_path)
+                jobs = FileStore.read_all(config_path)
             except: # pragma: no cover
                 process.kill()
                 raise
             process.kill()
-            assert len(tasks) == 1
-            assert tasks[0]['status'] != 'finished'
+            assert len(jobs) == 1
+            assert jobs[0]['status'] != 'finished'
             sleep(write_refresh_rate + 1)
-            tasks = FileStore.read_all(config_path)
-            assert len(tasks) == 1
-            assert tasks[0]['status'] == 'zombie'
+            jobs = FileStore.read_all(config_path)
+            assert len(jobs) == 1
+            assert jobs[0]['status'] == 'zombie'
 
 
 def test_noconfig():
@@ -72,14 +72,14 @@ def test_noconfig():
     """
     runner = CliRunner()
     with runner.isolated_filesystem() as config_path:
-        with start_daemon(config_path) as (daemon_id, _):
+        with start_watcher(config_path) as (watcher_id, _):
             try:
-                process = start_process(daemon_id, config_path)
+                process = start_process(watcher_id, config_path)
                 sleep(DEFAULT_WRITE_REFRESH_RATE * 2)
-                tasks = FileStore.read_all(config_path)
+                jobs = FileStore.read_all(config_path)
             except: # pragma: no cover
                 process.kill()
                 raise
             process.kill()
-            assert len(tasks) == 1
-            assert tasks[0]['status'] != 'finished'
+            assert len(jobs) == 1
+            assert jobs[0]['status'] != 'finished'

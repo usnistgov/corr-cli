@@ -21,7 +21,7 @@ from .tools import get_version
 from .commands.cli import cli
 from .commands.config import config
 from .commands.watch import watch
-from .commands.task import task
+from .commands.jobs import jobs
 
 
 def test(): # pragma: no cover

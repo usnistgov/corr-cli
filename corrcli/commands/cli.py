@@ -6,8 +6,8 @@ from ..tools import get_version
 from ..tools import get_config_dir
 
 DEFAULT_CONFIG_FILE = 'config.ini'
-DEFAULT_DAEMON_DIR = 'daemons'
-DEFAULT_TASK_DIR = 'tasks'
+DEFAULT_WATCHER_DIR = 'watchers'
+DEFAULT_JOB_DIR = 'jobs'
 DEFAULT_WRITE_REFRESH_RATE = 5.0
 DEFAULT_WATCH_REFRESH_RATE = 0.1
 
@@ -22,7 +22,7 @@ DEFAULT_WATCH_REFRESH_RATE = 0.1
 def cli(ctx, config_dir):
     """The CoRR command line tool.
     """
-    if config_dir is None:
+    if config_dir is None: # pragma: no cover
         config_dir = get_config_dir('corrcli')
         if not os.path.exists(config_dir):
             os.makedirs(config_dir)
