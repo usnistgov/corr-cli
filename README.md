@@ -19,10 +19,10 @@ for recording, viewing and storing scientific computing investigations
 and allows scientists to use the cloud to improve sharing and
 collaboration.
 
-[![Gitter Chat](https://img.shields.io/gitter/room/gitterHQ/gitter.svg)](https://gitter.im/usnistgov/corr)
+[![Gitter Chat](https://img.shields.io/gitter/room/usnistgov/corr.svg)](https://gitter.im/usnistgov/corr)
 
 * **[INSTALL](INSTALLATION.md)** – install CoRR-cli
 * **[LICENSE](LICENSE)** – the license
-* **[USAGE](USAGE)** - use CoRR-cli
+* **[USAGE](USAGE.md)** - use CoRR-cli
 
 [CoRR]: https://github.com/usnistgov/corr
